@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/pf_nav"
+    app:startDestination="@id/imageFragment">
+
+
+    <fragment
+        android:id="@+id/bookmarkFragment"
+        android:name="com.example.socialmediaapp.ui.fragment.profile.BookmarkFragment"
+        android:label="fragment_bookmark"
+        tools:layout="@layout/fragment_bookmark" />
+    <fragment
+        android:id="@+id/imageFragment"
+        android:name="com.example.socialmediaapp.ui.fragment.profile.ImageFragment"
+        android:label="fragment_image"
+        tools:layout="@layout/fragment_image" />
+    <fragment
+        android:id="@+id/videoFragment"
+        android:name="com.example.socialmediaapp.ui.fragment.profile.VideoFragment"
+        android:label="fragment_video"
+        tools:layout="@layout/fragment_video" />
+</navigation>

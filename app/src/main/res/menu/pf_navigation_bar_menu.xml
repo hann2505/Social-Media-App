@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/imageFragment"
+        android:title="@string/photos"
+        android:icon="@drawable/ic_white_grid"
+        />
+
+    <item android:id="@+id/videoFragment"
+        android:title="@string/videos"
+        android:icon="@drawable/ic_white_video"
+        />
+
+    <item android:id="@+id/bookmarkFragment"
+        android:title="@string/bookmark"
+        android:icon="@drawable/ic_pf_bookmark"
+        />
+</menu>

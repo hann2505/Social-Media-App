@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".ui.fragment.login.SignUpFragment"
+    >
+
+    <ImageView
+        android:id="@+id/red_circle"
+        android:layout_width="340dp"
+        android:layout_height="340dp"
+        android:background="@drawable/ic_orange_1"
+        android:layout_gravity="end"
+        android:layout_marginEnd="-170dp"
+        android:layout_marginTop="-170dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        />
+    <ImageView
+        android:id="@+id/blue_circle"
+        android:layout_width="270dp"
+        android:layout_height="270dp"
+        android:src="@drawable/ic_orange_2"
+        android:layout_marginBottom="-135dp"
+        android:layout_marginStart="-135dp"
+        android:layout_alignParentBottom="true"
+        />
+
+    <TextView
+        android:id="@+id/rhe16q287z3g"
+        android:textColor="@color/orange"
+        android:textSize="32sp"
+        android:textStyle="bold"
+        android:layout_below="@+id/red_circle"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="14dp"
+        android:text="@string/join_with_us"
+        />
+    <TextView
+        android:id="@+id/rjfusp4ujoz9"
+        android:textColor="#4D4D4D"
+        android:textSize="15sp"
+        android:layout_below="@+id/rhe16q287z3g"
+        android:layout_height="wrap_content"
+        android:gravity="start"
+        android:layout_width="215dp"
+        android:layout_marginStart="14dp"
+        android:text="@string/create_your_account_and_start_the_conversation"
+        />
+
+    <LinearLayout
+        android:id="@+id/rf2dx1cirq0v"
+        android:layout_centerInParent="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="14dp"
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        android:orientation="vertical">
+
+        <EditText
+            android:id="@+id/email_edt"
+            android:textColor="#6E2424"
+            android:textSize="16sp"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:background="@drawable/custom_login_edit_text"
+            android:drawableStart="@drawable/ic_email"
+            android:padding="10dp"
+            android:drawablePadding="10dp"
+            android:textColorHint="@color/text_hint_color"
+            android:inputType="textEmailAddress"
+            android:hint="@string/email"
+            />
+        <EditText
+            android:id="@+id/pwd_edt"
+            android:textColor="#6E2424"
+            android:textSize="16sp"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:background="@drawable/custom_login_edit_text"
+            android:drawableStart="@drawable/ic_lock"
+            android:padding="10dp"
+            android:drawablePadding="10dp"
+            android:textColorHint="@color/text_hint_color"
+            android:layout_marginTop="10dp"
+            android:inputType="textPassword"
+            android:hint="@string/create_password"/>
+
+        <EditText
+            android:id="@+id/cf_pwd_edt"
+            android:textColor="#6E2424"
+            android:textSize="16sp"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:background="@drawable/custom_login_edit_text"
+            android:drawableStart="@drawable/ic_lock"
+            android:padding="10dp"
+            android:drawablePadding="10dp"
+            android:textColorHint="@color/text_hint_color"
+            android:layout_marginTop="10dp"
+            android:inputType="textPassword"
+            android:hint="@string/confirm_password"/>
+
+        <TextView
+            android:id="@+id/pwd_notification"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:text=""
+            android:textColor="@color/red"
+            android:textSize="13sp"
+            android:layout_marginTop="7dp"
+            />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/sign_up_btn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            app:cornerRadius="20dp"
+            android:text="@string/sign_up"
+            android:textSize="25sp"
+            android:backgroundTint="@color/orange"
+            android:layout_marginTop="40dp"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="20dp"
+        android:layout_below="@+id/rf2dx1cirq0v"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/text_layout"
+        >
+
+        <TextView
+            android:id="@+id/r3ctg9zjh3pu"
+            android:textColor="#000000"
+            android:textSize="13sp"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:text="@string/already_have_an_account"
+            />
+
+        <TextView
+            android:id="@+id/login_tv"
+            android:textColor="#000000"
+            android:textSize="13sp"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:text="@string/log_in"
+            android:layout_marginStart="5dp"
+            android:textStyle="bold"
+            />
+    </LinearLayout>
+
+
+    
+    <TextView
+        android:id="@+id/rukfg71zu7n"
+        android:textColor="#000000"
+        android:textSize="13sp"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:text="@string/or_log_in_with"
+        android:layout_above="@+id/rd9bs9zk522d"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/text_layout"
+        android:layout_marginTop="15dp"
+        />
+
+    <LinearLayout
+        android:id="@+id/rd9bs9zk522d"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        android:orientation="horizontal"
+        android:paddingHorizontal="14dp"
+        android:layout_centerHorizontal="true"
+        android:gravity="center_horizontal"
+        android:layout_marginBottom="-10dp"
+        android:layout_above="@+id/blue_circle"
+        >
+
+        <androidx.appcompat.widget.AppCompatImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:background="@drawable/rounded_sign_in_opt"
+            android:src="@drawable/ic_google"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
+            />
+
+        <androidx.appcompat.widget.AppCompatImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:background="@drawable/rounded_sign_in_opt"
+            android:src="@drawable/ic_facebook"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            />
+        <androidx.appcompat.widget.AppCompatImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:background="@drawable/rounded_sign_in_opt"
+            android:src="@drawable/ic_twitter_x"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
+            />
+
+    </LinearLayout>
+
+</RelativeLayout>
