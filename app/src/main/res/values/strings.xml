@@ -56,4 +56,13 @@
     <string name="password_not_match">Password not match</string>
     <string name="reset_your_password">Reset your password</string>
     <string name="the_password_must_be_different_than_before">The password must be different than before</string>
+    <string name="edit_profile">Edit profile</string>
+    <string name="edit_profile_picure">Edit profile picure</string>
+    <string name="name">Name</string>
+    <string name="username">Username</string>
+    <string name="gender">Gender</string>
+    <string name="bio">Bio</string>
+    <string name="done">Done</string>
+    <string name="male">Male</string>
+    <string name="female">Female</string>
 </resources>

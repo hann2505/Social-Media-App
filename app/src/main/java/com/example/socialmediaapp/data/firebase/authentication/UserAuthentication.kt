@@ -2,6 +2,7 @@ package com.example.socialmediaapp.data.firebase.authentication
 
 import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import javax.inject.Inject
 
 class UserAuthentication @Inject constructor(
@@ -20,17 +21,14 @@ class UserAuthentication @Inject constructor(
             }
     }
 
-    fun register(email: String, password: String, onResult: (Boolean) -> Unit) {
+    fun register(email: String, password: String, onResult: (Boolean, String) -> Unit) {
         firebaseAuth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->
-                onResult(task.isSuccessful)
-            }
-    }
-
-    fun createNewUser(email: String, password: String, onResult: (Boolean) -> Unit) {
-        firebaseAuth.createUserWithEmailAndPassword(email, password)
-            .addOnCompleteListener { task ->
-                onResult(task.isSuccessful)
+                if (task.isSuccessful) {
+                    onResult(true, task.result?.user!!.uid)
+                }
+            }.addOnFailureListener { exception ->
+                onResult(false, exception.message.toString())
             }
     }
 
@@ -43,5 +41,9 @@ class UserAuthentication @Inject constructor(
             .addOnCompleteListener { task ->
                 onResult(task.isSuccessful)
             }
+    }
+
+    fun getCurrentUser(): FirebaseUser? {
+        return firebaseAuth.currentUser
     }
 }

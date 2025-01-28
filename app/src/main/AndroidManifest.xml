@@ -3,8 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <application
-        android:allowBackup="true"
         android:name=".other.MyApplication"
+        android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
@@ -13,6 +13,12 @@
         android:supportsRtl="true"
         android:theme="@style/Base.Theme.SocialMediaApp"
         tools:targetApi="35">
+        <activity
+            android:name=".ui.acitivity.SearchActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.acitivity.EditProfileActivity"
+            android:exported="false" />
         <activity
             android:name=".ui.acitivity.SettingActivity"
             android:exported="false" />

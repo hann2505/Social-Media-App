@@ -39,7 +39,7 @@ class ForgetPasswordFragment : Fragment() {
         return binding.root
     }
 
-    fun resetPassword() {
+    private fun resetPassword() {
         val email = binding.emailEdt.text.toString()
         userAuthentication.resetPassword(email) {
             if (it) {

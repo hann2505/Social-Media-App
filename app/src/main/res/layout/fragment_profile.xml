@@ -190,16 +190,19 @@
         android:layout_marginTop="20dp">
 
         <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/edit_profile_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/follow"
+            android:text="@string/edit_profile"
             android:textColor="@color/white"
             android:paddingStart="40dp"
             android:paddingEnd="40dp"
+            android:textAllCaps="false"
             android:background="@drawable/custom_follow_button"
             />
 
         <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/message_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/message"
@@ -208,6 +211,7 @@
             android:paddingEnd="40dp"
             android:layout_marginStart="4dp"
             android:backgroundTint="@color/black"
+            android:textAllCaps="false"
             android:background="@drawable/custom_follow_button"
             />
 

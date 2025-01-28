@@ -26,24 +26,53 @@ class UserViewModel @Inject constructor(
     init {
         val userDao = UserDatabase.getInstance(application).userDao()
         userRepository = UserRepository(userDao)
-        fetchDataFromFirebase()
         readAllDatabase = userRepository.readAllDatabase
         Log.d("view model", "view model created")
     }
 
-    fun addUser(user: User) {
+    //* Update
+    fun upsertUser(user: User) {
         viewModelScope.launch(Dispatchers.IO) {
-            userRepository.upsertUser(user)
+            userRemoteDatabase.upsertUser(user)
+        }
+    }
+    fun updateName(userId: String, name: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            userRemoteDatabase.updateName(userId, name)
+        }
+    }
+    fun updateUsername(userId: String, username: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            userRemoteDatabase.updateUsername(userId, username)
+        }
+
+    }
+    fun updateBio(uid: String, bio: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            userRemoteDatabase.updateBio(uid, bio)
+        }
+    }
+    fun updateGender(uid: String, gender: Boolean) {
+        viewModelScope.launch(Dispatchers.IO) {
+            userRemoteDatabase.updateGender(uid, gender)
         }
     }
 
+    //* Retrieve Data
+    fun deleteAllUser() {
+        viewModelScope.launch(Dispatchers.IO) {
+            userRepository.deleteAllUser()
+        }
+    }
     fun getAllUser() {
         viewModelScope.launch(Dispatchers.IO) {
             userRepository.readAllDatabase
         }
     }
-
-    private fun fetchDataFromFirebase() {
+    fun getUserInfoById(uid: String): LiveData<User> {
+        return userRepository.getUserInfoById(uid)
+    }
+    fun fetchDataFromFirebase() {
         viewModelScope.launch(Dispatchers.IO) {
             val users = userRemoteDatabase.getAllUsers()
             for (user in users) {

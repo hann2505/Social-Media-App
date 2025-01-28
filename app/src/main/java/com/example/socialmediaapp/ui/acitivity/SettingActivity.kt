@@ -31,11 +31,10 @@ class SettingActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-        setSupportActionBar(binding.settingToolbar)
-        supportActionBar?.setDisplayShowTitleEnabled(false)
-        supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_back)
 
-        binding.backToHome.setOnClickListener {
+        binding.toolBarPf.title.text = getString(R.string.settings_and_activity)
+
+        binding.toolBarPf.backToHome.setOnClickListener {
             backToProfile()
         }
 

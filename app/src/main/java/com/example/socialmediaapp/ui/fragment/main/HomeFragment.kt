@@ -21,14 +21,8 @@ class HomeFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val user = User(
-            userId = "1",
-            email = "1",
-            bio = "1",
-            profilePictureUrl = "1"
-        )
 
-        mUserViewModel.addUser(user)
+        mUserViewModel.fetchDataFromFirebase()
 
         return inflater.inflate(R.layout.fragment_home, container, false)
     }

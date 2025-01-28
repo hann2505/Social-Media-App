@@ -19,4 +19,24 @@ class UserRemoteDatabase @Inject constructor(
             emptyList()
         }
     }
+
+    suspend fun upsertUser(user: User) {
+        usersCollection.document(user.userId).set(user).await()
+    }
+
+    suspend fun updateName(userId: String, name: String) {
+        usersCollection.document(userId).update("name", name).await()
+    }
+
+    suspend fun updateUsername(userId: String, username: String) {
+        usersCollection.document(userId).update("username", username).await()
+    }
+
+    suspend fun updateBio(userId: String, bio: String) {
+        usersCollection.document(userId).update("bio", bio).await()
+    }
+
+    suspend fun updateGender(uid: String, gender: Boolean) {
+        usersCollection.document(uid).update("gender", gender).await()
+    }
 }
