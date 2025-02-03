@@ -4,6 +4,8 @@ plugins {
     alias(libs.plugins.google.gms.google.services)
     id("kotlin-kapt")
     id("com.google.dagger.hilt.android")
+    id("androidx.navigation.safeargs.kotlin")
+    id("kotlin-parcelize")
 }
 
 android {
@@ -108,4 +110,8 @@ dependencies {
     androidTestImplementation("androidx.room:room-testing:2.6.1")
 
     androidTestImplementation("androidx.test.ext:truth:1.6.0")
+
+    //Glide
+    implementation("com.github.bumptech.glide:glide:4.15.1")
+    kapt("com.github.bumptech.glide:compiler:4.15.1")
 }

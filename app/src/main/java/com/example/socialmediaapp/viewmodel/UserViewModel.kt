@@ -7,8 +7,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.viewModelScope
 import com.example.socialmediaapp.data.entity.User
 import com.example.socialmediaapp.data.firebase.remote.UserRemoteDatabase
-import com.example.socialmediaapp.data.room.UserDatabase
-import com.example.socialmediaapp.data.room.UserRepository
+import com.example.socialmediaapp.data.room.user.UserDatabase
+import com.example.socialmediaapp.data.room.user.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -64,10 +64,8 @@ class UserViewModel @Inject constructor(
             userRepository.deleteAllUser()
         }
     }
-    fun getAllUser() {
-        viewModelScope.launch(Dispatchers.IO) {
-            userRepository.readAllDatabase
-        }
+    fun getAllUser(): LiveData<List<User>> {
+        return readAllDatabase
     }
     fun getUserInfoById(uid: String): LiveData<User> {
         return userRepository.getUserInfoById(uid)
@@ -81,6 +79,14 @@ class UserViewModel @Inject constructor(
 
             userRepository.upsertAllUsers(users)
         }
+    }
+
+    fun getUserByUsername(username: String): LiveData<List<User>> {
+        return userRepository.getUserByUsername(username)
+    }
+
+    fun getUserByName(name: String): LiveData<List<User>> {
+        return userRepository.getUserByName(name)
     }
 
 }

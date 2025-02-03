@@ -1,4 +1,4 @@
-package com.example.socialmediaapp.data.room
+package com.example.socialmediaapp.data.room.user
 
 import android.util.Log
 import androidx.lifecycle.LiveData
@@ -8,8 +8,6 @@ class UserRepository(
     private val userDao: UserDao
 ) {
     val readAllDatabase: LiveData<List<User>> = userDao.getAllUser()
-
-    val firstUser: LiveData<User> = userDao.getUserInfoById("9oFq1ENNqgX7bcZ5HJiy0YxAf7t2")
 
     suspend fun upsertUser(user: User) {
         userDao.upsertUser(user)
@@ -26,6 +24,14 @@ class UserRepository(
     fun getUserInfoById(userId: String): LiveData<User> {
         Log.d("view model", "get user info by id: ${userDao.getUserInfoById(userId).value}")
         return userDao.getUserInfoById(userId)
+    }
+
+    fun getUserByUsername(username: String): LiveData<List<User>> {
+        return userDao.getUserByUsername(username)
+    }
+
+    fun getUserByName(name: String): LiveData<List<User>> {
+        return userDao.getUserByName(name)
     }
 
 }

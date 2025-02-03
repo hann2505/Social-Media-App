@@ -14,7 +14,11 @@
         android:id="@+id/searchFragment"
         android:name="com.example.socialmediaapp.ui.fragment.main.SearchFragment"
         android:label="fragment_search"
-        tools:layout="@layout/fragment_search" />
+        tools:layout="@layout/fragment_search" >
+        <action
+            android:id="@+id/action_searchFragment_to_userProfileFragment"
+            app:destination="@id/userProfileFragment" />
+    </fragment>
     <fragment
         android:id="@+id/addFragment"
         android:name="com.example.socialmediaapp.ui.fragment.main.AddFragment"
@@ -30,5 +34,17 @@
         android:name="com.example.socialmediaapp.ui.fragment.main.NotificationFragment"
         android:label="fragment_notification"
         tools:layout="@layout/fragment_notification" />
+    <fragment
+        android:id="@+id/userProfileFragment"
+        android:name="com.example.socialmediaapp.ui.fragment.main.UserProfileFragment"
+        android:label="fragment_user_profile"
+        tools:layout="@layout/fragment_user_profile" >
+        <action
+            android:id="@+id/action_userProfileFragment_to_searchFragment"
+            app:destination="@id/searchFragment" />
+        <argument
+            android:name="user"
+            app:argType="com.example.socialmediaapp.data.entity.User" />
+    </fragment>
 
 </navigation>

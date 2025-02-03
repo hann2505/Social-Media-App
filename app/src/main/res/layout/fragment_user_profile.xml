@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.fragment.main.ProfileFragment"
-    android:orientation="vertical">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    tools:context=".ui.fragment.main.UserProfileFragment">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/pf_toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:menu="@menu/pf_toolbar_menu">
+        app:menu="@menu/user_pf_toolbar_menu">
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -21,13 +21,14 @@
             android:id="@+id/back_to_home"
             >
 
-<!--            <androidx.appcompat.widget.AppCompatImageButton-->
-<!--                android:layout_width="30dp"-->
-<!--                android:layout_height="30dp"-->
-<!--                android:src="@drawable/ic_back"-->
-<!--                android:background="?attr/selectableItemBackground"-->
-<!--                android:scaleType="centerCrop"-->
-<!--                />-->
+            <androidx.appcompat.widget.AppCompatImageButton
+                android:id="@+id/back_btn"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:src="@drawable/ic_back"
+                android:background="?attr/selectableItemBackground"
+                android:scaleType="centerCrop"
+                />
 
             <TextView
                 android:id="@id/user_name"
@@ -193,7 +194,7 @@
             android:id="@+id/edit_profile_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/edit_profile"
+            android:text="@string/follow"
             android:textColor="@color/white"
             android:paddingStart="40dp"
             android:paddingEnd="40dp"
@@ -205,7 +206,7 @@
             android:id="@+id/message_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/message"
+            android:text="@string/following"
             android:textColor="@color/white"
             android:paddingStart="40dp"
             android:paddingEnd="40dp"
@@ -245,6 +246,7 @@
         app:defaultNavHost="true"
         android:layout_marginTop="10dp"
         app:navGraph="@navigation/pf_nav" />
+
 
 
 </LinearLayout>

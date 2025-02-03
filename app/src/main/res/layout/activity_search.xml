@@ -7,4 +7,13 @@
     android:layout_height="match_parent"
     tools:context=".ui.acitivity.SearchActivity">
 
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/fragmentContainerView3"
+        android:name="androidx.navigation.fragment.NavHostFragment"
+        android:layout_width="480dp"
+        android:layout_height="936dp"
+        app:defaultNavHost="true"
+        app:navGraph="@navigation/search_nav"
+        tools:layout_editor_absoluteX="1dp"
+        tools:layout_editor_absoluteY="1dp" />
 </androidx.constraintlayout.widget.ConstraintLayout>

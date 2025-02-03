@@ -14,4 +14,10 @@
     <style name="toolbar" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:textAllCaps">false</item>
     </style>
+
+    <style name="CustomSearchView" parent="Widget.AppCompat.SearchView">
+        <item name="queryBackground">@android:color/transparent</item>
+        <item name="submitBackground">@android:color/transparent</item>
+    </style>
+
 </resources>

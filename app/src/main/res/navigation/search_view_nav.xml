@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/search_view_nav"
+    app:startDestination="@id/searchViewFragment">
+
+    <fragment
+        android:id="@+id/userSearchViewFragment"
+        android:name="com.example.socialmediaapp.ui.fragment.search.UserSearchViewFragment"
+        android:label="fragment_user_search_view"
+        tools:layout="@layout/fragment_user_search_view" >
+        <action
+            android:id="@+id/action_userSearchViewFragment_to_searchViewFragment"
+            app:destination="@id/searchViewFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/searchViewFragment"
+        android:name="com.example.socialmediaapp.SearchViewFragment"
+        android:label="fragment_search_view"
+        tools:layout="@layout/fragment_search_view" >
+        <action
+            android:id="@+id/action_searchViewFragment_to_userSearchViewFragment"
+            app:destination="@id/userSearchViewFragment" />
+    </fragment>
+</navigation>

@@ -14,12 +14,16 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
+import com.bumptech.glide.Glide
 import com.example.socialmediaapp.R
+import com.example.socialmediaapp.data.entity.User
+import com.example.socialmediaapp.data.firebase.authentication.UserAuthentication
 import com.example.socialmediaapp.databinding.FragmentProfileBinding
 import com.example.socialmediaapp.ui.acitivity.EditProfileActivity
 import com.example.socialmediaapp.ui.acitivity.SettingActivity
 import com.example.socialmediaapp.viewmodel.UserViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class ProfileFragment : Fragment() {
@@ -27,6 +31,9 @@ class ProfileFragment : Fragment() {
     private lateinit var binding: FragmentProfileBinding
 
     private val mUserViewModel: UserViewModel by activityViewModels()
+
+    @Inject
+    lateinit var userAuthentication: UserAuthentication
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,6 +47,7 @@ class ProfileFragment : Fragment() {
         mUserViewModel.fetchDataFromFirebase()
         setupToolbar()
         replaceFragment()
+        showCurrentUserInfo()
 
         binding.editProfileBtn.setOnClickListener {
             val intent = Intent(requireActivity(), EditProfileActivity::class.java)
@@ -51,6 +59,19 @@ class ProfileFragment : Fragment() {
         }
 
         return binding.root
+    }
+
+    private fun showCurrentUserInfo() {
+        mUserViewModel.getUserInfoById(userAuthentication.getCurrentUser()!!.uid).observe(viewLifecycleOwner) {
+            binding.userName.text = it.username
+            binding.name.text = it.name
+            binding.userBio.text = it.bio
+            Glide.with(binding.userPfp).load(it.profilePictureUrl).into(binding.userPfp)
+
+            binding.followersNumber.text = it.followers.toString()
+            binding.followingNumber.text = it.following.toString()
+            binding.postNumber.text = it.posts.toString()
+        }
     }
 
     private fun setupToolbar() {
@@ -75,6 +96,8 @@ class ProfileFragment : Fragment() {
         val intent = Intent(requireActivity(), SettingActivity::class.java)
         startActivity(intent)
     }
+
+
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
