@@ -10,6 +10,7 @@ import android.widget.SearchView
 import android.widget.Toast
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.socialmediaapp.adapter.UserAdapter
 import com.example.socialmediaapp.data.firebase.authentication.UserAuthentication
@@ -24,7 +25,6 @@ class SearchFragment : Fragment(), SearchView.OnQueryTextListener,
     private var _binding: FragmentSearchBinding? = null
     private val binding get() = _binding!!
 
-//    private lateinit var userAdapter: UserAdapter
     private val userAdapter = UserAdapter()
     private val mUserViewModel: UserViewModel by viewModels()
 
@@ -46,8 +46,13 @@ class SearchFragment : Fragment(), SearchView.OnQueryTextListener,
 //        userAdapter = UserAdapter()
 
         userAdapter.setOnItemClickListener {
-            val action = SearchFragmentDirections.actionSearchFragmentToUserProfileFragment(it)
-            findNavController().navigate(action)
+            if (userAuthentication.getCurrentUser()?.uid != it.userId) {
+                val action = SearchFragmentDirections.actionSearchFragmentToProfileFragment(true)
+                findNavController().navigate(action)
+            } else {
+                val action = SearchFragmentDirections.actionSearchFragmentToUserProfileFragment(it)
+                findNavController().navigate(action)
+            }
         }
 
         binding.recyclerView.adapter = userAdapter
@@ -84,4 +89,5 @@ class SearchFragment : Fragment(), SearchView.OnQueryTextListener,
         val searchView = binding.searchView
         searchView.setOnQueryTextListener(this)
     }
+
 }

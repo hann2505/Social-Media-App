@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item android:id="@+id/image"
+        android:title="@string/image"
+        android:icon="@drawable/ic_image"
+        app:showAsAction="ifRoom"
+        />
+
+    <item android:id="@+id/text"
+        android:title="@string/text_edit"
+        android:icon="@drawable/ic_text_aa"
+        app:showAsAction="ifRoom"
+        />
+
+    <item android:id="@+id/add"
+        android:title="@string/adjust"
+        android:icon="@drawable/ic_adjust"
+        app:showAsAction="ifRoom"
+        />
+
+
+</menu>

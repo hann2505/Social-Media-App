@@ -7,7 +7,7 @@ import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 class UserRemoteDatabase @Inject constructor(
-    private val db: FirebaseFirestore
+    db: FirebaseFirestore
 ) {
     private val usersCollection = db.collection(COLLECTION_USERS)
 

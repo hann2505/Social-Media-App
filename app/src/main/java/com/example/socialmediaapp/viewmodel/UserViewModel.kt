@@ -7,7 +7,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.viewModelScope
 import com.example.socialmediaapp.data.entity.User
 import com.example.socialmediaapp.data.firebase.remote.UserRemoteDatabase
-import com.example.socialmediaapp.data.room.user.UserDatabase
+import com.example.socialmediaapp.data.room.database.AppDatabase
 import com.example.socialmediaapp.data.room.user.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -24,7 +24,7 @@ class UserViewModel @Inject constructor(
     private val userRepository: UserRepository
 
     init {
-        val userDao = UserDatabase.getInstance(application).userDao()
+        val userDao = AppDatabase.getInstance(application).userDao()
         userRepository = UserRepository(userDao)
         readAllDatabase = userRepository.readAllDatabase
         Log.d("view model", "view model created")

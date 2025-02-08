@@ -17,10 +17,4 @@ data class User(
     val email: String = "",
     val bio: String = "",
     val profilePictureUrl: String = "",
-    @ColumnInfo(name = "followers", defaultValue = "0")
-    val followers: Int = 0,
-    @ColumnInfo(name = "following", defaultValue = "0")
-    val following: Int = 0,
-    @ColumnInfo(name = "posts", defaultValue = "0")
-    val posts: Int = 0
 ): Parcelable

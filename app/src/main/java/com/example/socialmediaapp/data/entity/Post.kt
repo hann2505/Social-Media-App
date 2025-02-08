@@ -1,9 +1,11 @@
 package com.example.socialmediaapp.data.entity
 
 import androidx.room.Entity
+import androidx.room.PrimaryKey
 
 @Entity(tableName = "Post")
 data class Post (
+    @PrimaryKey(autoGenerate = false)
     val postId: String = "",
     val userId: String = "",
     val content: String = "",

@@ -70,4 +70,11 @@
     <string name="report">report</string>
     <string name="about">about</string>
     <string name="more">more</string>
+    <string name="Whats_happening">What\'s happening?</string>
+    <string name="post">Post</string>
+    <string name="image">Image</string>
+    <string name="text_edit">Text Edit</string>
+    <string name="adjust">Adjust</string>
+    <string name="caption">Caption</string>
+
 </resources>

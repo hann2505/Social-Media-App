@@ -13,6 +13,8 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import androidx.navigation.ui.setupWithNavController
 import com.bumptech.glide.Glide
 import com.example.socialmediaapp.R
@@ -21,6 +23,7 @@ import com.example.socialmediaapp.data.firebase.authentication.UserAuthenticatio
 import com.example.socialmediaapp.databinding.FragmentProfileBinding
 import com.example.socialmediaapp.ui.acitivity.EditProfileActivity
 import com.example.socialmediaapp.ui.acitivity.SettingActivity
+import com.example.socialmediaapp.viewmodel.PostViewModel
 import com.example.socialmediaapp.viewmodel.UserViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -31,6 +34,9 @@ class ProfileFragment : Fragment() {
     private lateinit var binding: FragmentProfileBinding
 
     private val mUserViewModel: UserViewModel by activityViewModels()
+    private val mPostViewModel: PostViewModel by activityViewModels()
+
+    private val args: ProfileFragmentArgs by navArgs()
 
     @Inject
     lateinit var userAuthentication: UserAuthentication
@@ -48,6 +54,7 @@ class ProfileFragment : Fragment() {
         setupToolbar()
         replaceFragment()
         showCurrentUserInfo()
+        displayBackButton()
 
         binding.editProfileBtn.setOnClickListener {
             val intent = Intent(requireActivity(), EditProfileActivity::class.java)
@@ -55,23 +62,33 @@ class ProfileFragment : Fragment() {
         }
 
         binding.messageBtn.setOnClickListener {
-            mUserViewModel.deleteAllUser()
+//            mUserViewModel.deleteAllUser()
+        }
+
+        mPostViewModel.getPostWithUserByUserId("BzfBMswL8Od88yTpLVoSMdQKxjk2").observe(viewLifecycleOwner) {
+            Log.d("post with user", "$it")
         }
 
         return binding.root
     }
 
+    //* with this approach, app will show the clone user profile when current user is null
     private fun showCurrentUserInfo() {
-        mUserViewModel.getUserInfoById(userAuthentication.getCurrentUser()!!.uid).observe(viewLifecycleOwner) {
-            binding.userName.text = it.username
-            binding.name.text = it.name
-            binding.userBio.text = it.bio
-            Glide.with(binding.userPfp).load(it.profilePictureUrl).into(binding.userPfp)
+        if (userAuthentication.getCurrentUser() == null)
+            return
+        else {
+            mUserViewModel.getUserInfoById(userAuthentication.getCurrentUser()!!.uid).observe(viewLifecycleOwner) {
+                binding.userName.text = it.username
+                binding.name.text = it.name
+                binding.userBio.text = it.bio
+                Glide.with(binding.userPfp).load(it.profilePictureUrl).into(binding.userPfp)
 
-            binding.followersNumber.text = it.followers.toString()
-            binding.followingNumber.text = it.following.toString()
-            binding.postNumber.text = it.posts.toString()
+//                binding.followersNumber.text = it.followers.toString()
+//                binding.followingNumber.text = it.following.toString()
+//                binding.postNumber.text = it.posts.toString()
+            }
         }
+
     }
 
     private fun setupToolbar() {
@@ -108,5 +125,14 @@ class ProfileFragment : Fragment() {
             }
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    private fun displayBackButton() {
+        if (args.isCurrentUser) {
+            binding.back.visibility = View.VISIBLE
+            binding.back.setOnClickListener {
+                findNavController().popBackStack()
+            }
+        }
     }
 }

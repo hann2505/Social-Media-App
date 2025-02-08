@@ -13,9 +13,9 @@
         tools:layout="@layout/fragment_bookmark" />
     <fragment
         android:id="@+id/imageFragment"
-        android:name="com.example.socialmediaapp.ui.fragment.profile.ImageFragment"
+        android:name="com.example.socialmediaapp.ui.fragment.profile.PostFragment"
         android:label="fragment_image"
-        tools:layout="@layout/fragment_image" />
+        tools:layout="@layout/fragment_post" />
     <fragment
         android:id="@+id/videoFragment"
         android:name="com.example.socialmediaapp.ui.fragment.profile.VideoFragment"

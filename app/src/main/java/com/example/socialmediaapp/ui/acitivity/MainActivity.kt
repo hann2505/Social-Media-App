@@ -1,9 +1,11 @@
 package com.example.socialmediaapp.ui.acitivity
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat.startActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.navigation.fragment.NavHostFragment
@@ -44,6 +46,23 @@ class MainActivity : AppCompatActivity() {
         val navController = navHostFragment.navController
 
         bottomNavigationView.setupWithNavController(navController)
+
+        binding.bottomNavigationBarLayout.bottomNavigationBar.setOnItemSelectedListener {
+            when (it.itemId) {
+                R.id.homeFragment,
+                R.id.searchFragment,
+                R.id.notificationFragment,
+                R.id.profileFragment -> {
+                    navController.navigate(it.itemId)
+                    true
+                }
+                R.id.addFragment -> {
+                    startActivity(Intent(this, PostActivity::class.java))
+                    true
+                }
+                else -> false
+            }
+        }
 
     }
 }

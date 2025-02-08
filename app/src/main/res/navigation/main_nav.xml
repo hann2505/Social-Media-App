@@ -18,6 +18,9 @@
         <action
             android:id="@+id/action_searchFragment_to_userProfileFragment"
             app:destination="@id/userProfileFragment" />
+        <action
+            android:id="@+id/action_searchFragment_to_profileFragment"
+            app:destination="@id/profileFragment" />
     </fragment>
     <fragment
         android:id="@+id/addFragment"
@@ -28,7 +31,15 @@
         android:id="@+id/profileFragment"
         android:name="com.example.socialmediaapp.ui.fragment.main.ProfileFragment"
         android:label="fragment_user_profile"
-        tools:layout="@layout/fragment_profile" />
+        tools:layout="@layout/fragment_profile" >
+        <action
+            android:id="@+id/action_profileFragment_to_searchFragment"
+            app:destination="@id/searchFragment" />
+        <argument
+            android:name="isCurrentUser"
+            app:argType="boolean"
+            android:defaultValue="false" />
+    </fragment>
     <fragment
         android:id="@+id/notificationFragment"
         android:name="com.example.socialmediaapp.ui.fragment.main.NotificationFragment"
