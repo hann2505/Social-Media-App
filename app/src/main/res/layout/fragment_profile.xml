@@ -115,6 +115,7 @@
                 android:layout_marginEnd="40dp">
 
                 <LinearLayout
+                    android:id="@+id/posts"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
@@ -141,11 +142,15 @@
                 </LinearLayout>
 
                 <LinearLayout
+                    android:id="@+id/followers"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:orientation="vertical"
-                    android:gravity="center_horizontal">
+                    android:gravity="center_horizontal"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginEnd="20dp"
+                    >
 
                     <TextView
                         android:id="@+id/followers_number"
@@ -167,6 +172,7 @@
                 </LinearLayout>
 
                 <LinearLayout
+                    android:id="@+id/following"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"

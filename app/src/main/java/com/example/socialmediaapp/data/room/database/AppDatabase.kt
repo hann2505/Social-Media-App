@@ -6,8 +6,10 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
+import com.example.socialmediaapp.data.entity.Follower
 import com.example.socialmediaapp.data.entity.Post
 import com.example.socialmediaapp.data.entity.User
+import com.example.socialmediaapp.data.room.follower.FollowerDao
 import com.example.socialmediaapp.data.room.post.PostDao
 import com.example.socialmediaapp.data.room.user.UserDao
 import com.example.socialmediaapp.other.MediaTypeConverter
@@ -15,18 +17,20 @@ import com.example.socialmediaapp.other.MediaTypeConverter
 @Database(
     entities = [
         Post::class,
-        User::class
+        User::class,
+        Follower::class
     ],
-    version = 2,
+    version = 1,
     exportSchema = true,
-    autoMigrations = [
-        AutoMigration(from = 1, to = 2, spec = MyAutoMigrationSpec::class)
-    ]
+//    autoMigrations = [
+//        AutoMigration(from = 2, to = 3)
+//    ]
 )
 @TypeConverters(MediaTypeConverter::class) // Register the converter
 abstract class AppDatabase : RoomDatabase() {
     abstract fun postDao(): PostDao
     abstract fun userDao(): UserDao
+    abstract fun followerDao(): FollowerDao
 
     companion object {
         @Volatile

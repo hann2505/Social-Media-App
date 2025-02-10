@@ -46,7 +46,7 @@ class SearchFragment : Fragment(), SearchView.OnQueryTextListener,
 //        userAdapter = UserAdapter()
 
         userAdapter.setOnItemClickListener {
-            if (userAuthentication.getCurrentUser()?.uid != it.userId) {
+            if (userAuthentication.getCurrentUser()?.uid == it.userId) {
                 val action = SearchFragmentDirections.actionSearchFragmentToProfileFragment(true)
                 findNavController().navigate(action)
             } else {

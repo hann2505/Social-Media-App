@@ -10,9 +10,13 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
 import com.example.socialmediaapp.data.entity.User
+import com.example.socialmediaapp.data.firebase.authentication.UserAuthentication
 import com.example.socialmediaapp.databinding.FragmentUserProfileBinding
+import com.example.socialmediaapp.viewmodel.FollowerViewModel
+import com.example.socialmediaapp.viewmodel.PostViewModel
 import com.example.socialmediaapp.viewmodel.UserViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class UserProfileFragment : Fragment() {
@@ -21,6 +25,10 @@ class UserProfileFragment : Fragment() {
     private val binding get() = _binding!!
 
     private val mUserViewModel: UserViewModel by viewModels()
+    private val mFollowerViewModel: FollowerViewModel by viewModels()
+    private val mPostViewModel: PostViewModel by viewModels()
+    @Inject
+    lateinit var userAuthentication: UserAuthentication
 
     private val args: UserProfileFragmentArgs by navArgs()
 
@@ -36,6 +44,7 @@ class UserProfileFragment : Fragment() {
         }
 
         binding.followBtn.setOnClickListener {
+            mFollowerViewModel.followUser(userAuthentication.getCurrentUser()!!.uid, args.user.userId)
             binding.followBtn.text = "Followed"
         }
 
@@ -48,10 +57,20 @@ class UserProfileFragment : Fragment() {
         binding.userBio.text = user.bio
         Glide.with(binding.userPfp).load(user.profilePictureUrl).into(binding.userPfp)
 
-//        binding.followersNumber.text = user.followers.toString()
-//        binding.followingNumber.text = user.following.toString()
-//        binding.postNumber.text = user.posts.toString()
+        getFollowInfo(user.userId)
 
+    }
+
+    private fun getFollowInfo(userId: String) {
+        mFollowerViewModel.getFollowersOfAnUser(userId).observe(viewLifecycleOwner) {
+            binding.followersNumber.text = it.size.toString()
+        }
+        mFollowerViewModel.getFollowingOfAnUser(userId).observe(viewLifecycleOwner) {
+            binding.followingNumber.text = it.size.toString()
+        }
+        mPostViewModel.getPostWithUserByUserId(userId).observe(viewLifecycleOwner) {
+            binding.postNumber.text = it.size.toString()
+        }
     }
 
 }

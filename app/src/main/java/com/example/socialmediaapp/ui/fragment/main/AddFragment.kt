@@ -14,6 +14,7 @@ import com.bumptech.glide.Glide
 import com.example.socialmediaapp.R
 import com.example.socialmediaapp.data.firebase.authentication.UserAuthentication
 import com.example.socialmediaapp.databinding.FragmentAddBinding
+import com.example.socialmediaapp.viewmodel.PostViewModel
 import com.example.socialmediaapp.viewmodel.UserViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -25,6 +26,7 @@ class AddFragment : Fragment() {
     private val binding get() = _binding!!
 
     private val mUserViewModel: UserViewModel by viewModels()
+    private val mPostViewModel: PostViewModel by viewModels()
 
     @Inject
     lateinit var userAuthentication: UserAuthentication
@@ -62,7 +64,7 @@ class AddFragment : Fragment() {
     }
 
     private fun post() {
-        TODO("Not yet implemented")
+//        mPostViewModel.uploadPost()
     }
 
     private fun setupToolbar() {
