@@ -1,9 +1,20 @@
 package com.example.socialmediaapp.data.entity
 
 import androidx.room.Entity
+import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "Post")
+@Entity(
+    tableName = "Post",
+    foreignKeys = [
+        ForeignKey(
+            entity = User::class,
+            parentColumns = ["userId"],
+            childColumns = ["userId"],
+            onDelete = ForeignKey.CASCADE
+        )
+    ]
+)
 data class Post (
     @PrimaryKey(autoGenerate = false)
     val postId: String = "",

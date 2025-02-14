@@ -76,5 +76,6 @@
     <string name="text_edit">Text Edit</string>
     <string name="adjust">Adjust</string>
     <string name="caption">Caption</string>
+    <string name="followed">Followed</string>
 
 </resources>

@@ -17,6 +17,10 @@ class UserRepository(
         userDao.upsertAllUsers(users)
     }
 
+    suspend fun deleteUser(user: User) {
+        userDao.deleteUser(user)
+    }
+
     suspend fun deleteAllUser() {
         userDao.deleteAllUsers()
     }

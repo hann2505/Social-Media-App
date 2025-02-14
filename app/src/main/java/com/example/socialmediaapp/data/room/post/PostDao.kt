@@ -2,6 +2,7 @@ package com.example.socialmediaapp.data.room.post
 
 import androidx.lifecycle.LiveData
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Query
 import androidx.room.Upsert
 import com.example.socialmediaapp.data.entity.Post
@@ -12,6 +13,12 @@ interface PostDao {
 
     @Upsert
     suspend fun upsertAllPosts(posts: List<Post>)
+
+    @Upsert
+    suspend fun upsertPost(post: Post)
+
+    @Delete
+    suspend fun deletePost(post: Post)
 
     @Query("SELECT * FROM Post")
     fun getAllPosts(): LiveData<List<Post>>

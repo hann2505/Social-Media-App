@@ -20,11 +20,11 @@ import com.example.socialmediaapp.other.MediaTypeConverter
         User::class,
         Follower::class
     ],
-    version = 1,
+    version = 2,
     exportSchema = true,
-//    autoMigrations = [
-//        AutoMigration(from = 2, to = 3)
-//    ]
+    autoMigrations = [
+        AutoMigration(from = 1, to = 2)
+    ]
 )
 @TypeConverters(MediaTypeConverter::class) // Register the converter
 abstract class AppDatabase : RoomDatabase() {

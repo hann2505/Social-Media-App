@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.socialmediaapp.adapter.UserAdapter
 import com.example.socialmediaapp.data.firebase.authentication.UserAuthentication
 import com.example.socialmediaapp.databinding.FragmentSearchBinding
+import com.example.socialmediaapp.viewmodel.FollowerViewModel
 import com.example.socialmediaapp.viewmodel.UserViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -27,6 +28,7 @@ class SearchFragment : Fragment(), SearchView.OnQueryTextListener,
 
     private val userAdapter = UserAdapter()
     private val mUserViewModel: UserViewModel by viewModels()
+    private val mFollowerViewModel: FollowerViewModel by viewModels()
 
     @Inject
     lateinit var userAuthentication: UserAuthentication
@@ -37,6 +39,8 @@ class SearchFragment : Fragment(), SearchView.OnQueryTextListener,
     ): View {
         _binding = FragmentSearchBinding.inflate(inflater, container, false)
         subscribeSearchView()
+        mUserViewModel.fetchDataFromFirebase()
+        mFollowerViewModel.fetchDataFromFirebase()
 
         binding.recyclerView.layoutManager = LinearLayoutManager(
             requireContext(),

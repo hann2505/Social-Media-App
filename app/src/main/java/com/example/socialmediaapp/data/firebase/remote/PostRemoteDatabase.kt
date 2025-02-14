@@ -2,8 +2,10 @@ package com.example.socialmediaapp.data.firebase.remote
 
 import com.example.socialmediaapp.data.entity.MediaType
 import com.example.socialmediaapp.data.entity.Post
-import com.example.socialmediaapp.data.entity.User
 import com.example.socialmediaapp.other.Constant.COLLECTION_POSTS
+import com.example.socialmediaapp.other.FirebaseChangeType
+import com.example.socialmediaapp.other.FirebaseChangeType.*
+import com.google.firebase.firestore.DocumentChange
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
@@ -67,6 +69,44 @@ class PostRemoteDatabase @Inject constructor(
         )
         postsCollection.document(post.postId).set(post).await()
 
+    }
+
+    fun listenForPostChanges(onPostChange: (FirebaseChangeType, Post) -> Unit) {
+        postsCollection.addSnapshotListener { snapshots, error ->
+            if (error != null) {
+                return@addSnapshotListener
+            }
+            snapshots?.let {
+                for (docChange in it.documentChanges) {
+                    val postId = docChange.document.getString("postId") ?: continue
+                    val userId = docChange.document.getString("userId") ?: continue
+                    val content = docChange.document.getString("content") ?: continue
+                    val imageUrl = docChange.document.getString("imageUrl") ?: continue
+                    val mediaType = docChange.document.getString("mediaType")?.toMediaType() ?: MediaType.TEXT
+                    val mediaUrl = docChange.document.getString("mediaUrl") ?: continue
+                    val postState = docChange.document.getBoolean("postState") ?: true
+                    val timestamp = docChange.document.getLong("timestamp") ?: continue
+                    val post = Post(postId, userId, content, imageUrl, mediaType, mediaUrl, postState, timestamp)
+
+                    val result: FirebaseChangeType = when (docChange.type) {
+                        DocumentChange.Type.ADDED -> {
+                            ADDED
+                        }
+                        DocumentChange.Type.REMOVED -> {
+                            REMOVED
+                        }
+                        DocumentChange.Type.MODIFIED -> {
+                            MODIFIED
+                        }
+                        else -> {
+                            NOT_DETECTED
+                        }
+                    }
+                    onPostChange(result, post)
+                }
+
+            }
+        }
     }
 
 }

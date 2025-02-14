@@ -13,6 +13,14 @@ class PostRepository(
         postDao.upsertAllPosts(posts)
     }
 
+    suspend fun upsertPost(post: Post) {
+        postDao.upsertPost(post)
+    }
+
+    suspend fun deletePost(post: Post) {
+        postDao.deletePost(post)
+    }
+
     fun getPostWithUserByUserId(userId: String): LiveData<List<PostWithUser>>{
         return postDao.getPostWithUserByUserId(userId)
     }

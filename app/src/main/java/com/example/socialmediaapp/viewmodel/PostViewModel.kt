@@ -10,6 +10,7 @@ import com.example.socialmediaapp.data.entity.PostWithUser
 import com.example.socialmediaapp.data.firebase.remote.PostRemoteDatabase
 import com.example.socialmediaapp.data.room.database.AppDatabase
 import com.example.socialmediaapp.data.room.post.PostRepository
+import com.example.socialmediaapp.other.FirebaseChangeType.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -63,6 +64,29 @@ class PostViewModel@Inject constructor(
 
     fun getPostWithUserByUserId(userId: String): LiveData<List<PostWithUser>> {
         return postRepository.getPostWithUserByUserId(userId)
+    }
+
+    fun checkIfPostChanges() {
+        viewModelScope.launch(Dispatchers.IO) {
+            postRemoteDatabase.listenForPostChanges { changeType, post ->
+                viewModelScope.launch(Dispatchers.IO) {
+                    Log.d("post", changeType.toString())
+                    when (changeType) {
+                        ADDED, MODIFIED -> {
+                            postRepository.upsertPost(post)
+                            Log.d("post", "added: $post")
+                        }
+
+                        REMOVED -> {
+                            Log.d("post", "removed: $post")
+                            postRepository.deletePost(post)
+                        }
+
+                        else -> {}
+                    }
+                }
+            }
+        }
     }
 
 }

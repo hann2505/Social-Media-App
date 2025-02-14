@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 2,
-    "identityHash": "b08c6cf7a227c034642dba4c8465acb8",
+    "identityHash": "2b76331ae2ee4b17e0e92cf9ff8dbef0",
     "entities": [
       {
         "tableName": "Post",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`postId` TEXT NOT NULL, `userId` TEXT NOT NULL, `content` TEXT NOT NULL, `imageUrl` TEXT NOT NULL, `mediaType` TEXT NOT NULL, `mediaUrl` TEXT NOT NULL, `postState` INTEGER NOT NULL, `timestamp` INTEGER NOT NULL, PRIMARY KEY(`postId`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`postId` TEXT NOT NULL, `userId` TEXT NOT NULL, `content` TEXT NOT NULL, `imageUrl` TEXT NOT NULL, `mediaType` TEXT NOT NULL, `mediaUrl` TEXT NOT NULL, `postState` INTEGER NOT NULL, `timestamp` INTEGER NOT NULL, PRIMARY KEY(`postId`), FOREIGN KEY(`userId`) REFERENCES `User`(`userId`) ON UPDATE NO ACTION ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "postId",
@@ -64,7 +64,19 @@
           ]
         },
         "indices": [],
-        "foreignKeys": []
+        "foreignKeys": [
+          {
+            "table": "User",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "userId"
+            ],
+            "referencedColumns": [
+              "userId"
+            ]
+          }
+        ]
       },
       {
         "tableName": "User",
@@ -164,7 +176,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'b08c6cf7a227c034642dba4c8465acb8')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '2b76331ae2ee4b17e0e92cf9ff8dbef0')"
     ]
   }
 }

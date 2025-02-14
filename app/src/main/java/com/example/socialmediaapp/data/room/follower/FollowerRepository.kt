@@ -12,12 +12,28 @@ class FollowerRepository(
         followerDao.upsertFollowers(followers)
     }
 
+    suspend fun upsertFollower(follower: Follower) {
+        followerDao.upsertFollower(follower)
+    }
+
+    suspend fun deleteFollower(follower: Follower) {
+        return followerDao.deleteFollower(follower)
+    }
+
     fun getFollowingByFollowerId(userId: String): LiveData<List<Follower>> {
         return followerDao.getFollowingByFollowerId(userId)
     }
 
     fun getFollowersByFollowingId(userId: String): LiveData<List<Follower>> {
         return followerDao.getFollowersByFollowingId(userId)
+    }
+
+    fun getFollower(followerId: String, followingId: String): LiveData<Follower> {
+        return followerDao.getFollower(followerId, followingId)
+    }
+
+    fun checkIfFollowing(followerId: String, followingId: String): LiveData<Int> {
+        return followerDao.checkIfFollowing(followerId, followingId)
     }
 
 }

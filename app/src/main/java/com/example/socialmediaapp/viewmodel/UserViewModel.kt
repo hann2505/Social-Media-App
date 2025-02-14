@@ -9,6 +9,9 @@ import com.example.socialmediaapp.data.entity.User
 import com.example.socialmediaapp.data.firebase.remote.UserRemoteDatabase
 import com.example.socialmediaapp.data.room.database.AppDatabase
 import com.example.socialmediaapp.data.room.user.UserRepository
+import com.example.socialmediaapp.other.FirebaseChangeType
+import com.example.socialmediaapp.other.FirebaseChangeType.ADDED
+import com.example.socialmediaapp.other.FirebaseChangeType.REMOVED
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -87,6 +90,27 @@ class UserViewModel @Inject constructor(
 
     fun getUserByName(name: String): LiveData<List<User>> {
         return userRepository.getUserByName(name)
+    }
+
+    fun checkIfUserChanges() {
+        viewModelScope.launch(Dispatchers.IO) {
+            userRemoteDatabase.listenForUsersChanges { changeType, user ->
+                viewModelScope.launch(Dispatchers.IO) {
+                    Log.d("user", changeType.toString())
+                    when (changeType) {
+                        ADDED -> {
+                            userRepository.upsertUser(user)
+                        }
+                        REMOVED -> {
+                            userRepository.deleteUser(user)
+                        }
+                        else -> {}
+                        }                        }
+                }
+
+
+        }
+
     }
 
 }

@@ -12,6 +12,8 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.example.socialmediaapp.R
 import com.example.socialmediaapp.databinding.ActivityMainBinding
+import com.example.socialmediaapp.viewmodel.FollowerViewModel
+import com.example.socialmediaapp.viewmodel.PostViewModel
 import com.example.socialmediaapp.viewmodel.UserViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -22,6 +24,8 @@ class MainActivity : AppCompatActivity() {
     private val binding get() = _binding!!
 
     private val mUserViewModel: UserViewModel by viewModels()
+    private val mFollowerViewModel: FollowerViewModel by viewModels()
+    private val mPostViewModel: PostViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,8 +37,9 @@ class MainActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-
         replaceFragment()
+        checkOnRealtimeDatabase()
+
     }
 
     private fun replaceFragment() {
@@ -60,9 +65,17 @@ class MainActivity : AppCompatActivity() {
                     startActivity(Intent(this, PostActivity::class.java))
                     true
                 }
+
                 else -> false
             }
         }
+
+    }
+
+    private fun checkOnRealtimeDatabase() {
+        mUserViewModel.checkIfUserChanges()
+        mPostViewModel.checkIfPostChanges()
+        mFollowerViewModel.checkIfFollowingChanges()
 
     }
 }

@@ -1,7 +1,11 @@
 package com.example.socialmediaapp.data.firebase.remote
 
+import android.util.Log
 import com.example.socialmediaapp.data.entity.User
 import com.example.socialmediaapp.other.Constant.COLLECTION_USERS
+import com.example.socialmediaapp.other.FirebaseChangeType
+import com.example.socialmediaapp.other.FirebaseChangeType.*
+import com.google.firebase.firestore.DocumentChange
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
@@ -38,5 +42,42 @@ class UserRemoteDatabase @Inject constructor(
 
     suspend fun updateGender(uid: String, gender: Boolean) {
         usersCollection.document(uid).update("gender", gender).await()
+    }
+
+    fun listenForUsersChanges(onUserChange: (FirebaseChangeType, User) -> Unit) {
+        usersCollection.addSnapshotListener { snapshots, error ->
+            if (error != null) {
+                Log.e("Firestore", "Error listening for user changes", error)
+                return@addSnapshotListener
+            }
+
+            snapshots?.let {
+                for (docChange in it.documentChanges) {
+                    val userId = docChange.document.getString("userId") ?: continue
+                    val name = docChange.document.getString("name") ?: continue
+                    val username = docChange.document.getString("username") ?: continue
+                    val bio = docChange.document.getString("bio") ?: continue
+                    val gender = docChange.document.getBoolean("gender") ?: continue
+                    val email = docChange.document.getString("email") ?: continue
+                    val profilePicture = docChange.document.getString("profilePicture") ?: continue
+
+                    val user = User(userId, name, username, gender, bio, email, profilePicture)
+
+                    val result: FirebaseChangeType = when (docChange.type) {
+                        DocumentChange.Type.ADDED -> {
+                            ADDED
+                        }
+                        DocumentChange.Type.REMOVED -> {
+                            REMOVED
+                        }
+                        else -> {
+                            NOT_DETECTED
+                        }
+                    }
+
+                    onUserChange(result, user)
+                }
+            }
+        }
     }
 }

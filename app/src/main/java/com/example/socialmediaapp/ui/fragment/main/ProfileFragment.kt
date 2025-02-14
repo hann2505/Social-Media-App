@@ -64,15 +64,11 @@ class ProfileFragment : Fragment() {
         }
 
         binding.messageBtn.setOnClickListener {
-//            mUserViewModel.deleteAllUser()
+
         }
 
         binding.followers.setOnClickListener {
 
-        }
-
-        mPostViewModel.getPostWithUserByUserId("BzfBMswL8Od88yTpLVoSMdQKxjk2").observe(viewLifecycleOwner) {
-            Log.d("post with user", "$it")
         }
 
         return binding.root

@@ -1,6 +1,7 @@
 package com.example.socialmediaapp.ui.fragment.main
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -9,9 +10,11 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
+import com.example.socialmediaapp.R
 import com.example.socialmediaapp.data.entity.User
 import com.example.socialmediaapp.data.firebase.authentication.UserAuthentication
 import com.example.socialmediaapp.databinding.FragmentUserProfileBinding
+import com.example.socialmediaapp.ui.fragment.main.FollowState.FOLLOWING
 import com.example.socialmediaapp.viewmodel.FollowerViewModel
 import com.example.socialmediaapp.viewmodel.PostViewModel
 import com.example.socialmediaapp.viewmodel.UserViewModel
@@ -23,6 +26,8 @@ class UserProfileFragment : Fragment() {
 
     private var _binding: FragmentUserProfileBinding? = null
     private val binding get() = _binding!!
+
+    private lateinit var followState: FollowState
 
     private val mUserViewModel: UserViewModel by viewModels()
     private val mFollowerViewModel: FollowerViewModel by viewModels()
@@ -44,8 +49,7 @@ class UserProfileFragment : Fragment() {
         }
 
         binding.followBtn.setOnClickListener {
-            mFollowerViewModel.followUser(userAuthentication.getCurrentUser()!!.uid, args.user.userId)
-            binding.followBtn.text = "Followed"
+            followUser()
         }
 
         return binding.root
@@ -61,6 +65,16 @@ class UserProfileFragment : Fragment() {
 
     }
 
+    private fun followUser() {
+        val isFollowing = followState == FOLLOWING
+        if (isFollowing) {
+            mFollowerViewModel.unfollowUser(userAuthentication.getCurrentUser()!!.uid, args.user.userId)
+        }
+        else {
+            mFollowerViewModel.followUser(userAuthentication.getCurrentUser()!!.uid, args.user.userId)
+        }
+    }
+
     private fun getFollowInfo(userId: String) {
         mFollowerViewModel.getFollowersOfAnUser(userId).observe(viewLifecycleOwner) {
             binding.followersNumber.text = it.size.toString()
@@ -71,6 +85,21 @@ class UserProfileFragment : Fragment() {
         mPostViewModel.getPostWithUserByUserId(userId).observe(viewLifecycleOwner) {
             binding.postNumber.text = it.size.toString()
         }
+        mFollowerViewModel.checkIfFollowing(userAuthentication.getCurrentUser()!!.uid, userId)
+            .observe(viewLifecycleOwner) {
+                if (it > 0) {
+                    binding.followBtn.text = getString(R.string.followed)
+                    followState = FOLLOWING
+                } else {
+                    binding.followBtn.text = getString(R.string.follow)
+                    followState = FollowState.NOT_FOLLOWING
+                }
+            }
     }
+}
 
+enum class FollowState {
+    FOLLOWING,
+    NOT_FOLLOWING,
+    NOT_DETECTED
 }
