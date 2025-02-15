@@ -7,15 +7,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.SearchView
-import android.widget.Toast
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.socialmediaapp.adapter.SearchAdapter
 import com.example.socialmediaapp.adapter.UserAdapter
 import com.example.socialmediaapp.data.firebase.authentication.UserAuthentication
 import com.example.socialmediaapp.databinding.FragmentSearchBinding
 import com.example.socialmediaapp.viewmodel.FollowerViewModel
+import com.example.socialmediaapp.viewmodel.PostViewModel
 import com.example.socialmediaapp.viewmodel.UserViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -26,8 +26,9 @@ class SearchFragment : Fragment(), SearchView.OnQueryTextListener,
     private var _binding: FragmentSearchBinding? = null
     private val binding get() = _binding!!
 
-    private val userAdapter = UserAdapter()
+    private val searchAdapter = SearchAdapter()
     private val mUserViewModel: UserViewModel by viewModels()
+    private val mPostViewModel: PostViewModel by viewModels()
     private val mFollowerViewModel: FollowerViewModel by viewModels()
 
     @Inject
@@ -49,31 +50,29 @@ class SearchFragment : Fragment(), SearchView.OnQueryTextListener,
         )
 //        userAdapter = UserAdapter()
 
-        userAdapter.setOnItemClickListener {
-            if (userAuthentication.getCurrentUser()?.uid == it.userId) {
-                val action = SearchFragmentDirections.actionSearchFragmentToProfileFragment(true)
-                findNavController().navigate(action)
-            } else {
-                val action = SearchFragmentDirections.actionSearchFragmentToUserProfileFragment(it)
-                findNavController().navigate(action)
-            }
-        }
+        binding.recyclerView.adapter = searchAdapter
 
-        binding.recyclerView.adapter = userAdapter
+        searchAdapter.setOnUserItemClickListener {
+            val action = SearchFragmentDirections.actionSearchFragmentToUserProfileFragment(it)
+            findNavController().navigate(action)
+        }
 
         return binding.root
     }
 
     override fun onQueryTextSubmit(query: String?): Boolean {
-        if (query != null) {
-            println("Text changed: $query")
+        if (query.isNullOrEmpty()) {
+            searchAdapter.setData(emptyList())
+        }
+        else {
+            searchData(query)
         }
         return true
     }
 
     override fun onQueryTextChange(newText: String?): Boolean {
         if (newText.isNullOrEmpty()) {
-            userAdapter.setData(emptyList())
+            searchAdapter.setData(emptyList())
         }
         else {
             searchData(newText)
@@ -83,8 +82,15 @@ class SearchFragment : Fragment(), SearchView.OnQueryTextListener,
 
     private fun searchData(query: String) {
         mUserViewModel.getUserByUsername(query).observe(viewLifecycleOwner) { userList ->
+
             Log.d("search user", "$userList")
-            userAdapter.setData(userList)
+            mPostViewModel.getPostWithUserByText(query).observe(viewLifecycleOwner) { postList ->
+                val combinedList = mutableListOf<Any>()
+                combinedList.addAll(userList)
+                combinedList.addAll(postList)
+                searchAdapter.setData(combinedList)
+            }
+
         }
 
     }

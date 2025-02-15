@@ -25,4 +25,8 @@ class PostRepository(
         return postDao.getPostWithUserByUserId(userId)
     }
 
+    fun getPostWithUserByText(query: String): LiveData<List<PostWithUser>>{
+        return postDao.getPostWithUserByText(query)
+    }
+
 }

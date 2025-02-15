@@ -36,4 +36,14 @@ interface PostDao {
     )
     fun getPostWithUserByUserId(userId: String): LiveData<List<PostWithUser>>
 
+
+    @Query(" SELECT post.postId, user.username, user.profilePictureUrl, post.content, post.mediaUrl, post.timestamp\n" +
+            "FROM post\n" +
+            "INNER JOIN user ON post.userId = user.userId\n" +
+            "WHERE user.username LIKE '%' || :query || '%' OR post.content LIKE '%' || :query || '%'"
+    )
+    fun getPostWithUserByText(query: String): LiveData<List<PostWithUser>>
+
+
+
 }

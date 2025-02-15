@@ -11,11 +11,13 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.example.socialmediaapp.R
+import com.example.socialmediaapp.data.firebase.authentication.UserAuthentication
 import com.example.socialmediaapp.databinding.ActivityMainBinding
 import com.example.socialmediaapp.viewmodel.FollowerViewModel
 import com.example.socialmediaapp.viewmodel.PostViewModel
 import com.example.socialmediaapp.viewmodel.UserViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -26,6 +28,9 @@ class MainActivity : AppCompatActivity() {
     private val mUserViewModel: UserViewModel by viewModels()
     private val mFollowerViewModel: FollowerViewModel by viewModels()
     private val mPostViewModel: PostViewModel by viewModels()
+
+    @Inject
+    lateinit var userAuthentication: UserAuthentication
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,6 +45,14 @@ class MainActivity : AppCompatActivity() {
         replaceFragment()
         checkOnRealtimeDatabase()
 
+        checkIfUserLoggedIn()
+    }
+
+    private fun checkIfUserLoggedIn() {
+        if (userAuthentication.getCurrentUser() == null) {
+            startActivity(Intent(this, SignInActivity::class.java))
+            finish()
+        }
     }
 
     private fun replaceFragment() {

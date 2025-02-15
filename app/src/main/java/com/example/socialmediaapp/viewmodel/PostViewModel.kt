@@ -89,4 +89,8 @@ class PostViewModel@Inject constructor(
         }
     }
 
+    fun getPostWithUserByText(username: String): LiveData<List<PostWithUser>> {
+        return postRepository.getPostWithUserByText(username)
+    }
+
 }

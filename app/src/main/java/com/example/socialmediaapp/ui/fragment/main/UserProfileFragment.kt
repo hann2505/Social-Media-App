@@ -9,8 +9,10 @@ import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.example.socialmediaapp.R
+import com.example.socialmediaapp.adapter.PostAdapter
 import com.example.socialmediaapp.data.entity.User
 import com.example.socialmediaapp.data.firebase.authentication.UserAuthentication
 import com.example.socialmediaapp.databinding.FragmentUserProfileBinding
@@ -51,6 +53,8 @@ class UserProfileFragment : Fragment() {
         binding.followBtn.setOnClickListener {
             followUser()
         }
+
+        subscribeToRecyclerView()
 
         return binding.root
     }
@@ -95,6 +99,21 @@ class UserProfileFragment : Fragment() {
                     followState = FollowState.NOT_FOLLOWING
                 }
             }
+    }
+
+    private fun subscribeToRecyclerView() {
+        val adapter = PostAdapter()
+        binding.recyclerView.adapter = adapter
+
+        binding.recyclerView.layoutManager = LinearLayoutManager(
+            requireContext(),
+            LinearLayoutManager.VERTICAL,
+            false
+        )
+
+        mPostViewModel.getPostWithUserByUserId(args.user.userId).observe(viewLifecycleOwner) {
+            adapter.setData(it)
+        }
     }
 }
 
