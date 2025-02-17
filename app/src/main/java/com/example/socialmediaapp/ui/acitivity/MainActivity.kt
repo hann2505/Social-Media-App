@@ -13,6 +13,7 @@ import androidx.navigation.ui.setupWithNavController
 import com.example.socialmediaapp.R
 import com.example.socialmediaapp.data.firebase.authentication.UserAuthentication
 import com.example.socialmediaapp.databinding.ActivityMainBinding
+import com.example.socialmediaapp.viewmodel.CommentViewModel
 import com.example.socialmediaapp.viewmodel.FollowerViewModel
 import com.example.socialmediaapp.viewmodel.PostViewModel
 import com.example.socialmediaapp.viewmodel.UserViewModel
@@ -28,6 +29,7 @@ class MainActivity : AppCompatActivity() {
     private val mUserViewModel: UserViewModel by viewModels()
     private val mFollowerViewModel: FollowerViewModel by viewModels()
     private val mPostViewModel: PostViewModel by viewModels()
+    private val mCommentViewModel: CommentViewModel by viewModels()
 
     @Inject
     lateinit var userAuthentication: UserAuthentication
@@ -44,7 +46,6 @@ class MainActivity : AppCompatActivity() {
         }
         replaceFragment()
         checkOnRealtimeDatabase()
-
         checkIfUserLoggedIn()
     }
 
@@ -89,6 +90,6 @@ class MainActivity : AppCompatActivity() {
         mUserViewModel.checkIfUserChanges()
         mPostViewModel.checkIfPostChanges()
         mFollowerViewModel.checkIfFollowingChanges()
-
+        mCommentViewModel.checkIfCommentChanges()
     }
 }

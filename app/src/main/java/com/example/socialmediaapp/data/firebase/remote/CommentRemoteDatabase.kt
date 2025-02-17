@@ -26,8 +26,15 @@ class CommentRemoteDatabase @Inject constructor(
         }
     }
 
-    suspend fun addComment(comment: Comment) {
+    suspend fun addComment(userI: String, postId: String, content: String) {
         try {
+            val comment = Comment(
+                commentCollection.document().id,
+                userI,
+                postId,
+                content,
+                System.currentTimeMillis()
+            )
             commentCollection.add(comment).await()
         } catch (e: Exception) {
             throw e

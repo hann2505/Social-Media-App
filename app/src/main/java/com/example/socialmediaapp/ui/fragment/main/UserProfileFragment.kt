@@ -16,6 +16,7 @@ import com.example.socialmediaapp.adapter.PostAdapter
 import com.example.socialmediaapp.data.entity.User
 import com.example.socialmediaapp.data.firebase.authentication.UserAuthentication
 import com.example.socialmediaapp.databinding.FragmentUserProfileBinding
+import com.example.socialmediaapp.ui.fragment.comment.placeholder.CommentListBottomSheetDialog
 import com.example.socialmediaapp.ui.fragment.main.FollowState.FOLLOWING
 import com.example.socialmediaapp.viewmodel.FollowerViewModel
 import com.example.socialmediaapp.viewmodel.PostViewModel
@@ -34,6 +35,9 @@ class UserProfileFragment : Fragment() {
     private val mUserViewModel: UserViewModel by viewModels()
     private val mFollowerViewModel: FollowerViewModel by viewModels()
     private val mPostViewModel: PostViewModel by viewModels()
+
+    private val adapter = PostAdapter()
+
     @Inject
     lateinit var userAuthentication: UserAuthentication
 
@@ -52,6 +56,14 @@ class UserProfileFragment : Fragment() {
 
         binding.followBtn.setOnClickListener {
             followUser()
+        }
+
+        adapter.setOnCommentClickListener {
+            Log.d("UserProfileFragment", "onCommentClickListener: $it")
+            val action = UserProfileFragmentDirections.actionUserProfileFragmentToCommentListBottomSheetDialog(it)
+            findNavController().navigate(action)
+//            val bottomSheet = CommentListBottomSheetDialog()
+//            bottomSheet.show(childFragmentManager, "CommentListBottomSheetDialog")
         }
 
         subscribeToRecyclerView()
@@ -102,7 +114,6 @@ class UserProfileFragment : Fragment() {
     }
 
     private fun subscribeToRecyclerView() {
-        val adapter = PostAdapter()
         binding.recyclerView.adapter = adapter
 
         binding.recyclerView.layoutManager = LinearLayoutManager(

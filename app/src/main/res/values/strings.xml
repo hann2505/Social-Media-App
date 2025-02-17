@@ -77,5 +77,7 @@
     <string name="adjust">Adjust</string>
     <string name="caption">Caption</string>
     <string name="followed">Followed</string>
+    <string name="add_your_comment">Add your comment</string>
+    <string name="comment">Comment</string>
 
 </resources>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
@@ -30,30 +30,10 @@
             android:layout_gravity="center_vertical"
             />
 
-        <androidx.appcompat.widget.AppCompatImageButton
-            android:id="@+id/more_horz"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:src="@drawable/ic_more_horz"
-            android:background="?attr/selectableItemBackground"
-            android:layout_gravity="center"
-            android:layout_marginEnd="10dp"
-            />
-
     </LinearLayout>
 
-    <ImageView
-        android:id="@+id/image"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:src="@drawable/reona_cover"
-        android:adjustViewBounds="true"
-        android:scaleType="centerInside"
-        />
-
     <TextView
-        android:id="@+id/caption"
+        android:id="@+id/user_comment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/caption"
@@ -99,7 +79,7 @@
             android:layout_marginEnd="5dp"
             >
 
-            <ImageView
+            <androidx.appcompat.widget.AppCompatImageButton
                 android:id="@+id/comment"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
@@ -119,45 +99,6 @@
         </LinearLayout>
 
 
-
-
-        <androidx.appcompat.widget.AppCompatImageButton
-            android:id="@+id/share"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:background="?attr/selectableItemBackground"
-            android:scaleType="centerCrop"
-            android:layout_marginTop="10dp"
-            android:layout_marginStart="10dp"
-            android:layout_marginBottom="10dp"
-            android:src="@drawable/ic_share"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/share_number"
-            android:layout_marginStart="5dp"
-            android:layout_marginEnd="5dp"
-            android:textSize="17sp"
-            android:layout_gravity="center_vertical"
-            android:textColor="@color/black"/>
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <androidx.appcompat.widget.AppCompatImageButton
-                android:id="@+id/bookmark"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:background="?attr/selectableItemBackground"
-                android:scaleType="centerInside"
-                android:layout_margin="10dp"
-                android:src="@drawable/ic_bookmark"
-                android:layout_alignParentEnd="true"
-                />
-
-        </RelativeLayout>
 
     </LinearLayout>
 

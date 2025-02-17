@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/background_bottom_sheet"
+    tools:context=".ui.fragment.comment.placeholder.CommentListBottomSheetDialog">
+
+    <com.google.android.material.bottomsheet.BottomSheetDragHandleView
+        android:id="@+id/bottomSheetDragHandleView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        />
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/comment"
+        android:textSize="20sp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"
+        android:textColor="@color/black"
+        android:layout_below="@+id/bottomSheetDragHandleView"
+        />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_marginTop="10dp"
+        android:id="@+id/comment_recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/title"
+        />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="15dp"
+        android:orientation="horizontal">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/user_pfp"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginBottom="15dp"
+            android:layout_marginEnd="10dp"
+            android:src="@drawable/reona_pfp"/>
+
+        <EditText
+            android:id="@+id/comment"
+            android:textColor="#6E2424"
+            android:textSize="16sp"
+            android:layout_height="50dp"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:background="@drawable/custom_login_edit_text"
+            android:padding="10dp"
+            android:drawablePadding="10dp"
+            android:textColorHint="@color/text_hint_color"
+            android:hint="@string/add_your_comment"
+            android:inputType="textEmailAddress"
+            />
+
+        <androidx.appcompat.widget.AppCompatImageButton
+            android:id="@+id/upload_button"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:src="@drawable/ic_up_arrow"
+            android:background="@drawable/circle_button"
+            android:padding="5dp"
+            android:layout_marginStart="5dp"
+            android:visibility="gone"
+            />
+
+    </LinearLayout>
+
+</RelativeLayout>

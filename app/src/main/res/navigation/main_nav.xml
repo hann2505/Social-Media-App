@@ -56,6 +56,33 @@
         <argument
             android:name="user"
             app:argType="com.example.socialmediaapp.data.entity.User" />
+        <action
+            android:id="@+id/action_userProfileFragment_to_commentListBottomSheetDialog"
+            app:destination="@id/commentListBottomSheetDialog" />
     </fragment>
+    <fragment
+        android:id="@+id/postFragment"
+        android:name="com.example.socialmediaapp.ui.fragment.profile.PostFragment"
+        android:label="fragment_post"
+        tools:layout="@layout/fragment_post" >
+        <action
+            android:id="@+id/action_postFragment_to_commentListBottomSheetDialog"
+            app:destination="@id/commentListBottomSheetDialog" />
+    </fragment>
+    <dialog
+        android:id="@+id/commentListBottomSheetDialog"
+        android:name="com.example.socialmediaapp.ui.fragment.comment.placeholder.CommentListBottomSheetDialog"
+        android:label="fragment_comment_list_bottom_sheet_dialog"
+        tools:layout="@layout/fragment_comment_list_bottom_sheet_dialog" >
+        <action
+            android:id="@+id/action_commentListBottomSheetDialog_to_postFragment"
+            app:destination="@id/postFragment" />
+        <action
+            android:id="@+id/action_commentListBottomSheetDialog_to_userProfileFragment"
+            app:destination="@id/userProfileFragment" />
+        <argument
+            android:name="post_with_user"
+            app:argType="com.example.socialmediaapp.data.entity.PostWithUser" />
+    </dialog>
 
 </navigation>

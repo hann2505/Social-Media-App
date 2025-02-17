@@ -11,6 +11,12 @@ class PostAdapter : RecyclerView.Adapter<PostAdapter.PostViewHolder>() {
 
     private var postList = listOf<PostWithUser>()
 
+    private var onCommentClickListener: ((PostWithUser) -> Unit)? = null
+
+    fun setOnCommentClickListener(listener: (PostWithUser) -> Unit) {
+        onCommentClickListener = listener
+    }
+
     class PostViewHolder(
         private val binding: PostBinding
     ) : RecyclerView.ViewHolder(binding.root) {
@@ -19,6 +25,12 @@ class PostAdapter : RecyclerView.Adapter<PostAdapter.PostViewHolder>() {
             binding.caption.text = post.content
             Glide.with(binding.userPfp).load(post.profilePictureUrl).into(binding.userPfp)
             Glide.with(binding.image).load(post.mediaUrl).into(binding.image)
+        }
+
+        fun setOnCommentClickListener(listener: () -> Unit) {
+            binding.commentLayout.setOnClickListener {
+                listener()
+            }
         }
 
     }
@@ -39,6 +51,10 @@ class PostAdapter : RecyclerView.Adapter<PostAdapter.PostViewHolder>() {
     override fun onBindViewHolder(holder: PostViewHolder, position: Int) {
         val currentPost = postList[position]
         holder.bindData(currentPost)
+
+        holder.setOnCommentClickListener {
+            onCommentClickListener?.invoke(currentPost)
+        }
     }
 
     fun setData(postList: List<PostWithUser>) {

@@ -8,9 +8,7 @@ import com.bumptech.glide.Glide
 import com.example.socialmediaapp.data.entity.User
 import com.example.socialmediaapp.databinding.UserBinding
 
-class UserAdapter(
-
-) : RecyclerView.Adapter<UserAdapter.UserViewHolder>() {
+class UserAdapter : RecyclerView.Adapter<UserAdapter.UserViewHolder>() {
 
     private var userList = listOf<User>()
 
