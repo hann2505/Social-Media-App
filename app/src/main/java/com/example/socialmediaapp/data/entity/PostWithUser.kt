@@ -10,5 +10,6 @@ data class PostWithUser(
     val profilePictureUrl: String,
     val content: String,
     val mediaUrl: String,
+    val commentCount : Int,
     val timestamp: Long,
 ) : Parcelable

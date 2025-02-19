@@ -53,8 +53,14 @@ class SearchFragment : Fragment(), SearchView.OnQueryTextListener,
         binding.recyclerView.adapter = searchAdapter
 
         searchAdapter.setOnUserItemClickListener {
-            val action = SearchFragmentDirections.actionSearchFragmentToUserProfileFragment(it)
-            findNavController().navigate(action)
+            if (userAuthentication.getCurrentUser()!!.uid == it.userId){
+                val action = SearchFragmentDirections.actionSearchFragmentToProfileFragment(true)
+                findNavController().navigate(action)
+            }
+            else {
+                val action = SearchFragmentDirections.actionSearchFragmentToUserProfileFragment(it)
+                findNavController().navigate(action)
+            }
         }
 
         return binding.root

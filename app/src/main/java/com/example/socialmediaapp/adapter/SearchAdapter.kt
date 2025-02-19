@@ -41,6 +41,7 @@ class SearchAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         fun bindData(post: PostWithUser) {
             binding.userName.text = post.username
             binding.caption.text = post.content
+            binding.commentCount.text = post.commentCount.toString()
             Glide.with(binding.userPfp).load(post.profilePictureUrl).into(binding.userPfp)
             Glide.with(binding.image).load(post.mediaUrl).into(binding.image)
         }

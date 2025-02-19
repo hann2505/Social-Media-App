@@ -29,18 +29,22 @@ interface PostDao {
     @Query("SELECT * FROM Post WHERE userId = :userId")
     fun getPostsByUserId(userId: String): LiveData<List<Post>>
 
-    @Query(" SELECT post.postId, user.username, user.profilePictureUrl, post.content, post.mediaUrl, post.timestamp\n" +
+    @Query(" SELECT post.postId, user.username, user.profilePictureUrl, post.content, post.mediaUrl, COUNT(comment.commentId) AS commentCount, post.timestamp\n" +
             "FROM post\n" +
-            "INNER JOIN user ON post.userId = user.userId\n" +
-            "WHERE post.userId = :userId"
+            "JOIN user ON post.userId = user.userId\n" +
+            "LEFT JOIN comment ON post.postId = comment.postId\n" +
+            "WHERE post.userId = :userId\n" +
+            "GROUP BY post.postId, user.username, user.profilePictureUrl, post.content, post.mediaUrl, post.timestamp"
     )
     fun getPostWithUserByUserId(userId: String): LiveData<List<PostWithUser>>
 
 
-    @Query(" SELECT post.postId, user.username, user.profilePictureUrl, post.content, post.mediaUrl, post.timestamp\n" +
+    @Query(" SELECT post.postId, user.username, user.profilePictureUrl, post.content, post.mediaUrl, COUNT(comment.commentId) AS commentCount, post.timestamp\n" +
             "FROM post\n" +
-            "INNER JOIN user ON post.userId = user.userId\n" +
-            "WHERE user.username LIKE '%' || :query || '%' OR post.content LIKE '%' || :query || '%'"
+            "JOIN user ON post.userId = user.userId\n" +
+            "LEFT JOIN comment ON post.postId = comment.postId\n" +
+            "WHERE user.username LIKE '%' || :query || '%' OR post.content LIKE '%' || :query || '%'" +
+            "GROUP BY post.postId, user.username, user.profilePictureUrl, post.content, post.mediaUrl, post.timestamp"
     )
     fun getPostWithUserByText(query: String): LiveData<List<PostWithUser>>
 

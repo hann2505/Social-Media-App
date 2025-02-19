@@ -1,6 +1,7 @@
 package com.example.socialmediaapp.ui.fragment.profile
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -63,6 +64,7 @@ class PostFragment : Fragment() {
         binding.recyclerView.isNestedScrollingEnabled = false
 
         mPostViewModel.getPostWithUserByUserId(userAuthentication.getCurrentUser()!!.uid).observe(viewLifecycleOwner) { posts ->
+            Log.d("post", "$posts")
             postAdapter.setData(posts)
             binding.recyclerView.adapter = postAdapter
         }

@@ -62,8 +62,6 @@ class UserProfileFragment : Fragment() {
             Log.d("UserProfileFragment", "onCommentClickListener: $it")
             val action = UserProfileFragmentDirections.actionUserProfileFragmentToCommentListBottomSheetDialog(it)
             findNavController().navigate(action)
-//            val bottomSheet = CommentListBottomSheetDialog()
-//            bottomSheet.show(childFragmentManager, "CommentListBottomSheetDialog")
         }
 
         subscribeToRecyclerView()
