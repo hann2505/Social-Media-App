@@ -18,6 +18,8 @@ class UserAuthentication @Inject constructor(
                 it.user?.let { user ->
                     Log.d("log_in", "Success: ${user.email}")
                 }
+            }.addOnFailureListener {
+                Log.d("log_in", "Failure: ${it.message}")
             }
     }
 

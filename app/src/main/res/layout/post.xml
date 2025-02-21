@@ -68,7 +68,7 @@
         android:orientation="horizontal">
 
         <androidx.appcompat.widget.AppCompatImageButton
-            android:id="@+id/like"
+            android:id="@+id/like_btn"
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:background="?attr/selectableItemBackground"
@@ -79,6 +79,7 @@
             android:src="@drawable/ic_heart"/>
 
         <TextView
+            android:id="@+id/like_count"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/like_number"

@@ -15,6 +15,7 @@ import com.example.socialmediaapp.data.firebase.authentication.UserAuthenticatio
 import com.example.socialmediaapp.databinding.ActivityMainBinding
 import com.example.socialmediaapp.viewmodel.CommentViewModel
 import com.example.socialmediaapp.viewmodel.FollowerViewModel
+import com.example.socialmediaapp.viewmodel.LikeViewModel
 import com.example.socialmediaapp.viewmodel.PostViewModel
 import com.example.socialmediaapp.viewmodel.UserViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -30,6 +31,7 @@ class MainActivity : AppCompatActivity() {
     private val mFollowerViewModel: FollowerViewModel by viewModels()
     private val mPostViewModel: PostViewModel by viewModels()
     private val mCommentViewModel: CommentViewModel by viewModels()
+    private val mLikeViewModel: LikeViewModel by viewModels()
 
     @Inject
     lateinit var userAuthentication: UserAuthentication
@@ -91,5 +93,6 @@ class MainActivity : AppCompatActivity() {
         mPostViewModel.checkIfPostChanges()
         mFollowerViewModel.checkIfFollowingChanges()
         mCommentViewModel.checkIfCommentChanges()
+        mLikeViewModel.checkIfLikeChanges()
     }
 }
