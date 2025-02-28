@@ -7,12 +7,16 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.socialmediaapp.R
 import com.example.socialmediaapp.adapter.PostAdapter
 import com.example.socialmediaapp.data.firebase.authentication.UserAuthentication
 import com.example.socialmediaapp.databinding.FragmentPostBinding
+import com.example.socialmediaapp.extensions.LiveDataExtensions.observeOnce
+import com.example.socialmediaapp.ui.fragment.main.ProfileFragmentDirections
+import com.example.socialmediaapp.viewmodel.LikeViewModel
 import com.example.socialmediaapp.viewmodel.PostViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -29,6 +33,7 @@ class PostFragment : Fragment() {
     lateinit var userAuthentication: UserAuthentication
 
     private val mPostViewModel: PostViewModel by viewModels()
+    private val mLikeViewModel: LikeViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,17 +48,36 @@ class PostFragment : Fragment() {
 
         mPostViewModel.fetchDataFromFirebase()
         subscribeToObservers()
+        onLikeClickListener()
 
         postAdapter.setOnCommentClickListener {
-            val action = PostFragmentDirections.actionPostFragmentToCommentListBottomSheetDialog(it)
-            findNavController().navigate(action)
+            val action = ProfileFragmentDirections.actionProfileFragmentToCommentListBottomSheetDialog(it)
+            requireActivity().findNavController(R.id.nav_host_fragment).navigate(action)
         }
-
 
         return binding.root
     }
 
+    private fun onLikeClickListener() {
+        postAdapter.setOnLikeClickListener { post ->
+            mLikeViewModel.checkIfLiked(userAuthentication.getCurrentUser()!!.uid, post.postId).observeOnce(viewLifecycleOwner) {
+                if (it)
+                    mLikeViewModel.unlikePost(
+                        userAuthentication.getCurrentUser()!!.uid,
+                        post.postId
+                    )
+                else
+                    mLikeViewModel.likePost(
+                        userAuthentication.getCurrentUser()!!.uid,
+                        post.postId
+                    )
+            }
+
+        }
+    }
+
     private fun subscribeToObservers() {
+        binding.recyclerView.adapter = postAdapter
 
         binding.recyclerView.layoutManager = LinearLayoutManager(
             requireContext(),
@@ -66,7 +90,10 @@ class PostFragment : Fragment() {
         mPostViewModel.getPostWithUserByUserId(userAuthentication.getCurrentUser()!!.uid).observe(viewLifecycleOwner) { posts ->
             Log.d("post", "$posts")
             postAdapter.setData(posts)
-            binding.recyclerView.adapter = postAdapter
+        }
+
+        mLikeViewModel.getPostIdByUserId(userAuthentication.getCurrentUser()!!.uid).observe(viewLifecycleOwner) {
+            postAdapter.setLikedList(it)
         }
 
     }

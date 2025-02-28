@@ -4,6 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     style="@style/toolbar"
+    android:id="@+id/toolbar"
     app:menu="@menu/post_bottom_bar">
 
 </androidx.appcompat.widget.Toolbar>

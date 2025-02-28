@@ -1,14 +1,22 @@
 package com.example.socialmediaapp.ui.acitivity
 
+import android.app.Activity
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import android.provider.MediaStore
+import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.bumptech.glide.Glide
 import com.example.socialmediaapp.R
-import com.example.socialmediaapp.data.entity.MediaType
-import com.example.socialmediaapp.data.entity.Post
 import com.example.socialmediaapp.data.firebase.authentication.UserAuthentication
 import com.example.socialmediaapp.databinding.ActivityPostBinding
 import com.example.socialmediaapp.viewmodel.PostViewModel
@@ -22,8 +30,12 @@ class PostActivity : AppCompatActivity() {
     private var _binding: ActivityPostBinding?= null
     private val binding get() = _binding!!
 
+    private lateinit var imagePickerLauncher: ActivityResultLauncher<Intent>
+
     private val mUserViewModel: UserViewModel by viewModels()
     private val mPostViewModel: PostViewModel by viewModels()
+
+    private var selectedImageUri: Uri? = null
 
     @Inject
     lateinit var userAuthentication: UserAuthentication
@@ -38,27 +50,71 @@ class PostActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+        setSupportActionBar(binding.bottomBar.toolbar)
+        supportActionBar?.setDisplayShowTitleEnabled(false)
+        imagePicker()
 
         binding.cancel.setOnClickListener {
             finish()
         }
 
+    }
+
+    private fun imagePicker() {
+        imagePickerLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val imageUri: Uri? = result.data?.data
+                if (imageUri != null) {
+                    Glide.with(this).load(imageUri).into(binding.image)
+                    selectedImageUri = imageUri
+                }
+            }
+        }
+
         binding.post.setOnClickListener {
-            uploadPost()
-            finish()
+            selectedImageUri?.let { uri ->
+                uploadPost(uri) // Pass Uri instead of String
+                finish()
+            } ?: Log.e("PostActivity", "No image selected")
         }
     }
 
-    private fun uploadPost() {
-        val userId = userAuthentication.getCurrentUser()!!.uid
+    private fun uploadPost(imageUrl: Uri) {
         val content = binding.content.text.toString()
-        val imageUrl = ""
+        val userId = userAuthentication.getCurrentUser()!!.uid
         val mediaUrl = ""
         val postState = true
         val timestamp = System.currentTimeMillis()
-
         mPostViewModel.uploadPost(userId, content, imageUrl, mediaUrl, postState, timestamp)
 
+    }
+
+
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.post_bottom_bar, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.image -> {
+                pickImage()
+                return true
+            }
+            R.id.text -> {
+                return true
+            }
+            R.id.add -> {
+                return true
+            }
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
+    private fun pickImage() {
+        val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+        imagePickerLauncher.launch(intent)
     }
 
 }

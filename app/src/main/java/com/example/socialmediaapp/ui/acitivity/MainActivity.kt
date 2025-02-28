@@ -48,7 +48,37 @@ class MainActivity : AppCompatActivity() {
         }
         replaceFragment()
         checkOnRealtimeDatabase()
+
+        println("MainActivity: OnCreated")
+
+    }
+
+    override fun onStart() {
+        super.onStart()
+        println("MainActivity: OnStart")
+    }
+
+    override fun onResume() {
+        super.onResume()
         checkIfUserLoggedIn()
+        println("MainActivity: OnResume")
+
+    }
+
+    override fun onPause() {
+        super.onPause()
+        println("MainActivity: OnPause")
+    }
+
+    override fun onStop() {
+        super.onStop()
+        println("MainActivity: OnStop")
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        println("MainActivity: OnDestroy")
+        _binding = null
     }
 
     private fun checkIfUserLoggedIn() {

@@ -10,7 +10,6 @@ import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.socialmediaapp.R
 import com.example.socialmediaapp.adapter.CommentAdapter
 import com.example.socialmediaapp.data.firebase.authentication.UserAuthentication
 import com.example.socialmediaapp.databinding.FragmentCommentListBottomSheetDialogBinding

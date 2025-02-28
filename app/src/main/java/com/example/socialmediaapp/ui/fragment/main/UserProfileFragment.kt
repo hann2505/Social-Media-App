@@ -1,16 +1,11 @@
 package com.example.socialmediaapp.ui.fragment.main
 
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.Observer
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -21,14 +16,12 @@ import com.example.socialmediaapp.data.entity.User
 import com.example.socialmediaapp.data.firebase.authentication.UserAuthentication
 import com.example.socialmediaapp.databinding.FragmentUserProfileBinding
 import com.example.socialmediaapp.extensions.LiveDataExtensions.observeOnce
-import com.example.socialmediaapp.ui.fragment.comment.placeholder.CommentListBottomSheetDialog
-import com.example.socialmediaapp.ui.fragment.main.FollowState.FOLLOWING
+import com.example.socialmediaapp.ui.fragment.main.FollowState.*
 import com.example.socialmediaapp.viewmodel.FollowerViewModel
 import com.example.socialmediaapp.viewmodel.LikeViewModel
 import com.example.socialmediaapp.viewmodel.PostViewModel
 import com.example.socialmediaapp.viewmodel.UserViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -56,7 +49,20 @@ class UserProfileFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentUserProfileBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         showUserInfo(args.user)
+        adapter.setOnCommentClickListener {
+            val action = UserProfileFragmentDirections.actionUserProfileFragmentToCommentListBottomSheetDialog(it)
+            findNavController().navigate(action)
+        }
+
+        onLikeClickListener()
+        subscribeToRecyclerView()
 
         binding.backBtn.setOnClickListener {
             findNavController().popBackStack()
@@ -65,17 +71,6 @@ class UserProfileFragment : Fragment() {
         binding.followBtn.setOnClickListener {
             followUser()
         }
-
-        adapter.setOnCommentClickListener {
-            val action = UserProfileFragmentDirections.actionUserProfileFragmentToCommentListBottomSheetDialog(it)
-            findNavController().navigate(action)
-        }
-
-        onLikeClickListener()
-
-        subscribeToRecyclerView()
-
-        return binding.root
     }
 
     private fun onLikeClickListener() {
@@ -133,7 +128,7 @@ class UserProfileFragment : Fragment() {
                     followState = FOLLOWING
                 } else {
                     binding.followBtn.text = getString(R.string.follow)
-                    followState = FollowState.NOT_FOLLOWING
+                    followState = NOT_FOLLOWING
                 }
             }
     }

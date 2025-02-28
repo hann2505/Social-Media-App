@@ -9,6 +9,7 @@ import com.example.socialmediaapp.R
 import com.example.socialmediaapp.data.entity.PostLike
 import com.example.socialmediaapp.data.entity.PostWithUser
 import com.example.socialmediaapp.databinding.PostBinding
+import com.example.socialmediaapp.extensions.TimeConverter
 
 class PostAdapter : RecyclerView.Adapter<PostAdapter.PostViewHolder>() {
 
@@ -35,6 +36,7 @@ class PostAdapter : RecyclerView.Adapter<PostAdapter.PostViewHolder>() {
             binding.caption.text = post.content
             binding.likeCount.text = post.likeCount.toString()
             binding.commentCount.text = post.commentCount.toString()
+            binding.timestamp.text = TimeConverter.convertTimestampToDateTime(post.timestamp)
             changeLikeButton(post)
             Glide.with(binding.userPfp).load(post.profilePictureUrl).into(binding.userPfp)
             Glide.with(binding.image).load(post.mediaUrl).into(binding.image)

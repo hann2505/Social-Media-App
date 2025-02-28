@@ -1,9 +1,11 @@
 package com.example.socialmediaapp.viewmodel
 
 import android.app.Application
+import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.socialmediaapp.data.entity.Post
 import com.example.socialmediaapp.data.entity.PostWithUser
@@ -25,6 +27,12 @@ class PostViewModel@Inject constructor(
     private val readAllDatabase: LiveData<List<Post>>
     private val postRepository: PostRepository
 
+    private val _imageUrl = MutableLiveData<String>()
+    val imageUrl: LiveData<String> = _imageUrl
+
+    private val _error = MutableLiveData<Boolean>()
+    val error: LiveData<Boolean> = _error
+
     init {
         val postDao = AppDatabase.getInstance(application).postDao()
         postRepository = PostRepository(postDao)
@@ -45,19 +53,19 @@ class PostViewModel@Inject constructor(
     fun uploadPost(
         userId: String,
         content: String,
-        imageUrl: String,
+        imageUrl: Uri,
         mediaUrl: String,
         postState: Boolean,
         timestamp: Long
     ) {
         viewModelScope.launch(Dispatchers.IO) {
-            postRemoteDatabase.uploadPost(
-                userId,
-                content,
-                imageUrl,
-                mediaUrl,
-                postState,
-                timestamp
+            postRemoteDatabase.handleImageUpload(
+                userId = userId,
+                content = content,
+                imageUri = imageUrl,
+                mediaUrl = mediaUrl,
+                postState = postState,
+                timestamp = timestamp
             )
         }
     }
