@@ -64,15 +64,21 @@
 
     </LinearLayout>
 
-    <ImageView
-        android:id="@+id/image"
+<!--    <ImageView-->
+<!--        android:id="@+id/image"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginTop="10dp"-->
+<!--        android:src="@drawable/reona_cover"-->
+<!--        android:adjustViewBounds="true"-->
+<!--        android:scaleType="centerInside"-->
+<!--        />-->
+
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/view_pager"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:src="@drawable/reona_cover"
-        android:adjustViewBounds="true"
-        android:scaleType="centerInside"
-        />
+        android:clipToPadding="false"/>
 
     <TextView
         android:id="@+id/caption"

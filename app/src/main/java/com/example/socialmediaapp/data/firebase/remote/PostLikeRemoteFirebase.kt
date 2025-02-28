@@ -21,8 +21,7 @@ class PostLikeRemoteFirebase @Inject constructor(
             val postLike = PostLike(
                 postLikeCollection.document().id,
                 userId,
-                postId,
-                System.currentTimeMillis()
+                postId
             )
             postLikeCollection.document(postLike.likeId).set(postLike).await()
         } catch (e: Exception) {

@@ -58,6 +58,10 @@ class ProfileFragment : Fragment() {
         showCurrentUserInfo()
         displayBackButton()
 
+        mPostViewModel.getPostWithUserAndImage(userAuthentication.getCurrentUser()!!.uid).observe(viewLifecycleOwner) {
+            Log.d("Observe post", "Post: $it")
+        }
+
         binding.editProfileBtn.setOnClickListener {
             val intent = Intent(requireActivity(), EditProfileActivity::class.java)
             startActivity(intent)

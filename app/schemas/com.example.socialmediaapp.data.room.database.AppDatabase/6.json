@@ -1,8 +1,8 @@
 {
   "formatVersion": 1,
   "database": {
-    "version": 5,
-    "identityHash": "c54c2edfd81c7182478a1955411cb66a",
+    "version": 6,
+    "identityHash": "6d6ee48fbfe6adeebf5c11facd338459",
     "entities": [
       {
         "tableName": "Post",
@@ -326,12 +326,50 @@
             ]
           }
         ]
+      },
+      {
+        "tableName": "Post Medias",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`imageId` TEXT NOT NULL, `postId` TEXT NOT NULL, PRIMARY KEY(`imageId`), FOREIGN KEY(`postId`) REFERENCES `Post`(`postId`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "imageId",
+            "columnName": "imageId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "postId",
+            "columnName": "postId",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "imageId"
+          ]
+        },
+        "indices": [],
+        "foreignKeys": [
+          {
+            "table": "Post",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "postId"
+            ],
+            "referencedColumns": [
+              "postId"
+            ]
+          }
+        ]
       }
     ],
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'c54c2edfd81c7182478a1955411cb66a')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '6d6ee48fbfe6adeebf5c11facd338459')"
     ]
   }
 }

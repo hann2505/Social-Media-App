@@ -32,8 +32,7 @@ class CommentRemoteDatabase @Inject constructor(
                 commentCollection.document().id,
                 userI,
                 postId,
-                content,
-                System.currentTimeMillis()
+                content
             )
             commentCollection.add(comment).await()
         } catch (e: Exception) {

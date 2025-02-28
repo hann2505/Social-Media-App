@@ -2,7 +2,6 @@ package com.example.socialmediaapp.data.firebase.remote
 
 import android.net.Uri
 import android.util.Log
-import androidx.core.net.toUri
 import com.example.socialmediaapp.data.entity.MediaType
 import com.example.socialmediaapp.data.entity.Post
 import com.example.socialmediaapp.other.Constant.COLLECTION_POSTS
@@ -31,9 +30,7 @@ class PostRemoteDatabase @Inject constructor(
                     postId = document.getString("postId") ?: "",
                     userId = document.getString("userId") ?: "",
                     content = document.getString("content") ?: "",
-                    imageUrl = document.getString("imageUrl") ?: "",
-                    mediaType = document.getString("mediaType")?.toMediaType() ?: MediaType.TEXT, // Convert String to Enum
-                    mediaUrl = document.getString("mediaUrl") ?: "",
+                    mediaType = document.getString("mediaType")?.toMediaType() ?: MediaType.TEXT,
                     postState = document.getBoolean("postState") ?: true,
                     timestamp = document.getLong("timestamp") ?: 0
                 )
@@ -59,13 +56,12 @@ class PostRemoteDatabase @Inject constructor(
     }
 
     private fun uploadImageToStorage(fileName: String, imageUri: Uri, onSuccess: (String) -> Unit, onFailure: (Exception) -> Unit) {
-        val storageRef = FirebaseStorage.getInstance().reference
         val imageRef = storageRef.child(fileName)
 
         imageRef.putFile(imageUri)
             .addOnSuccessListener {
                 imageRef.downloadUrl.addOnSuccessListener { uri ->
-                    onSuccess(uri.toString()) // Pass download URL back
+                    onSuccess(uri.toString())
                 }.addOnFailureListener { exception ->
                     onFailure(exception)
                 }
@@ -79,9 +75,7 @@ class PostRemoteDatabase @Inject constructor(
         userId: String,
         content: String,
         imageUri: Uri,
-        mediaUrl: String,
-        postState: Boolean,
-        timestamp: Long
+        postState: Boolean
     ) {
         val postId = postsCollection.document().id
         val fileName = "posts/${userId}/$postId/${System.currentTimeMillis()}.jpg"
@@ -93,10 +87,9 @@ class PostRemoteDatabase @Inject constructor(
                     postId = postId,
                     userId = userId,
                     content = content,
-                    imageUrl = downloadUrl,
-                    mediaUrl = mediaUrl,
-                    postState = postState,
-                    timestamp = timestamp
+//                    imageUrl = downloadUrl,
+//                    mediaUrl = mediaUrl,
+                    postState = postState
                 )
                 uploadPost(post)
             },
@@ -122,7 +115,7 @@ class PostRemoteDatabase @Inject constructor(
                     val mediaUrl = docChange.document.getString("mediaUrl") ?: continue
                     val postState = docChange.document.getBoolean("postState") ?: true
                     val timestamp = docChange.document.getLong("timestamp") ?: continue
-                    val post = Post(postId, userId, content, imageUrl, mediaType, mediaUrl, postState, timestamp)
+                    val post = Post(postId, userId, content, mediaType, postState, timestamp)
 
                     val result: FirebaseChangeType = when (docChange.type) {
                         DocumentChange.Type.ADDED -> {

@@ -28,5 +28,5 @@ data class Comment(
     val userId: String = "",
     val postId: String = "",
     val content: String = "",
-    val timestamp: Long = 0
+    val timestamp: Long = System.currentTimeMillis()
 )

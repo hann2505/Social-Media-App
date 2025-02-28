@@ -20,5 +20,5 @@ data class CommentLike(
     val likeId: String = "",
     val userId: String = "",
     val commentId: String = "",
-    val timestamp: Long = 0
+    val timestamp: Long = System.currentTimeMillis()
 )

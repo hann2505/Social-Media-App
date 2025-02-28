@@ -24,8 +24,7 @@ class FollowerRemoteDatabase @Inject constructor(
         return Follower(
             fid = followersCollection.document().id,
             followerId = followerId,
-            followingId = followingId,
-            timestamp = System.currentTimeMillis()
+            followingId = followingId
         )
     }
 

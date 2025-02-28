@@ -82,10 +82,8 @@ class PostActivity : AppCompatActivity() {
     private fun uploadPost(imageUrl: Uri) {
         val content = binding.content.text.toString()
         val userId = userAuthentication.getCurrentUser()!!.uid
-        val mediaUrl = ""
         val postState = true
-        val timestamp = System.currentTimeMillis()
-        mPostViewModel.uploadPost(userId, content, imageUrl, mediaUrl, postState, timestamp)
+        mPostViewModel.uploadPost(userId, content, imageUrl, postState)
 
     }
 

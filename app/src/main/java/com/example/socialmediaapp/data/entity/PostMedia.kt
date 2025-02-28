@@ -5,7 +5,7 @@ import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
 
 @Entity(
-    tableName = "PostLike",
+    tableName = "Post Medias",
     foreignKeys = [
         ForeignKey(
             entity = Post::class,
@@ -15,10 +15,8 @@ import androidx.room.PrimaryKey
         )
     ]
 )
-data class PostLike(
+data class PostMedia(
     @PrimaryKey(autoGenerate = false)
-    val likeId: String = "",
-    val userId: String = "",
-    val postId: String = "",
-    val timestamp: Long = System.currentTimeMillis()
+    val imageId: String = "",
+    val postId: String = ""
 )

@@ -9,6 +9,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.socialmediaapp.data.entity.Post
 import com.example.socialmediaapp.data.entity.PostWithUser
+import com.example.socialmediaapp.data.entity.PostWithUserAndMedia
 import com.example.socialmediaapp.data.firebase.remote.PostRemoteDatabase
 import com.example.socialmediaapp.data.room.database.AppDatabase
 import com.example.socialmediaapp.data.room.post.PostRepository
@@ -54,18 +55,14 @@ class PostViewModel@Inject constructor(
         userId: String,
         content: String,
         imageUrl: Uri,
-        mediaUrl: String,
-        postState: Boolean,
-        timestamp: Long
+        postState: Boolean
     ) {
         viewModelScope.launch(Dispatchers.IO) {
             postRemoteDatabase.handleImageUpload(
                 userId = userId,
                 content = content,
                 imageUri = imageUrl,
-                mediaUrl = mediaUrl,
-                postState = postState,
-                timestamp = timestamp
+                postState = postState
             )
         }
     }
@@ -99,6 +96,10 @@ class PostViewModel@Inject constructor(
 
     fun getPostWithUserByText(username: String): LiveData<List<PostWithUser>> {
         return postRepository.getPostWithUserByText(username)
+    }
+
+    fun getPostWithUserAndImage(userId: String): LiveData<List<PostWithUserAndMedia>> {
+        return postRepository.getPostWithUserAndMedias(userId)
     }
 
 }

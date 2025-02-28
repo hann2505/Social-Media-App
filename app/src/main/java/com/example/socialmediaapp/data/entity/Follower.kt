@@ -9,5 +9,5 @@ data class Follower(
     val fid: String = "",
     val followerId: String = "",
     val followingId: String = "",
-    val timestamp: Long = 0
+    val timestamp: Long = System.currentTimeMillis()
 )

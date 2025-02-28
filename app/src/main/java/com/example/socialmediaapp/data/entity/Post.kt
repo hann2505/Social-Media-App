@@ -20,11 +20,9 @@ data class Post (
     val postId: String = "",
     val userId: String = "",
     val content: String = "",
-    val imageUrl: String = "",
     val mediaType: MediaType = MediaType.TEXT,
-    val mediaUrl: String = "",
     val postState: Boolean = true,
-    val timestamp: Long = 0,
+    val timestamp: Long = System.currentTimeMillis(),
 )
 
 enum class MediaType {

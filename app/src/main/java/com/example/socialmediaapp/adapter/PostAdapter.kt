@@ -39,7 +39,12 @@ class PostAdapter : RecyclerView.Adapter<PostAdapter.PostViewHolder>() {
             binding.timestamp.text = TimeConverter.convertTimestampToDateTime(post.timestamp)
             changeLikeButton(post)
             Glide.with(binding.userPfp).load(post.profilePictureUrl).into(binding.userPfp)
-            Glide.with(binding.image).load(post.mediaUrl).into(binding.image)
+
+        }
+
+        private fun setUpRecyclerView() {
+//            val adapter = PostImageAdapter(post.imageUrls)
+//            binding.viewPager.adapter = adapter
         }
 
         fun setOnCommentClickListener(listener: () -> Unit) {

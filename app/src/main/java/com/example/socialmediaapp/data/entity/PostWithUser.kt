@@ -9,7 +9,6 @@ data class PostWithUser(
     val username: String,
     val profilePictureUrl: String,
     val content: String,
-    val mediaUrl: String,
     val likeCount: Int,
     val commentCount : Int,
     val timestamp: Long,
