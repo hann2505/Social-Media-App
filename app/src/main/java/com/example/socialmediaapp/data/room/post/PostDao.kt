@@ -7,6 +7,7 @@ import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Upsert
 import com.example.socialmediaapp.data.entity.Post
+import com.example.socialmediaapp.data.entity.PostWithMedias
 import com.example.socialmediaapp.data.entity.PostWithUser
 import com.example.socialmediaapp.data.entity.PostWithUserAndMedia
 
@@ -35,6 +36,9 @@ interface PostDao {
     @Query("SELECT * FROM Post WHERE userId = :userId")
     fun getAllPostsWithUserAndMedias(userId: String): LiveData<List<PostWithUserAndMedia>>
 
+    @Transaction
+    @Query("SELECT * FROM Post WHERE postId = :postId")
+    fun getPostWithUserAndMedias(postId: String): LiveData<List<PostWithMedias>>
 
     @Query(" SELECT post.postId, user.username, user.profilePictureUrl, post.content, COUNT(DISTINCT postlike.likeId) AS likeCount, COUNT(DISTINCT comment.commentId) AS commentCount, post.timestamp\n" +
             "FROM post\n" +

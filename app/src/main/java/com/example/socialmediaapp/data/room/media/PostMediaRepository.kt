@@ -8,4 +8,12 @@ class PostMediaRepository(
     suspend fun upsertPostMedia(postMedia: PostMedia) {
         postMediaDao.upsertPostMedia(postMedia)
     }
+
+    suspend fun deletePostMedia(postMedia: PostMedia) {
+        postMediaDao.deletePostMedia(postMedia)
+    }
+
+    suspend fun getPostMediaByPostId(postId: String): List<PostMedia> {
+        return postMediaDao.getPostMediaByPostId(postId)
+    }
 }

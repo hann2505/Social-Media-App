@@ -4,7 +4,10 @@ import android.net.Uri
 import android.util.Log
 import com.example.socialmediaapp.data.entity.MediaType
 import com.example.socialmediaapp.data.entity.Post
+import com.example.socialmediaapp.data.entity.PostMedia
+import com.example.socialmediaapp.data.entity.PostWithUserAndMedia
 import com.example.socialmediaapp.other.Constant.COLLECTION_POSTS
+import com.example.socialmediaapp.other.Constant.COLLECTION_POST_MEDIAS
 import com.example.socialmediaapp.other.FirebaseChangeType
 import com.example.socialmediaapp.other.FirebaseChangeType.*
 import com.google.firebase.firestore.DocumentChange
@@ -19,6 +22,7 @@ class PostRemoteDatabase @Inject constructor(
 ) {
 
     private val postsCollection = db.collection(COLLECTION_POSTS)
+    private val postMediasCollection = db.collection(COLLECTION_POST_MEDIAS)
     private val storageRef = storage.reference
 
     suspend fun getAllPost(): List<Post> {
@@ -55,26 +59,39 @@ class PostRemoteDatabase @Inject constructor(
         }
     }
 
-    private fun uploadImageToStorage(fileName: String, imageUri: Uri, onSuccess: (String) -> Unit, onFailure: (Exception) -> Unit) {
+    private fun uploadPostMedia(postMedia: PostMedia) {
+        try {
+            postMediasCollection.document(postMedia.imageId).set(postMedia)
+        } catch (e: Exception) {
+            Log.e("PostRemoteDatabase", "Upload failed: ${e.message}", e)
+        }
+    }
+
+    private fun uploadImageToStorage(fileName: String, imageUris: List<Uri>, onSuccess: (List<String>) -> Unit, onFailure: (Exception) -> Unit) {
+        val uploadedUrls = mutableListOf<String>()
+        var uploadCount = 0
         val imageRef = storageRef.child(fileName)
 
-        imageRef.putFile(imageUri)
-            .addOnSuccessListener {
+        for (imageUri in imageUris) {
+            imageRef.putFile(imageUri).addOnSuccessListener {
                 imageRef.downloadUrl.addOnSuccessListener { uri ->
-                    onSuccess(uri.toString())
+                    uploadedUrls.add(uri.toString())
+                    uploadCount++
+
+                    if (uploadCount == imageUris.size) {
+                        onSuccess(uploadedUrls)
+                    }
                 }.addOnFailureListener { exception ->
                     onFailure(exception)
                 }
             }
-            .addOnFailureListener { exception ->
-                onFailure(exception)
-            }
+        }
     }
 
     fun handleImageUpload(
         userId: String,
         content: String,
-        imageUri: Uri,
+        imageUri: List<Uri>,
         postState: Boolean
     ) {
         val postId = postsCollection.document().id
@@ -82,16 +99,22 @@ class PostRemoteDatabase @Inject constructor(
         uploadImageToStorage(
             fileName,
             imageUri,
-            onSuccess = { downloadUrl ->
+            onSuccess = { downloadListUrl ->
                 val post = Post(
                     postId = postId,
                     userId = userId,
                     content = content,
-//                    imageUrl = downloadUrl,
-//                    mediaUrl = mediaUrl,
                     postState = postState
                 )
                 uploadPost(post)
+                for (downloadUrl in downloadListUrl) {
+                    val postMedia = PostMedia(
+                        postMediasCollection.document().id,
+                        postId,
+                        downloadUrl
+                    )
+                    uploadPostMedia(postMedia)
+                }
             },
             onFailure = { exception ->
                 Log.e("Upload", "Failed to upload image", exception)
@@ -110,9 +133,7 @@ class PostRemoteDatabase @Inject constructor(
                     val postId = docChange.document.getString("postId") ?: continue
                     val userId = docChange.document.getString("userId") ?: continue
                     val content = docChange.document.getString("content") ?: continue
-                    val imageUrl = docChange.document.getString("imageUrl") ?: continue
                     val mediaType = docChange.document.getString("mediaType")?.toMediaType() ?: MediaType.TEXT
-                    val mediaUrl = docChange.document.getString("mediaUrl") ?: continue
                     val postState = docChange.document.getBoolean("postState") ?: true
                     val timestamp = docChange.document.getLong("timestamp") ?: continue
                     val post = Post(postId, userId, content, mediaType, postState, timestamp)
@@ -132,6 +153,39 @@ class PostRemoteDatabase @Inject constructor(
                         }
                     }
                     onPostChange(result, post)
+                }
+
+            }
+        }
+    }
+
+    fun listenForPostMediaChanges(onPostMediaChange: (FirebaseChangeType, PostMedia) -> Unit) {
+        postMediasCollection.addSnapshotListener { snapshots, error ->
+            if (error != null) {
+                return@addSnapshotListener
+            }
+            snapshots?.let {
+                for (docChange in it.documentChanges) {
+                    val imageId = docChange.document.getString("imageId") ?: continue
+                    val postId = docChange.document.getString("postId") ?: continue
+                    val mediaUrl = docChange.document.getString("mediaUrl") ?: continue
+                    val postMedia = PostMedia(imageId, postId, mediaUrl)
+
+                    val result: FirebaseChangeType = when (docChange.type) {
+                        DocumentChange.Type.ADDED -> {
+                            ADDED
+                        }
+                        DocumentChange.Type.REMOVED -> {
+                            REMOVED
+                        }
+                        DocumentChange.Type.MODIFIED -> {
+                            MODIFIED
+                        }
+                        else -> {
+                            NOT_DETECTED
+                        }
+                    }
+                    onPostMediaChange(result, postMedia)
                 }
 
             }

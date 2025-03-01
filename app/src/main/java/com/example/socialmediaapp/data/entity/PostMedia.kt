@@ -1,5 +1,6 @@
 package com.example.socialmediaapp.data.entity
 
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
@@ -18,5 +19,8 @@ import androidx.room.PrimaryKey
 data class PostMedia(
     @PrimaryKey(autoGenerate = false)
     val imageId: String = "",
-    val postId: String = ""
+    val postId: String = "",
+    @ColumnInfo(name = "mediaUrl", defaultValue = "")
+//    val mediaUrl: String = ""
+    val mediaUrl: String = ""
 )

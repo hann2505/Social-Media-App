@@ -1,6 +1,7 @@
 package com.example.socialmediaapp.data.room.media
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Query
 import androidx.room.Upsert
 import com.example.socialmediaapp.data.entity.PostMedia
@@ -12,6 +13,9 @@ interface PostMediaDao {
     suspend fun upsertPostMedia(postMedia: PostMedia)
 
     @Query("SELECT * FROM `Post Medias` WHERE postId = :postId")
-    suspend fun getPostMediaByPostId(postId: String): List<PostMedia>
+    fun getPostMediaByPostId(postId: String): List<PostMedia>
+
+    @Delete
+    suspend fun deletePostMedia(postMedia: PostMedia)
 
 }

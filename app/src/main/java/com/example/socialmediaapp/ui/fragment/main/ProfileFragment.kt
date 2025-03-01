@@ -59,7 +59,9 @@ class ProfileFragment : Fragment() {
         displayBackButton()
 
         mPostViewModel.getPostWithUserAndImage(userAuthentication.getCurrentUser()!!.uid).observe(viewLifecycleOwner) {
-            Log.d("Observe post", "Post: $it")
+            for (post in it) {
+                Log.d("Observe post", "Post: $post")
+            }
         }
 
         binding.editProfileBtn.setOnClickListener {

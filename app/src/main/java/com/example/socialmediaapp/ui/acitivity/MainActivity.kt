@@ -124,5 +124,6 @@ class MainActivity : AppCompatActivity() {
         mFollowerViewModel.checkIfFollowingChanges()
         mCommentViewModel.checkIfCommentChanges()
         mLikeViewModel.checkIfLikeChanges()
+        mPostViewModel.checkIfPostMediaChanges()
     }
 }

@@ -35,7 +35,7 @@ class PostActivity : AppCompatActivity() {
     private val mUserViewModel: UserViewModel by viewModels()
     private val mPostViewModel: PostViewModel by viewModels()
 
-    private var selectedImageUri: Uri? = null
+    private val imageUris = mutableListOf<Uri>()
 
     @Inject
     lateinit var userAuthentication: UserAuthentication
@@ -62,24 +62,30 @@ class PostActivity : AppCompatActivity() {
 
     private fun imagePicker() {
         imagePickerLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == Activity.RESULT_OK) {
-                val imageUri: Uri? = result.data?.data
-                if (imageUri != null) {
-                    Glide.with(this).load(imageUri).into(binding.image)
-                    selectedImageUri = imageUri
+            val clipData = result.data?.clipData
+
+            if (clipData != null) {
+                // Multiple images selected
+                for (i in 0 until clipData.itemCount) {
+                    imageUris.add(clipData.getItemAt(i).uri)
+                }
+            } else {
+                // Single image selected
+                result.data?.data?.let { uri ->
+                    imageUris.add(uri)
                 }
             }
         }
 
         binding.post.setOnClickListener {
-            selectedImageUri?.let { uri ->
-                uploadPost(uri) // Pass Uri instead of String
+            imageUris.let { uri ->
+                uploadPost(uri)
                 finish()
-            } ?: Log.e("PostActivity", "No image selected")
+            }
         }
     }
 
-    private fun uploadPost(imageUrl: Uri) {
+    private fun uploadPost(imageUrl: List<Uri>) {
         val content = binding.content.text.toString()
         val userId = userAuthentication.getCurrentUser()!!.uid
         val postState = true

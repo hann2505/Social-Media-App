@@ -12,6 +12,7 @@ import com.example.socialmediaapp.data.entity.PostWithUser
 import com.example.socialmediaapp.data.entity.PostWithUserAndMedia
 import com.example.socialmediaapp.data.firebase.remote.PostRemoteDatabase
 import com.example.socialmediaapp.data.room.database.AppDatabase
+import com.example.socialmediaapp.data.room.media.PostMediaRepository
 import com.example.socialmediaapp.data.room.post.PostRepository
 import com.example.socialmediaapp.other.FirebaseChangeType.*
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -27,6 +28,7 @@ class PostViewModel@Inject constructor(
 
     private val readAllDatabase: LiveData<List<Post>>
     private val postRepository: PostRepository
+    private val postMediaRepository: PostMediaRepository
 
     private val _imageUrl = MutableLiveData<String>()
     val imageUrl: LiveData<String> = _imageUrl
@@ -36,7 +38,9 @@ class PostViewModel@Inject constructor(
 
     init {
         val postDao = AppDatabase.getInstance(application).postDao()
+        val postMediaDao = AppDatabase.getInstance(application).postMediaDao()
         postRepository = PostRepository(postDao)
+        postMediaRepository = PostMediaRepository(postMediaDao)
         readAllDatabase = postRepository.readAllDatabase
     }
 
@@ -54,7 +58,7 @@ class PostViewModel@Inject constructor(
     fun uploadPost(
         userId: String,
         content: String,
-        imageUrl: Uri,
+        imageUrl: List<Uri>,
         postState: Boolean
     ) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -85,6 +89,29 @@ class PostViewModel@Inject constructor(
                         REMOVED -> {
                             Log.d("post", "removed: $post")
                             postRepository.deletePost(post)
+                        }
+
+                        else -> {}
+                    }
+                }
+            }
+        }
+    }
+
+    fun checkIfPostMediaChanges() {
+        viewModelScope.launch(Dispatchers.IO) {
+            postRemoteDatabase.listenForPostMediaChanges { changeType, postMedia ->
+                viewModelScope.launch(Dispatchers.IO) {
+                    Log.d("post", changeType.toString())
+                    when (changeType) {
+                        ADDED, MODIFIED -> {
+                            postMediaRepository.upsertPostMedia(postMedia)
+                            Log.d("post", "added: $postMedia")
+                        }
+
+                        REMOVED -> {
+                            Log.d("post", "removed: $postMedia")
+                            postMediaRepository.deletePostMedia(postMedia)
                         }
 
                         else -> {}

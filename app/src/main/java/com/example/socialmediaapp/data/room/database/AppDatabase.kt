@@ -6,6 +6,8 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
+import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
 import com.example.socialmediaapp.data.entity.Comment
 import com.example.socialmediaapp.data.entity.CommentLike
 import com.example.socialmediaapp.data.entity.Follower
@@ -50,13 +52,20 @@ abstract class AppDatabase : RoomDatabase() {
         @Volatile
         private var INSTANCE: AppDatabase?= null
 
+//        private val MIGRATION_1_2 = object : Migration(1, 2) {
+//            override fun migrate(db: SupportSQLiteDatabase) {
+//                // Example: Add a new column
+//                db.execSQL("ALTER TABLE `Post Medias` ADD COLUMN media_url TEXT")
+//            }
+//        }
+
         fun getInstance(context: Context): AppDatabase {
             synchronized(this) {
                 return INSTANCE ?: Room.databaseBuilder(
                     context.applicationContext,
                     AppDatabase::class.java,
                     "social_media_app_db"
-                ).fallbackToDestructiveMigration()
+                )
                     .build().also {
                     INSTANCE = it
                 }
