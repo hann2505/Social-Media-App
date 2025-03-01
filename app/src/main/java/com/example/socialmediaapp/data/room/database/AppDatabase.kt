@@ -33,11 +33,11 @@ import com.example.socialmediaapp.other.MediaTypeConverter
         CommentLike::class,
         PostMedia::class
     ],
-    version = 7,
+    version = 1,
     exportSchema = true,
-    autoMigrations = [
-        AutoMigration(from = 6, to = 7)
-    ]
+//    autoMigrations = [
+//        AutoMigration(from = 6, to = 7)
+//    ]
 )
 @TypeConverters(MediaTypeConverter::class) // Register the converter
 abstract class AppDatabase : RoomDatabase() {
@@ -65,7 +65,7 @@ abstract class AppDatabase : RoomDatabase() {
                     context.applicationContext,
                     AppDatabase::class.java,
                     "social_media_app_db"
-                )
+                ).fallbackToDestructiveMigration()
                     .build().also {
                     INSTANCE = it
                 }
