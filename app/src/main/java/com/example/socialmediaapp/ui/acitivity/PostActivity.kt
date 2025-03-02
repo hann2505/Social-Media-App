@@ -64,6 +64,14 @@ class PostActivity : AppCompatActivity() {
 
     }
 
+    override fun onStart() {
+        super.onStart()
+        postImageAdapter.setOnCancelClickListener {
+            imageUris.remove(it)
+            postImageAdapter.updateList(imageUris)
+        }
+    }
+
     private fun setRecyclerView() {
         postImageAdapter = PostImageAdapter()
         binding.recyclerView.adapter = postImageAdapter

@@ -5,6 +5,8 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.example.socialmediaapp.data.entity.PostWithUserAndMedia
+import com.example.socialmediaapp.data.entity.User
 import com.example.socialmediaapp.databinding.PostImageBinding
 
 class PostImageAdapter(
@@ -12,10 +14,22 @@ class PostImageAdapter(
 
     private val imageUrls = mutableListOf<Uri>()
 
+    private var onCancelClickListener: ((Uri) -> Unit)? = null
+
+    fun setOnCancelClickListener(listener: (Uri) -> Unit) {
+        onCancelClickListener = listener
+    }
+
     inner class PostViewHolder(
         private val binding: PostImageBinding
     ) : RecyclerView.ViewHolder(binding.root) {
         val image = binding.image
+
+        fun setOnCancelClickListener(listener: () -> Unit) {
+            binding.cancel.setOnClickListener {
+                listener()
+            }
+        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostViewHolder {
@@ -33,6 +47,10 @@ class PostImageAdapter(
         Glide.with(holder.image.context)
             .load(imageUrls[position].toString())
             .into(holder.image)
+
+        holder.setOnCancelClickListener {
+            onCancelClickListener?.invoke(imageUrls[position])
+        }
     }
 
     fun updateList(newList: List<Uri>) {
