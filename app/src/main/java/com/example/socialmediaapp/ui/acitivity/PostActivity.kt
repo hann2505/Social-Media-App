@@ -15,8 +15,10 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.example.socialmediaapp.R
+import com.example.socialmediaapp.adapter.PostImageAdapter
 import com.example.socialmediaapp.data.firebase.authentication.UserAuthentication
 import com.example.socialmediaapp.databinding.ActivityPostBinding
 import com.example.socialmediaapp.viewmodel.PostViewModel
@@ -36,6 +38,7 @@ class PostActivity : AppCompatActivity() {
     private val mPostViewModel: PostViewModel by viewModels()
 
     private val imageUris = mutableListOf<Uri>()
+    private lateinit var postImageAdapter: PostImageAdapter
 
     @Inject
     lateinit var userAuthentication: UserAuthentication
@@ -53,10 +56,19 @@ class PostActivity : AppCompatActivity() {
         setSupportActionBar(binding.bottomBar.toolbar)
         supportActionBar?.setDisplayShowTitleEnabled(false)
         imagePicker()
+        setRecyclerView()
 
         binding.cancel.setOnClickListener {
             finish()
         }
+
+    }
+
+    private fun setRecyclerView() {
+        postImageAdapter = PostImageAdapter()
+        binding.recyclerView.adapter = postImageAdapter
+
+        binding.recyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
 
     }
 
@@ -69,12 +81,14 @@ class PostActivity : AppCompatActivity() {
                 for (i in 0 until clipData.itemCount) {
                     imageUris.add(clipData.getItemAt(i).uri)
                 }
+                Log.d("image picked", "imagePicker: ${postImageAdapter.itemCount}")
             } else {
                 // Single image selected
                 result.data?.data?.let { uri ->
                     imageUris.add(uri)
                 }
             }
+            postImageAdapter.updateList(imageUris)
         }
 
         binding.post.setOnClickListener {
@@ -82,7 +96,16 @@ class PostActivity : AppCompatActivity() {
                 uploadPost(uri)
                 finish()
             }
+            Log.d("image picked", "imagePicker: $imageUris")
         }
+    }
+
+    private fun openImagePicker() {
+        val intent = Intent(Intent.ACTION_GET_CONTENT).apply {
+            type = "image/*"
+            putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true) // Enable multiple selection
+        }
+        imagePickerLauncher.launch(intent)
     }
 
     private fun uploadPost(imageUrl: List<Uri>) {
@@ -93,8 +116,6 @@ class PostActivity : AppCompatActivity() {
 
     }
 
-
-
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.post_bottom_bar, menu)
         return super.onCreateOptionsMenu(menu)
@@ -103,7 +124,7 @@ class PostActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.image -> {
-                pickImage()
+                openImagePicker()
                 return true
             }
             R.id.text -> {
@@ -114,11 +135,6 @@ class PostActivity : AppCompatActivity() {
             }
         }
         return super.onOptionsItemSelected(item)
-    }
-
-    private fun pickImage() {
-        val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-        imagePickerLauncher.launch(intent)
     }
 
 }

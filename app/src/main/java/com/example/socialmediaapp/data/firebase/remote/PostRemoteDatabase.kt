@@ -70,13 +70,19 @@ class PostRemoteDatabase @Inject constructor(
     private fun uploadImageToStorage(fileName: String, imageUris: List<Uri>, onSuccess: (List<String>) -> Unit, onFailure: (Exception) -> Unit) {
         val uploadedUrls = mutableListOf<String>()
         var uploadCount = 0
-        val imageRef = storageRef.child(fileName)
 
+        Log.d("Upload", "Image URIs: $imageUris")
+        Log.d("Upload", "Image URIs: ${imageUris.size}")
+
+//TODO(upload only 1 img)
         for (imageUri in imageUris) {
+            val imageRef = storageRef.child(fileName + "${System.currentTimeMillis()}.jpg")
             imageRef.putFile(imageUri).addOnSuccessListener {
-                imageRef.downloadUrl.addOnSuccessListener { uri ->
-                    uploadedUrls.add(uri.toString())
+                imageRef.downloadUrl.addOnSuccessListener { url ->
+                    println("uri:  $imageUri\n" + "url: $url")
+                    uploadedUrls.add(url.toString())
                     uploadCount++
+                    println("count: $uploadCount")
 
                     if (uploadCount == imageUris.size) {
                         onSuccess(uploadedUrls)
@@ -95,11 +101,12 @@ class PostRemoteDatabase @Inject constructor(
         postState: Boolean
     ) {
         val postId = postsCollection.document().id
-        val fileName = "posts/${userId}/$postId/${System.currentTimeMillis()}.jpg"
+        val fileName = "posts/${userId}/$postId/"
         uploadImageToStorage(
             fileName,
             imageUri,
             onSuccess = { downloadListUrl ->
+                Log.d("Upload", "Success: $downloadListUrl")
                 val post = Post(
                     postId = postId,
                     userId = userId,

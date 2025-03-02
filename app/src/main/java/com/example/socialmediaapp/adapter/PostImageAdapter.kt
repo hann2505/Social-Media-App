@@ -1,5 +1,6 @@
 package com.example.socialmediaapp.adapter
 
+import android.net.Uri
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -7,8 +8,10 @@ import com.bumptech.glide.Glide
 import com.example.socialmediaapp.databinding.PostImageBinding
 
 class PostImageAdapter(
-    private val imageUrls: List<String>
 ) : RecyclerView.Adapter<PostImageAdapter.PostViewHolder>() {
+
+    private val imageUrls = mutableListOf<Uri>()
+
     inner class PostViewHolder(
         private val binding: PostImageBinding
     ) : RecyclerView.ViewHolder(binding.root) {
@@ -28,7 +31,13 @@ class PostImageAdapter(
 
     override fun onBindViewHolder(holder: PostViewHolder, position: Int) {
         Glide.with(holder.image.context)
-            .load(imageUrls[position])
+            .load(imageUrls[position].toString())
             .into(holder.image)
+    }
+
+    fun updateList(newList: List<Uri>) {
+        imageUrls.clear()
+        imageUrls.addAll(newList)
+        notifyDataSetChanged()
     }
 }
