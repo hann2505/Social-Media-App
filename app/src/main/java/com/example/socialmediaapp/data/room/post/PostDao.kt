@@ -7,7 +7,6 @@ import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Upsert
 import com.example.socialmediaapp.data.entity.Post
-import com.example.socialmediaapp.data.entity.PostWithMedias
 import com.example.socialmediaapp.data.entity.PostWithUser
 import com.example.socialmediaapp.data.entity.PostWithUserAndMedia
 
@@ -36,11 +35,17 @@ interface PostDao {
     @Query("SELECT * FROM Post WHERE userId = :userId ORDER BY timestamp DESC")
     fun getAllPostsWithUserAndMedias(userId: String): LiveData<List<PostWithUserAndMedia>>
 
-    //TODO(the system hasn't upload image and post completely but
-    // profile fragment already call this function lead to the error[null media which shouldn't be null])
+//    @Transaction
+//    @Query("SELECT * FROM Post WHERE postId = :postId ORDER BY timestamp DESC")
+//    fun getPostWithUserAndMedias(postId: String): LiveData<List<PostWithMedias>>
+
     @Transaction
-    @Query("SELECT * FROM Post WHERE postId = :postId ORDER BY timestamp DESC")
-    fun getPostWithUserAndMedias(postId: String): LiveData<List<PostWithMedias>>
+    @Query("SELECT * FROM Post " +
+            "JOIN User ON Post.userId = User.userId " +
+            "WHERE user.username LIKE '%' || :query || '%' OR post.content LIKE '%' || :query || '%'" +
+            "ORDER BY timestamp DESC"
+    )
+    fun getPostWithUserAndMediasByQuery(query: String): LiveData<List<PostWithUserAndMedia>>
 
     @Query(" SELECT post.postId, user.username, user.profilePictureUrl, post.content, COUNT(DISTINCT postlike.likeId) AS likeCount, COUNT(DISTINCT comment.commentId) AS commentCount, post.timestamp\n" +
             "FROM post\n" +

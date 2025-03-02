@@ -91,7 +91,7 @@ class SearchFragment : Fragment(), SearchView.OnQueryTextListener,
         mUserViewModel.getUserByUsername(query).observe(viewLifecycleOwner) { userList ->
 
             Log.d("search user", "$userList")
-            mPostViewModel.getPostWithUserByText(query).observe(viewLifecycleOwner) { postList ->
+            mPostViewModel.getPostWithUserAndImageByQuery(query).observe(viewLifecycleOwner) { postList ->
                 val combinedList = mutableListOf<Any>()
                 combinedList.addAll(userList)
                 combinedList.addAll(postList)

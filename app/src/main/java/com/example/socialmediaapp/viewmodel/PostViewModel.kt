@@ -129,4 +129,8 @@ class PostViewModel@Inject constructor(
         return postRepository.getPostWithUserAndMedias(userId)
     }
 
+    fun getPostWithUserAndImageByQuery(query: String): LiveData<List<PostWithUserAndMedia>> {
+        return postRepository.getPostWithUserAndMediasByQuery(query)
+    }
+
 }

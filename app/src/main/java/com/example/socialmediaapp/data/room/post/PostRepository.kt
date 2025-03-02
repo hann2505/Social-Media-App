@@ -34,4 +34,9 @@ class PostRepository(
         return postDao.getAllPostsWithUserAndMedias(userId)
     }
 
+    fun getPostWithUserAndMediasByQuery(query: String): LiveData<List<PostWithUserAndMedia>> {
+        return postDao.getPostWithUserAndMediasByQuery(query)
+
+    }
+
 }
