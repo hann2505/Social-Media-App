@@ -81,15 +81,15 @@
         <action
             android:id="@+id/action_commentListBottomSheetDialog_to_userProfileFragment"
             app:destination="@id/userProfileFragment" />
-        <argument
-            android:name="post_with_user"
-            app:argType="com.example.socialmediaapp.data.entity.PostWithUser" />
         <action
             android:id="@+id/action_commentListBottomSheetDialog_to_profileFragment"
             app:destination="@id/profileFragment" />
         <action
             android:id="@+id/action_commentListBottomSheetDialog_to_searchFragment"
             app:destination="@id/searchFragment" />
+        <argument
+            android:name="postId"
+            app:argType="string" />
     </dialog>
 
 </navigation>

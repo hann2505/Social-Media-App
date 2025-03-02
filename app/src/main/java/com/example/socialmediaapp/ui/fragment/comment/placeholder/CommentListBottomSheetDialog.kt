@@ -43,7 +43,7 @@ class CommentListBottomSheetDialog : BottomSheetDialogFragment(), TextWatcher {
         binding.uploadButton.setOnClickListener {
             mCommentViewModel.addComment(
                 userAuthentication.getCurrentUser()!!.uid,
-                args.postWithUser.postId,
+                args.postId,
                 binding.comment.text.toString()
             )
             binding.comment.text.clear()
@@ -77,7 +77,7 @@ class CommentListBottomSheetDialog : BottomSheetDialogFragment(), TextWatcher {
             false
             )
 
-        mCommentViewModel.getCommentWithUser(args.postWithUser.postId).observe(viewLifecycleOwner) {
+        mCommentViewModel.getCommentWithUser(args.postId).observe(viewLifecycleOwner) {
             commentAdapter.setData(it)
             recyclerView.adapter = commentAdapter
         }

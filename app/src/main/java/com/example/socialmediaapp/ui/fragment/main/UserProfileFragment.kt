@@ -57,7 +57,7 @@ class UserProfileFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         showUserInfo(args.user)
         adapter.setOnCommentClickListener {
-            val action = UserProfileFragmentDirections.actionUserProfileFragmentToCommentListBottomSheetDialog(it)
+            val action = UserProfileFragmentDirections.actionUserProfileFragmentToCommentListBottomSheetDialog(it.post.postId)
             findNavController().navigate(action)
         }
 
@@ -75,16 +75,16 @@ class UserProfileFragment : Fragment() {
 
     private fun onLikeClickListener() {
         adapter.setOnLikeClickListener { post ->
-            mLikeViewModel.checkIfLiked(userAuthentication.getCurrentUser()!!.uid, post.postId).observeOnce(viewLifecycleOwner) {
+            mLikeViewModel.checkIfLiked(userAuthentication.getCurrentUser()!!.uid, post.post.postId).observeOnce(viewLifecycleOwner) {
                 if (it)
                     mLikeViewModel.unlikePost(
                         userAuthentication.getCurrentUser()!!.uid,
-                        post.postId
+                        post.post.postId
                     )
                 else
                     mLikeViewModel.likePost(
                         userAuthentication.getCurrentUser()!!.uid,
-                        post.postId
+                        post.post.postId
                     )
             }
 
@@ -142,8 +142,12 @@ class UserProfileFragment : Fragment() {
             false
         )
 
-        mPostViewModel.getPostWithUserByUserId(args.user.userId).observe(viewLifecycleOwner) {
-            adapter.setData(it)
+//        mPostViewModel.getPostWithUserByUserId(args.user.userId).observe(viewLifecycleOwner) {
+//            adapter.setData(it)
+//        }
+
+        mPostViewModel.getPostWithUserAndImage(args.user.userId).observe(viewLifecycleOwner) {
+
         }
 
         mLikeViewModel.getPostIdByUserId(userAuthentication.getCurrentUser()!!.uid).observe(viewLifecycleOwner) {

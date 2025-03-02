@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.socialmediaapp.R
 import com.example.socialmediaapp.data.entity.PostWithUser
+import com.example.socialmediaapp.data.entity.PostWithUserAndMedia
 import com.example.socialmediaapp.data.entity.User
 import com.example.socialmediaapp.databinding.PostBinding
 import com.example.socialmediaapp.databinding.UserBinding
@@ -22,21 +23,21 @@ class SearchAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         onUserItemClickListener = listener
     }
 
-    private var onPostItemClickListener: ((PostWithUser) -> Unit)? = null
+    private var onPostItemClickListener: ((PostWithUserAndMedia) -> Unit)? = null
 
-    fun setOnPostItemClickListener(listener: (PostWithUser) -> Unit) {
+    fun setOnPostItemClickListener(listener: (PostWithUserAndMedia) -> Unit) {
         onPostItemClickListener = listener
     }
 
-    private var onCommentClickListener: ((PostWithUser) -> Unit)? = null
+    private var onCommentClickListener: ((PostWithUserAndMedia) -> Unit)? = null
 
-    fun setOnCommentClickListener(listener: (PostWithUser) -> Unit) {
+    fun setOnCommentClickListener(listener: (PostWithUserAndMedia) -> Unit) {
         onCommentClickListener = listener
     }
 
-    private var onLikeClickListener: ((PostWithUser) -> Unit)? = null
+    private var onLikeClickListener: ((PostWithUserAndMedia) -> Unit)? = null
 
-    fun setOnLikeClickListener(listener: (PostWithUser) -> Unit) {
+    fun setOnLikeClickListener(listener: (PostWithUserAndMedia) -> Unit) {
         onLikeClickListener = listener
     }
 
@@ -53,13 +54,13 @@ class SearchAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     }
 
     inner class PostViewHolder(private val binding: PostBinding) : RecyclerView.ViewHolder(binding.root) {
-        fun bindData(post: PostWithUser) {
-            binding.userName.text = post.username
-            binding.caption.text = post.content
-            binding.likeCount.text = post.likeCount.toString()
-            binding.commentCount.text = post.commentCount.toString()
-            binding.timestamp.text = TimeConverter.convertTimestampToDateTime(post.timestamp)
-            Glide.with(binding.userPfp).load(post.profilePictureUrl).into(binding.userPfp)
+        fun bindData(post: PostWithUserAndMedia) {
+            binding.userName.text = post.user.username
+            binding.caption.text = post.post.content
+            binding.likeCount.text = post.postLike.size.toString()
+            binding.commentCount.text = post.comment.size.toString()
+            binding.timestamp.text = TimeConverter.convertTimestampToDateTime(post.post.timestamp)
+            Glide.with(binding.userPfp).load(post.user.profilePictureUrl).into(binding.userPfp)
 //            Glide.with(binding.image).load(post.mediaUrl).into(binding.image)
             changeLikeButton(post)
         }
@@ -70,14 +71,14 @@ class SearchAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             }
         }
 
-        fun setOnLikeClickListener(postWithUser: PostWithUser, listener: () -> Unit) {
+        fun setOnLikeClickListener(postWithUser: PostWithUserAndMedia, listener: () -> Unit) {
             binding.likeBtn.setOnClickListener {
                 listener()
             }
         }
 
-        private fun changeLikeButton(postWithUser: PostWithUser) {
-            val isLiked = likedList.contains(postWithUser.postId)
+        private fun changeLikeButton(postWithUser: PostWithUserAndMedia) {
+            val isLiked = likedList.contains(postWithUser.post.postId)
             if (isLiked) {
                 binding.likeBtn.setBackgroundResource(R.drawable.ic_hearted)
             }
@@ -105,7 +106,7 @@ class SearchAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
         when (holder) {
             is UserViewHolder -> holder.bindData(items[position] as User)
-            is PostViewHolder -> holder.bindData(items[position] as PostWithUser)
+            is PostViewHolder -> holder.bindData(items[position] as PostWithUserAndMedia)
         }
 
         holder.itemView.setOnClickListener {
@@ -116,14 +117,14 @@ class SearchAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                     }
                 is PostViewHolder -> {
                     onPostItemClickListener?.let {
-                        it(items[position] as PostWithUser)
+                        it(items[position] as PostWithUserAndMedia)
                     }
 
                     holder.setOnCommentClickListener {
-                        onCommentClickListener?.invoke(items[position] as PostWithUser)
+                        onCommentClickListener?.invoke(items[position] as PostWithUserAndMedia)
                     }
-                    holder.setOnLikeClickListener(items[position] as PostWithUser) {
-                        onLikeClickListener?.invoke(items[position] as PostWithUser)
+                    holder.setOnLikeClickListener(items[position] as PostWithUserAndMedia) {
+                        onLikeClickListener?.invoke(items[position] as PostWithUserAndMedia)
                     }
 
                 }

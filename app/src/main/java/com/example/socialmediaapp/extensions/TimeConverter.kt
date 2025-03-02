@@ -5,18 +5,18 @@ import java.util.Date
 
 object TimeConverter {
 
-    private const val oneDayInMillis = 24 * 60 * 60 * 1000
+    private const val ONE_DAY_IN_MILLIS = 24 * 60 * 60 * 1000
 
     private fun getDate(timestamp: Long): Date {
-        return java.util.Date(timestamp)
+        return Date(timestamp)
     }
 
     private fun dateFormatter(): SimpleDateFormat {
-        return java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.getDefault())
+        return SimpleDateFormat("yyyy-MM-dd", java.util.Locale.getDefault())
     }
 
     private fun timeFormatter(): SimpleDateFormat {
-        return java.text.SimpleDateFormat("HH:mm", java.util.Locale.getDefault())
+        return SimpleDateFormat("HH:mm", java.util.Locale.getDefault())
     }
 
     private fun convertTimestampToDate(timestamp: Long): String {
@@ -28,7 +28,7 @@ object TimeConverter {
     }
 
     private fun hasOnDayGap(timestamp: Long): Boolean {
-        return System.currentTimeMillis() - timestamp >= oneDayInMillis
+        return System.currentTimeMillis() - timestamp >= ONE_DAY_IN_MILLIS
     }
 
     fun convertTimestampToDateTime(timestamp: Long): String {

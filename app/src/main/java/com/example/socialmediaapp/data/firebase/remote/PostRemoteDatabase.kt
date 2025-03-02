@@ -6,6 +6,7 @@ import com.example.socialmediaapp.data.entity.MediaType
 import com.example.socialmediaapp.data.entity.Post
 import com.example.socialmediaapp.data.entity.PostMedia
 import com.example.socialmediaapp.data.entity.PostWithUserAndMedia
+import com.example.socialmediaapp.extensions.TimeConverter
 import com.example.socialmediaapp.other.Constant.COLLECTION_POSTS
 import com.example.socialmediaapp.other.Constant.COLLECTION_POST_MEDIAS
 import com.example.socialmediaapp.other.FirebaseChangeType
@@ -74,7 +75,6 @@ class PostRemoteDatabase @Inject constructor(
         Log.d("Upload", "Image URIs: $imageUris")
         Log.d("Upload", "Image URIs: ${imageUris.size}")
 
-//TODO(upload only 1 img)
         for (imageUri in imageUris) {
             val imageRef = storageRef.child(fileName + "${System.currentTimeMillis()}.jpg")
             imageRef.putFile(imageUri).addOnSuccessListener {
@@ -102,6 +102,7 @@ class PostRemoteDatabase @Inject constructor(
     ) {
         val postId = postsCollection.document().id
         val fileName = "posts/${userId}/$postId/"
+        val startTime = System.currentTimeMillis()
         uploadImageToStorage(
             fileName,
             imageUri,
@@ -122,6 +123,9 @@ class PostRemoteDatabase @Inject constructor(
                     )
                     uploadPostMedia(postMedia)
                 }
+                val endTime = System.currentTimeMillis()
+                val executionTime = endTime - startTime
+                Log.d("Upload", "Execution time: ${TimeConverter.convertTimestampToDateTime(executionTime)} ms")
             },
             onFailure = { exception ->
                 Log.e("Upload", "Failed to upload image", exception)

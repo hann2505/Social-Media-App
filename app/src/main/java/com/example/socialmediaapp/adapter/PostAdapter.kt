@@ -3,48 +3,56 @@ package com.example.socialmediaapp.adapter
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.net.toUri
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.socialmediaapp.R
 import com.example.socialmediaapp.data.entity.PostLike
 import com.example.socialmediaapp.data.entity.PostWithUser
+import com.example.socialmediaapp.data.entity.PostWithUserAndMedia
 import com.example.socialmediaapp.databinding.PostBinding
 import com.example.socialmediaapp.extensions.TimeConverter
 
 class PostAdapter : RecyclerView.Adapter<PostAdapter.PostViewHolder>() {
 
-    private var postList = listOf<PostWithUser>()
+    private var postList = listOf<PostWithUserAndMedia>()
     private var likedList = listOf<String>()
 
-    private var onCommentClickListener: ((PostWithUser) -> Unit)? = null
+    private var onCommentClickListener: ((PostWithUserAndMedia) -> Unit)? = null
 
-    fun setOnCommentClickListener(listener: (PostWithUser) -> Unit) {
+    fun setOnCommentClickListener(listener: (PostWithUserAndMedia) -> Unit) {
         onCommentClickListener = listener
     }
 
-    private var onLikeClickListener: ((PostWithUser) -> Unit)? = null
+    private var onLikeClickListener: ((PostWithUserAndMedia) -> Unit)? = null
 
-    fun setOnLikeClickListener(listener: (PostWithUser) -> Unit) {
+    fun setOnLikeClickListener(listener: (PostWithUserAndMedia) -> Unit) {
         onLikeClickListener = listener
     }
 
     inner class PostViewHolder(
         private val binding: PostBinding
     ) : RecyclerView.ViewHolder(binding.root) {
-        fun bindData(post: PostWithUser) {
-            binding.userName.text = post.username
-            binding.caption.text = post.content
-            binding.likeCount.text = post.likeCount.toString()
-            binding.commentCount.text = post.commentCount.toString()
-            binding.timestamp.text = TimeConverter.convertTimestampToDateTime(post.timestamp)
+        fun bindData(post: PostWithUserAndMedia) {
+            binding.userName.text = post.user.username
+            binding.caption.text = post.post.content
+            binding.likeCount.text = post.postLike.size.toString()
+            binding.commentCount.text = post.comment.size.toString()
+            binding.timestamp.text = TimeConverter.convertTimestampToDateTime(post.post.timestamp)
             changeLikeButton(post)
-            Glide.with(binding.userPfp).load(post.profilePictureUrl).into(binding.userPfp)
+            Glide.with(binding.userPfp).load(post.user.profilePictureUrl).into(binding.userPfp)
 
         }
 
-        private fun setUpRecyclerView() {
-//            val adapter = PostImageAdapter(post.imageUrls)
-//            binding.viewPager.adapter = adapter
+        fun setUpRecyclerView(post: PostWithUserAndMedia) {
+            val adapter = PostImageViewPagerAdapter()
+            post.media.map {
+                it.mediaUrl.toUri()
+            }.let {
+                Log.d("PostAdapter", "setUpRecyclerView: $it")
+                adapter.updateList(it)
+            }
+            binding.viewPager.adapter = adapter
         }
 
         fun setOnCommentClickListener(listener: () -> Unit) {
@@ -53,14 +61,14 @@ class PostAdapter : RecyclerView.Adapter<PostAdapter.PostViewHolder>() {
             }
         }
 
-        fun setOnLikeClickListener(postWithUser: PostWithUser, listener: () -> Unit) {
+        fun setOnLikeClickListener(listener: () -> Unit) {
             binding.likeBtn.setOnClickListener {
                 listener()
             }
         }
 
-        private fun changeLikeButton(postWithUser: PostWithUser) {
-            val isLiked = likedList.contains(postWithUser.postId)
+        private fun changeLikeButton(postWithUserAndMedia: PostWithUserAndMedia) {
+            val isLiked = likedList.contains(postWithUserAndMedia.post.postId)
             if (isLiked) {
                 binding.likeBtn.setBackgroundResource(R.drawable.ic_hearted)
             }
@@ -92,12 +100,14 @@ class PostAdapter : RecyclerView.Adapter<PostAdapter.PostViewHolder>() {
             onCommentClickListener?.invoke(currentPost)
         }
 
-        holder.setOnLikeClickListener(currentPost) {
+        holder.setOnLikeClickListener {
             onLikeClickListener?.invoke(currentPost)
         }
+
+        holder.setUpRecyclerView(currentPost)
     }
 
-    fun setData(postList: List<PostWithUser>) {
+    fun setData(postList: List<PostWithUserAndMedia>) {
         this.postList = postList
         notifyDataSetChanged()
     }

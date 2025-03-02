@@ -33,11 +33,13 @@ interface PostDao {
     fun getPostsByUserId(userId: String): LiveData<List<Post>>
 
     @Transaction
-    @Query("SELECT * FROM Post WHERE userId = :userId")
+    @Query("SELECT * FROM Post WHERE userId = :userId ORDER BY timestamp DESC")
     fun getAllPostsWithUserAndMedias(userId: String): LiveData<List<PostWithUserAndMedia>>
 
+    //TODO(the system hasn't upload image and post completely but
+    // profile fragment already call this function lead to the error[null media which shouldn't be null])
     @Transaction
-    @Query("SELECT * FROM Post WHERE postId = :postId")
+    @Query("SELECT * FROM Post WHERE postId = :postId ORDER BY timestamp DESC")
     fun getPostWithUserAndMedias(postId: String): LiveData<List<PostWithMedias>>
 
     @Query(" SELECT post.postId, user.username, user.profilePictureUrl, post.content, COUNT(DISTINCT postlike.likeId) AS likeCount, COUNT(DISTINCT comment.commentId) AS commentCount, post.timestamp\n" +

@@ -51,7 +51,7 @@ class PostFragment : Fragment() {
         onLikeClickListener()
 
         postAdapter.setOnCommentClickListener {
-            val action = ProfileFragmentDirections.actionProfileFragmentToCommentListBottomSheetDialog(it)
+            val action = ProfileFragmentDirections.actionProfileFragmentToCommentListBottomSheetDialog(it.post.postId)
             requireActivity().findNavController(R.id.nav_host_fragment).navigate(action)
         }
 
@@ -60,16 +60,16 @@ class PostFragment : Fragment() {
 
     private fun onLikeClickListener() {
         postAdapter.setOnLikeClickListener { post ->
-            mLikeViewModel.checkIfLiked(userAuthentication.getCurrentUser()!!.uid, post.postId).observeOnce(viewLifecycleOwner) {
+            mLikeViewModel.checkIfLiked(userAuthentication.getCurrentUser()!!.uid, post.post.postId).observeOnce(viewLifecycleOwner) {
                 if (it)
                     mLikeViewModel.unlikePost(
                         userAuthentication.getCurrentUser()!!.uid,
-                        post.postId
+                        post.post.postId
                     )
                 else
                     mLikeViewModel.likePost(
                         userAuthentication.getCurrentUser()!!.uid,
-                        post.postId
+                        post.post.postId
                     )
             }
 
@@ -87,7 +87,12 @@ class PostFragment : Fragment() {
 
         binding.recyclerView.isNestedScrollingEnabled = false
 
-        mPostViewModel.getPostWithUserByUserId(userAuthentication.getCurrentUser()!!.uid).observe(viewLifecycleOwner) { posts ->
+//        mPostViewModel.getPostWithUserByUserId(userAuthentication.getCurrentUser()!!.uid).observe(viewLifecycleOwner) { posts ->
+//            Log.d("post", "$posts")
+//            postAdapter.setData(posts)
+//        }
+
+        mPostViewModel.getPostWithUserAndImage(userAuthentication.getCurrentUser()!!.uid).observe(viewLifecycleOwner) { posts ->
             Log.d("post", "$posts")
             postAdapter.setData(posts)
         }
