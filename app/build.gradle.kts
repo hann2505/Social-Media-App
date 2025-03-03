@@ -118,5 +118,10 @@ dependencies {
     implementation("com.github.bumptech.glide:glide:4.15.1")
     kapt("com.github.bumptech.glide:compiler:4.15.1")
 
+    //Dot indicator
+    implementation("androidx.core:core-ktx:1.12.0")
+    implementation("com.google.android.material:material:1.10.0")
+    implementation("com.tbuonomo:dotsindicator:5.0")
+
 
 }

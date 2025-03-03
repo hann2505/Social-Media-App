@@ -53,6 +53,7 @@ class PostAdapter : RecyclerView.Adapter<PostAdapter.PostViewHolder>() {
                 adapter.updateList(it)
             }
             binding.viewPager.adapter = adapter
+            binding.wormDot.attachTo(binding.viewPager)
         }
 
         fun setOnCommentClickListener(listener: () -> Unit) {
