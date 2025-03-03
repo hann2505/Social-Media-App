@@ -87,13 +87,10 @@ class PostFragment : Fragment() {
 
         binding.recyclerView.isNestedScrollingEnabled = false
 
-//        mPostViewModel.getPostWithUserByUserId(userAuthentication.getCurrentUser()!!.uid).observe(viewLifecycleOwner) { posts ->
-//            Log.d("post", "$posts")
-//            postAdapter.setData(posts)
-//        }
-
         mPostViewModel.getPostWithUserAndImage(userAuthentication.getCurrentUser()!!.uid).observe(viewLifecycleOwner) { posts ->
-            Log.d("post", "$posts")
+            posts.forEach {
+                Log.d("profile fragment", "postId: ${it.post.postId} and likes: ${it.postLike.size}")
+            }
             postAdapter.setData(posts)
         }
 

@@ -73,6 +73,8 @@ class UserProfileFragment : Fragment() {
         }
     }
 
+
+
     private fun onLikeClickListener() {
         adapter.setOnLikeClickListener { post ->
             mLikeViewModel.checkIfLiked(userAuthentication.getCurrentUser()!!.uid, post.post.postId).observeOnce(viewLifecycleOwner) {
@@ -142,12 +144,8 @@ class UserProfileFragment : Fragment() {
             false
         )
 
-//        mPostViewModel.getPostWithUserByUserId(args.user.userId).observe(viewLifecycleOwner) {
-//            adapter.setData(it)
-//        }
-
         mPostViewModel.getPostWithUserAndImage(args.user.userId).observe(viewLifecycleOwner) {
-
+            adapter.setData(it)
         }
 
         mLikeViewModel.getPostIdByUserId(userAuthentication.getCurrentUser()!!.uid).observe(viewLifecycleOwner) {
