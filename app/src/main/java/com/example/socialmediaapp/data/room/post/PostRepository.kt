@@ -1,6 +1,7 @@
 package com.example.socialmediaapp.data.room.post
 
 import androidx.lifecycle.LiveData
+import com.example.socialmediaapp.data.entity.Notification
 import com.example.socialmediaapp.data.entity.Post
 import com.example.socialmediaapp.data.entity.PostWithUser
 import com.example.socialmediaapp.data.entity.PostWithUserAndMedia
@@ -36,6 +37,11 @@ class PostRepository(
 
     fun getPostWithUserAndMediasByQuery(query: String): LiveData<List<PostWithUserAndMedia>> {
         return postDao.getPostWithUserAndMediasByQuery(query)
+
+    }
+
+    fun getNotificationByUserId(userId: String): LiveData<List<Notification>> {
+        return postDao.getNotification(userId)
 
     }
 

@@ -88,6 +88,7 @@ class PostRemoteDatabase @Inject constructor(
                         onSuccess(uploadedUrls)
                     }
                 }.addOnFailureListener { exception ->
+                    Log.d("Fail to upload", "Failed to upload image: $exception")
                     onFailure(exception)
                 }
             }

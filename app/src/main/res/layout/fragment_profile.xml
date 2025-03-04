@@ -16,44 +16,43 @@
             android:layout_height="match_parent"
             android:orientation="vertical"
             >
-
             <androidx.appcompat.widget.Toolbar
-        android:id="@+id/pf_toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:menu="@menu/pf_toolbar_menu">
-
-        <LinearLayout
-            android:layout_width="wrap_content"
+            android:id="@+id/pf_toolbar"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginTop="15dp"
-            android:id="@+id/back_to_home"
-            >
+            app:menu="@menu/pf_toolbar_menu">
 
-            <androidx.appcompat.widget.AppCompatImageButton
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:src="@drawable/ic_back"
-                android:background="?attr/selectableItemBackground"
-                android:scaleType="centerCrop"
-                android:id="@+id/back"
-                android:visibility="gone"
-                />
-
-            <TextView
-                android:id="@id/user_name"
+            <LinearLayout
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:text="@string/milet_music"
-                android:textSize="22sp"
-                android:textStyle="bold"
-                android:textColor="@color/black"
-                />
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="15dp"
+                android:id="@+id/back_to_home"
+                >
 
-        </LinearLayout>
+                <androidx.appcompat.widget.AppCompatImageButton
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:src="@drawable/ic_back"
+                    android:background="?attr/selectableItemBackground"
+                    android:scaleType="centerCrop"
+                    android:id="@+id/back"
+                    android:visibility="gone"
+                    />
 
-    </androidx.appcompat.widget.Toolbar>
+                <TextView
+                    android:id="@id/user_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="@string/milet_music"
+                    android:textSize="22sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/black"
+                    />
+
+            </LinearLayout>
+
+            </androidx.appcompat.widget.Toolbar>
 
             <LinearLayout
                 android:layout_width="match_parent"

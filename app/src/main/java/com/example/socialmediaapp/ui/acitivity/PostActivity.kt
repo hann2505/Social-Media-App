@@ -8,6 +8,7 @@ import android.provider.MediaStore
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
@@ -100,9 +101,14 @@ class PostActivity : AppCompatActivity() {
         }
 
         binding.post.setOnClickListener {
-            imageUris.let { uri ->
-                uploadPost(uri)
-                finish()
+            imageUris.let { uris ->
+                if (uris.isNotEmpty()) {
+                    uploadPost(uris)
+                    finish()
+                }
+                else {
+                    Toast.makeText(this, "Please select at least one image", Toast.LENGTH_SHORT).show()
+                }
             }
             Log.d("image picked", "imagePicker: $imageUris")
         }

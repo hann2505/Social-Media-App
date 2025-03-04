@@ -6,6 +6,7 @@ import androidx.room.Delete
 import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Upsert
+import com.example.socialmediaapp.data.entity.Notification
 import com.example.socialmediaapp.data.entity.Post
 import com.example.socialmediaapp.data.entity.PostWithUser
 import com.example.socialmediaapp.data.entity.PostWithUserAndMedia
@@ -70,4 +71,13 @@ interface PostDao {
     )
     fun getPostWithUserByText(query: String): LiveData<List<PostWithUser>>
 
+
+    @Query("SELECT User.userId, Post.postId, User.username, User.profilePictureUrl, Post.timestamp\n" +
+            "FROM Post\n" +
+            "INNER JOIN Follower ON Post.userId = Follower.followingId\n" +
+            "LEFT JOIN User ON User.userId = Post.userId\n" +
+            "WHERE Follower.followerId = :userId\n" +
+            "ORDER BY Post.timestamp DESC;"
+            )
+    fun getNotification(userId: String): LiveData<List<Notification>>
 }

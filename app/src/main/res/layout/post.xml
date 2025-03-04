@@ -4,7 +4,6 @@
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    android:layout_marginTop="5dp"
     android:background="@color/white"
     android:layout_marginBottom="5dp">
 
@@ -44,13 +43,12 @@
                 android:id="@+id/timestamp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="1d"
-                android:textSize="14sp"
-                android:textStyle="normal"
-                android:textColor="@color/gray"
-                android:layout_marginStart="20dp"
                 android:layout_gravity="center_vertical"
-                />
+                android:layout_marginStart="20dp"
+                android:text="1d"
+                android:textColor="@color/gray"
+                android:textSize="14sp"
+                android:textStyle="normal" />
 
 
 

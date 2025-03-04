@@ -48,7 +48,7 @@
     <string name="photos">Photos</string>
     <string name="videos">Videos</string>
     <string name="bookmark">Bookmark</string>
-    <string name="notification_sample">milet added a video to their stories</string>
+    <string name="notification_sample">%1$s shared a post</string>
     <string name="settings_and_activity">Settings and activity</string>
     <string name="add_account">Add account</string>
     <string name="log_out">Log out</string>
@@ -79,5 +79,7 @@
     <string name="followed">Followed</string>
     <string name="add_your_comment">Add your comment</string>
     <string name="comment">Comment</string>
+    <string name="new_notification">New</string>
+    <string name="early_notification">Early</string>
 
 </resources>

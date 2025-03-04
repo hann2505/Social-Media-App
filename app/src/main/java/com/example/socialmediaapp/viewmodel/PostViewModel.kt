@@ -7,6 +7,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.example.socialmediaapp.data.entity.Notification
 import com.example.socialmediaapp.data.entity.Post
 import com.example.socialmediaapp.data.entity.PostWithUser
 import com.example.socialmediaapp.data.entity.PostWithUserAndMedia
@@ -131,6 +132,10 @@ class PostViewModel@Inject constructor(
 
     fun getPostWithUserAndImageByQuery(query: String): LiveData<List<PostWithUserAndMedia>> {
         return postRepository.getPostWithUserAndMediasByQuery(query)
+    }
+
+    fun getNotificationByUserId(userId: String): LiveData<List<Notification>> {
+        return postRepository.getNotificationByUserId(userId)
     }
 
 }

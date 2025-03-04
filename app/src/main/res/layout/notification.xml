@@ -20,12 +20,29 @@
 
     </RelativeLayout>
 
-   <TextView
-       android:id="@+id/notification_tv"
-       android:layout_width="wrap_content"
-       android:layout_height="wrap_content"
-       android:text="@string/notification_sample"
-       android:textColor="@color/black"
-       android:layout_gravity="center_vertical" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_gravity="center_vertical">
+        <TextView
+            android:id="@+id/notification_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/notification_sample"
+            android:textColor="@color/black"
+            />
+
+        <TextView
+            android:id="@+id/timestamp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="1d"
+            android:textColor="@color/gray"
+            />
+
+    </LinearLayout>
+
+
 
 </LinearLayout>
