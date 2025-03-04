@@ -5,46 +5,41 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".ui.fragment.main.SearchFragment"
+    android:background="@color/white"
     android:orientation="vertical">
 
-    <androidx.appcompat.widget.Toolbar
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="10dp">
+        android:orientation="horizontal"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="15dp"
+        android:layout_marginBottom="10dp"
+        >
 
-        <LinearLayout
+        <androidx.appcompat.widget.SearchView
+            android:id="@+id/search_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginTop="10dp"
-            android:layout_marginStart="10dp"
-            android:layout_marginEnd="10dp"
-            >
+            app:queryHint="@string/search"
+            app:iconifiedByDefault="false"
+            style="@style/CustomSearchView"
+            android:background="@drawable/custom_search_view"
+            />
 
-            <androidx.appcompat.widget.SearchView
-                android:id="@+id/search_view"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                app:queryHint="@string/search"
-                android:layout_weight="1"
-                app:iconifiedByDefault="false"
-                style="@style/CustomSearchView"
-                android:background="@drawable/custom_search_view"
-                />
+<!--            <TextView-->
+<!--                android:id="@+id/cancel"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:text="@string/cancel"-->
+<!--                android:textColor="@color/gray"-->
+<!--                android:textSize="15sp"-->
+<!--                android:layout_marginStart="10dp"-->
+<!--                android:layout_gravity="center_vertical" />-->
 
-            <TextView
-                android:id="@+id/cancel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/cancel"
-                android:textColor="@color/gray"
-                android:textSize="15sp"
-                android:layout_marginStart="10dp"
-                android:layout_gravity="center_vertical" />
+    </LinearLayout>
 
-        </LinearLayout>
-
-    </androidx.appcompat.widget.Toolbar>
 
 <!--    <androidx.fragment.app.FragmentContainerView-->
 <!--        android:id="@+id/fragmentContainerView4"-->
