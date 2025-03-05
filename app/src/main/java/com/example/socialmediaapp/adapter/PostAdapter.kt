@@ -2,6 +2,7 @@ package com.example.socialmediaapp.adapter
 
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.core.net.toUri
 import androidx.recyclerview.widget.RecyclerView
@@ -18,6 +19,8 @@ class PostAdapter : RecyclerView.Adapter<PostAdapter.PostViewHolder>() {
     private var postList = listOf<PostWithUserAndMedia>()
     private var likedList = listOf<String>()
 
+    private var isNavigatedByNotification = false
+
     private var onCommentClickListener: ((PostWithUserAndMedia) -> Unit)? = null
 
     fun setOnCommentClickListener(listener: (PostWithUserAndMedia) -> Unit) {
@@ -28,6 +31,12 @@ class PostAdapter : RecyclerView.Adapter<PostAdapter.PostViewHolder>() {
 
     fun setOnLikeClickListener(listener: (PostWithUserAndMedia) -> Unit) {
         onLikeClickListener = listener
+    }
+
+    private var onBackClickListener: (() -> Unit)? = null
+
+    fun setOnBackClickListener(listener: () -> Unit) {
+        onBackClickListener = listener
     }
 
     inner class PostViewHolder(
@@ -42,6 +51,8 @@ class PostAdapter : RecyclerView.Adapter<PostAdapter.PostViewHolder>() {
             changeLikeButton(post)
             Glide.with(binding.userPfp).load(post.user.profilePictureUrl).into(binding.userPfp)
 
+            if (isNavigatedByNotification)
+                binding.backBtn.visibility = View.VISIBLE
         }
 
         fun setUpRecyclerView(post: PostWithUserAndMedia) {
@@ -64,6 +75,12 @@ class PostAdapter : RecyclerView.Adapter<PostAdapter.PostViewHolder>() {
 
         fun setOnLikeClickListener(listener: () -> Unit) {
             binding.likeBtn.setOnClickListener {
+                listener()
+            }
+        }
+
+        fun setOnBackClickListener(listener: () -> Unit) {
+            binding.backBtn.setOnClickListener {
                 listener()
             }
         }
@@ -105,6 +122,10 @@ class PostAdapter : RecyclerView.Adapter<PostAdapter.PostViewHolder>() {
             onLikeClickListener?.invoke(currentPost)
         }
 
+        holder.setOnBackClickListener {
+            onBackClickListener?.invoke()
+        }
+
         holder.setUpRecyclerView(currentPost)
     }
 
@@ -116,5 +137,9 @@ class PostAdapter : RecyclerView.Adapter<PostAdapter.PostViewHolder>() {
     fun setLikedList(likedList: List<String>) {
         this.likedList = likedList
         notifyDataSetChanged()
+    }
+
+    fun setIsNavigatedByNotification() {
+        isNavigatedByNotification = true
     }
 }

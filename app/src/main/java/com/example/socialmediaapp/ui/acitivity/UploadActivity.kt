@@ -1,10 +1,8 @@
 package com.example.socialmediaapp.ui.acitivity
 
-import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.provider.MediaStore
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
@@ -17,7 +15,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.bumptech.glide.Glide
 import com.example.socialmediaapp.R
 import com.example.socialmediaapp.adapter.PostImageAdapter
 import com.example.socialmediaapp.data.firebase.authentication.UserAuthentication
@@ -28,7 +25,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class PostActivity : AppCompatActivity() {
+class UploadActivity : AppCompatActivity() {
 
     private var _binding: ActivityPostBinding?= null
     private val binding get() = _binding!!

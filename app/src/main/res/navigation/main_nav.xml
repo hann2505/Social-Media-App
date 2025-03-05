@@ -58,7 +58,15 @@
         android:id="@+id/notificationFragment"
         android:name="com.example.socialmediaapp.ui.fragment.main.NotificationFragment"
         android:label="fragment_notification"
-        tools:layout="@layout/fragment_notification" />
+        tools:layout="@layout/fragment_notification" >
+        <action
+            android:id="@+id/action_notificationFragment_to_postFragment"
+            app:destination="@id/postFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_to_left"
+            app:popEnterAnim="@anim/silde_in_left"
+            app:popExitAnim="@anim/slide_to_right" />
+    </fragment>
     <fragment
         android:id="@+id/userProfileFragment"
         android:name="com.example.socialmediaapp.ui.fragment.main.UserProfileFragment"
@@ -75,10 +83,10 @@
             app:destination="@id/commentListBottomSheetDialog" />
     </fragment>
     <fragment
-        android:id="@+id/postFragment"
-        android:name="com.example.socialmediaapp.ui.fragment.profile.PostFragment"
+        android:id="@+id/postListFragment"
+        android:name="com.example.socialmediaapp.ui.fragment.profile.PostListFragment"
         android:label="fragment_post"
-        tools:layout="@layout/fragment_post" />
+        tools:layout="@layout/fragment_post_list" />
 
 
     <dialog
@@ -98,6 +106,28 @@
         <argument
             android:name="postId"
             app:argType="string" />
+        <action
+            android:id="@+id/action_commentListBottomSheetDialog_to_postFragment"
+            app:destination="@id/postFragment" />
     </dialog>
+    <fragment
+        android:id="@+id/postFragment"
+        android:name="com.example.socialmediaapp.ui.fragment.main.PostFragment"
+        android:label="post"
+        tools:layout="@layout/post" >
+        <action
+            android:id="@+id/action_postFragment_to_notificationFragment"
+            app:destination="@id/notificationFragment" />
+        <argument
+            android:name="postId"
+            app:argType="string" />
+        <argument
+            android:name="isNavigatedByNotification"
+            app:argType="boolean"
+            android:defaultValue="false" />
+        <action
+            android:id="@+id/action_postFragment_to_commentListBottomSheetDialog"
+            app:destination="@id/commentListBottomSheetDialog" />
+    </fragment>
 
 </navigation>

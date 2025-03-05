@@ -14,10 +14,10 @@ class NotificationAdapter(
 
     private val notifications = mutableListOf<Notification>()
 
-    private var onCancelClickListener: ((Notification) -> Unit)? = null
+    private var onItemClickListener: ((Notification) -> Unit)? = null
 
-    fun setOnCancelClickListener(listener: (Notification) -> Unit) {
-        onCancelClickListener = listener
+    fun setOnItemClickListener(listener: (Notification) -> Unit) {
+        onItemClickListener = listener
     }
 
     inner class PostViewHolder(
@@ -31,9 +31,6 @@ class NotificationAdapter(
             binding.timestamp.text = TimeConverter.convertTimestampToDateTime(notification.timestamp)
         }
 
-        fun setOnCancelClickListener(listener: () -> Unit) {
-
-        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostViewHolder {
@@ -51,8 +48,10 @@ class NotificationAdapter(
 
         holder.bindData(notifications[position])
 
-        holder.setOnCancelClickListener {
-
+        holder.itemView.setOnClickListener {
+            onItemClickListener?.let {
+                it(notifications[position])
+            }
         }
     }
 

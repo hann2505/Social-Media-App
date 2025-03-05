@@ -36,9 +36,9 @@ interface PostDao {
     @Query("SELECT * FROM Post WHERE userId = :userId ORDER BY timestamp DESC")
     fun getAllPostsWithUserAndMedias(userId: String): LiveData<List<PostWithUserAndMedia>>
 
-//    @Transaction
-//    @Query("SELECT * FROM Post WHERE postId = :postId ORDER BY timestamp DESC")
-//    fun getPostWithUserAndMedias(postId: String): LiveData<List<PostWithMedias>>
+    @Transaction
+    @Query("SELECT * FROM Post WHERE postId = :postId ORDER BY timestamp DESC")
+    fun getPostWithUserAndMedias(postId: String): LiveData<List<PostWithUserAndMedia>>
 
     @Transaction
     @Query("SELECT * FROM Post " +

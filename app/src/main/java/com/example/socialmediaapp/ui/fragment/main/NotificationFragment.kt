@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.socialmediaapp.R
 import com.example.socialmediaapp.adapter.NotificationAdapter
@@ -47,7 +48,19 @@ class NotificationFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         subscribeToRecyclerView()
+        onClickListener()
+    }
 
+    private fun onClickListener() {
+        earlyNotificationAdapter.setOnItemClickListener {
+            val action = NotificationFragmentDirections.actionNotificationFragmentToPostFragment(it.postId, true)
+            findNavController().navigate(action)
+        }
+
+        newNotificationAdapter.setOnItemClickListener {
+            val action = NotificationFragmentDirections.actionNotificationFragmentToPostFragment(it.postId, true)
+            findNavController().navigate(action)
+        }
     }
 
     private fun subscribeToRecyclerView() {

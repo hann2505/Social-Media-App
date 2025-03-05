@@ -5,7 +5,6 @@ import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat.startActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.navigation.fragment.NavHostFragment
@@ -108,7 +107,7 @@ class MainActivity : AppCompatActivity() {
                     true
                 }
                 R.id.addFragment -> {
-                    startActivity(Intent(this, PostActivity::class.java))
+                    startActivity(Intent(this, UploadActivity::class.java))
                     true
                 }
 

@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/pf_nav"
-    app:startDestination="@id/imageFragment">
+    app:startDestination="@id/postListFragment">
 
 
     <fragment
@@ -12,10 +12,10 @@
         android:label="fragment_bookmark"
         tools:layout="@layout/fragment_bookmark" />
     <fragment
-        android:id="@+id/imageFragment"
-        android:name="com.example.socialmediaapp.ui.fragment.profile.PostFragment"
-        android:label="fragment_image"
-        tools:layout="@layout/fragment_post" />
+        android:id="@+id/postListFragment"
+        android:name="com.example.socialmediaapp.ui.fragment.profile.PostListFragment"
+        android:label="fragment_post_list"
+        tools:layout="@layout/fragment_post_list" />
     <fragment
         android:id="@+id/videoFragment"
         android:name="com.example.socialmediaapp.ui.fragment.profile.VideoFragment"

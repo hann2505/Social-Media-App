@@ -32,7 +32,7 @@
             android:value="@string/google_app_id" />
 
         <activity
-            android:name=".ui.acitivity.PostActivity"
+            android:name=".ui.acitivity.UploadActivity"
             android:exported="false" />
         <activity
             android:name=".ui.acitivity.SearchActivity"
