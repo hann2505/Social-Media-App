@@ -12,6 +12,7 @@ import com.example.socialmediaapp.adapter.NotificationAdapter
 import com.example.socialmediaapp.data.firebase.authentication.UserAuthentication
 import com.example.socialmediaapp.databinding.FragmentNotificationBinding
 import com.example.socialmediaapp.viewmodel.PostViewModel
+import com.example.socialmediaapp.viewmodel.UserViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -24,20 +25,32 @@ class NotificationFragment : Fragment() {
     @Inject
     lateinit var userAuthentication: UserAuthentication
 
-    private val notificationAdapter = NotificationAdapter()
+    private val newNotificationAdapter = NotificationAdapter()
+    private val earlyNotificationAdapter = NotificationAdapter()
 
     private val nPostViewModel: PostViewModel by viewModels()
+    private val mUserViewModel: UserViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentNotificationBinding.inflate(inflater, container, false)
+
+        mUserViewModel.getUserInfoById(userAuthentication.getCurrentUser()!!.uid).observe(viewLifecycleOwner) {
+            binding.userName.text = it.username
+        }
+
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        subscribeToRecyclerView()
+
+    }
+
+    private fun subscribeToRecyclerView() {
         val earlyRecyclerView = binding.earlyNotificationRecyclerview
         val newRecyclerView = binding.newNotificationRecyclerview
 
@@ -47,11 +60,20 @@ class NotificationFragment : Fragment() {
             false
         )
 
-        nPostViewModel.getNotificationByUserId(userAuthentication.getCurrentUser()!!.uid).observe(viewLifecycleOwner) {
-            notificationAdapter.updateList(it)
+        newRecyclerView.layoutManager = LinearLayoutManager(
+            requireContext(),
+            LinearLayoutManager.VERTICAL,
+            false
+        )
+
+        nPostViewModel.getNewNotificationByUserId(userAuthentication.getCurrentUser()!!.uid).observe(viewLifecycleOwner) {
+            newNotificationAdapter.updateList(it)
+            newRecyclerView.adapter = newNotificationAdapter
         }
 
-        earlyRecyclerView.adapter = notificationAdapter
-//        newRecyclerView.adapter = notificationAdapter
+        nPostViewModel.getEarlyNotificationByUserId(userAuthentication.getCurrentUser()!!.uid).observe(viewLifecycleOwner) {
+            earlyNotificationAdapter.updateList(it)
+            earlyRecyclerView.adapter = earlyNotificationAdapter
+        }
     }
 }

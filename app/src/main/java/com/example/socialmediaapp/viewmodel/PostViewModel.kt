@@ -134,8 +134,12 @@ class PostViewModel@Inject constructor(
         return postRepository.getPostWithUserAndMediasByQuery(query)
     }
 
-    fun getNotificationByUserId(userId: String): LiveData<List<Notification>> {
-        return postRepository.getNotificationByUserId(userId)
+    fun getEarlyNotificationByUserId(userId: String): LiveData<List<Notification>> {
+        return postRepository.getEarlyNotificationByUserId(userId)
+    }
+
+    fun getNewNotificationByUserId(userId: String): LiveData<List<Notification>> {
+        return postRepository.getNewNotificationByUserId(userId)
     }
 
 }

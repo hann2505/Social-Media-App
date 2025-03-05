@@ -40,9 +40,12 @@ class PostRepository(
 
     }
 
-    fun getNotificationByUserId(userId: String): LiveData<List<Notification>> {
-        return postDao.getNotification(userId)
+    fun getEarlyNotificationByUserId(userId: String): LiveData<List<Notification>> {
+        return postDao.getEarlyNotification(userId)
 
     }
 
+    fun getNewNotificationByUserId(userId: String): LiveData<List<Notification>> {
+        return postDao.getNewNotification(userId)
+    }
 }

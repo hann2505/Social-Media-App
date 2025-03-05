@@ -19,6 +19,10 @@ object TimeConverter {
         return SimpleDateFormat("HH:mm", java.util.Locale.getDefault())
     }
 
+    private fun convertTimestampToDayGap(timestamp: Long): String {
+        return (((System.currentTimeMillis() - timestamp) / ONE_DAY_IN_MILLIS).toInt()).toString() + "d"
+    }
+
     private fun convertTimestampToDate(timestamp: Long): String {
         return dateFormatter().format(getDate(timestamp))
     }
@@ -28,12 +32,18 @@ object TimeConverter {
     }
 
     private fun hasOnDayGap(timestamp: Long): Boolean {
-        return System.currentTimeMillis() - timestamp >= ONE_DAY_IN_MILLIS
+        return System.currentTimeMillis() - timestamp >= ONE_DAY_IN_MILLIS && System.currentTimeMillis() - timestamp < 7 * ONE_DAY_IN_MILLIS
+    }
+
+    private fun hasOneWeekGap(timestamp: Long): Boolean {
+        return System.currentTimeMillis() - timestamp >= 7 * ONE_DAY_IN_MILLIS
     }
 
     fun convertTimestampToDateTime(timestamp: Long): String {
-        return if (hasOnDayGap(timestamp)) {
+        return if (hasOneWeekGap(timestamp)) {
             convertTimestampToDate(timestamp)
+        } else if (hasOnDayGap(timestamp)) {
+            convertTimestampToDayGap(timestamp)
         } else {
             convertTimestampToTime(timestamp)
         }

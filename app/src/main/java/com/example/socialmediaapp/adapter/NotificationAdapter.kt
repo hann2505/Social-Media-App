@@ -1,5 +1,6 @@
 package com.example.socialmediaapp.adapter
 
+import android.text.Html
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -24,7 +25,9 @@ class NotificationAdapter(
     ) : RecyclerView.ViewHolder(binding.root) {
 
         fun bindData(notification: Notification) {
-            binding.notificationTv.text = binding.root.context.getString(R.string.notification_sample, notification.username)
+            val text = binding.root.context.getString(R.string.notification_sample, "<b>${notification.username}</b>")
+            val styledText = Html.fromHtml(text, Html.FROM_HTML_MODE_LEGACY)
+            binding.notificationTv.text = styledText
             binding.timestamp.text = TimeConverter.convertTimestampToDateTime(notification.timestamp)
         }
 
