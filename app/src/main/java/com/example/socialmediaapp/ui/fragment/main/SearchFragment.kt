@@ -43,8 +43,6 @@ class SearchFragment : Fragment(), SearchView.OnQueryTextListener,
     ): View {
         _binding = FragmentSearchBinding.inflate(inflater, container, false)
         onItemClickListener()
-        mUserViewModel.fetchDataFromFirebase()
-        mFollowerViewModel.fetchDataFromFirebase()
 
         binding.recyclerView.layoutManager = LinearLayoutManager(
             requireContext(),

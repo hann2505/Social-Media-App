@@ -15,6 +15,7 @@
         />
 
     <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/user_pfp"
         android:layout_width="80dp"
         android:layout_height="80dp"
         android:src="@drawable/milet_pfp"
@@ -22,6 +23,7 @@
         />
 
     <TextView
+        android:id="@+id/edit_pfp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/edit_profile_picure"

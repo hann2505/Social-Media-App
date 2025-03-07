@@ -53,11 +53,6 @@ class ProfileFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentProfileBinding.inflate(inflater, container, false)
-        mUserViewModel.fetchDataFromFirebase()
-        setupToolbar()
-        replaceFragment()
-        showCurrentUserInfo()
-        displayBackButton()
 
         mPostViewModel.getPostWithUserAndImage(userAuthentication.getCurrentUser()!!.uid).observe(viewLifecycleOwner) {
             for (post in it) {
@@ -79,6 +74,31 @@ class ProfileFragment : Fragment() {
         }
 
         return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        setupToolbar()
+        replaceFragment()
+        displayBackButton()
+        showCurrentUserInfo()
+
+
+        binding.editProfileBtn.setOnClickListener {
+            val intent = Intent(requireActivity(), EditProfileActivity::class.java)
+            startActivity(intent)
+        }
+
+        binding.messageBtn.setOnClickListener {
+
+        }
+
+        binding.followers.setOnClickListener {
+
+        }
+
+
+
     }
 
     //* with this approach, app will show the clone user profile when current user is null

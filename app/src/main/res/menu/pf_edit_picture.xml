@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/library"
+        android:title="@string/choose_from_library"
+        android:icon="@drawable/ic_white_grid"
+        />
+
+    <item android:id="@+id/camera"
+        android:title="@string/camera"
+        android:icon="@drawable/ic_white_video"
+        />
+
+    <item android:id="@+id/bookmarkFragment"
+        android:title="@string/remove_your_current_picture"
+        android:icon="@drawable/ic_pf_bookmark"
+        />
+
+</menu>

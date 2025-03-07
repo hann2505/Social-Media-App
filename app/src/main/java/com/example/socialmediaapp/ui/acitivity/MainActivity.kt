@@ -45,8 +45,6 @@ class MainActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-        replaceFragment()
-        checkOnRealtimeDatabase()
 
         println("MainActivity: OnCreated")
 
@@ -54,14 +52,15 @@ class MainActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
+        replaceFragment()
         println("MainActivity: OnStart")
     }
 
     override fun onResume() {
         super.onResume()
-        checkIfUserLoggedIn()
         println("MainActivity: OnResume")
-
+        checkIfUserLoggedIn()
+        checkOnRealtimeDatabase()
     }
 
     override fun onPause() {

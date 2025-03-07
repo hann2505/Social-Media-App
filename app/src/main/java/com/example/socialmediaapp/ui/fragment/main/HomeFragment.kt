@@ -39,9 +39,7 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         println("HomeFragment: OnViewCreated")
-        mUserViewModel.fetchDataFromFirebase()
-        mPostViewModel.fetchDataFromFirebase()
-        mFollowerViewModel.fetchDataFromFirebase()
+
     }
 
     override fun onViewStateRestored(savedInstanceState: Bundle?) {

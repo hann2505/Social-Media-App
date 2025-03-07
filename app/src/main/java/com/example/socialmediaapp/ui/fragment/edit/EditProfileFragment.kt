@@ -1,5 +1,6 @@
 package com.example.socialmediaapp.ui.fragment.edit
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -8,6 +9,7 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import com.bumptech.glide.Glide
 import com.example.socialmediaapp.R
 import com.example.socialmediaapp.data.firebase.authentication.UserAuthentication
 import com.example.socialmediaapp.databinding.FragmentEditProfileBinding
@@ -31,7 +33,7 @@ class EditProfileFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentEditProfileBinding.inflate(inflater, container, false)
-        mUserViewModel.fetchDataFromFirebase()
+//        mUserViewModel.fetchDataFromFirebase()
         showCurrentUserInfo()
 
         binding.name.setOnClickListener {
@@ -54,6 +56,15 @@ class EditProfileFragment : Fragment() {
             requireActivity().finish()
         }
 
+        mUserViewModel.getUserInfoById(userAuthentication.getCurrentUser()!!.uid).observe(viewLifecycleOwner) { user ->
+            binding.editPfp.setOnClickListener {
+                val action = EditProfileFragmentDirections.actionEditProfileToEditProfilePictureBottomSheetDialog(user)
+                findNavController().navigate(action)
+            }
+        }
+
+
+
         return binding.root
     }
 
@@ -61,6 +72,10 @@ class EditProfileFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.toolBarEdPf.title.text = getString(R.string.edit_profile)
+
+        mUserViewModel.getUserInfoById(userAuthentication.getCurrentUser()!!.uid).observe(viewLifecycleOwner) { user ->
+            Glide.with(binding.userPfp).load(user.profilePictureUrl).into(binding.userPfp)
+        }
 
     }
 
@@ -75,7 +90,6 @@ class EditProfileFragment : Fragment() {
             } else {
                 binding.genderTv.text = getString(R.string.female)
             }
-
         }
     }
 

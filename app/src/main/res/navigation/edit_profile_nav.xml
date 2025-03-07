@@ -12,16 +12,35 @@
         tools:layout="@layout/fragment_edit_profile" >
         <action
             android:id="@+id/action_editProfile_to_editNameFragment"
-            app:destination="@id/editNameFragment" />
+            app:destination="@id/editNameFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_to_left"
+            app:popEnterAnim="@anim/silde_in_left"
+            app:popExitAnim="@anim/slide_to_right" />
         <action
             android:id="@+id/action_editProfile_to_editBioFragment"
-            app:destination="@id/editBioFragment" />
+            app:destination="@id/editBioFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_to_left"
+            app:popEnterAnim="@anim/silde_in_left"
+            app:popExitAnim="@anim/slide_to_right" />
         <action
             android:id="@+id/action_editProfile_to_editUserNameFragment"
-            app:destination="@id/editUserNameFragment" />
+            app:destination="@id/editUserNameFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_to_left"
+            app:popEnterAnim="@anim/silde_in_left"
+            app:popExitAnim="@anim/slide_to_right" />
         <action
             android:id="@+id/action_editProfile_to_editGenderFragment"
-            app:destination="@id/editGenderFragment" />
+            app:destination="@id/editGenderFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_to_left"
+            app:popEnterAnim="@anim/silde_in_left"
+            app:popExitAnim="@anim/slide_to_right" />
+        <action
+            android:id="@+id/action_editProfile_to_editProfilePictureBottomSheetDialog"
+            app:destination="@id/editProfilePictureBottomSheetDialog" />
     </fragment>
     <fragment
         android:id="@+id/editNameFragment"
@@ -59,4 +78,13 @@
             android:id="@+id/action_editGenderFragment_to_editProfile"
             app:destination="@id/editProfile" />
     </fragment>
+    <dialog
+        android:id="@+id/editProfilePictureBottomSheetDialog"
+        android:name="com.example.socialmediaapp.ui.fragment.edit.dialog.EditProfilePictureBottomSheetDialog"
+        android:label="fragment_edit_profile_picture_bottom_sheet_dialog"
+        tools:layout="@layout/fragment_edit_profile_picture_bottom_sheet_dialog" >
+        <argument
+            android:name="user"
+            app:argType="com.example.socialmediaapp.data.entity.User" />
+    </dialog>
 </navigation>

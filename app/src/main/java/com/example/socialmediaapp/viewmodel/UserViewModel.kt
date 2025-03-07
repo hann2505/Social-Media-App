@@ -1,6 +1,7 @@
 package com.example.socialmediaapp.viewmodel
 
 import android.app.Application
+import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
@@ -11,6 +12,7 @@ import com.example.socialmediaapp.data.room.database.AppDatabase
 import com.example.socialmediaapp.data.room.user.UserRepository
 import com.example.socialmediaapp.other.FirebaseChangeType
 import com.example.socialmediaapp.other.FirebaseChangeType.ADDED
+import com.example.socialmediaapp.other.FirebaseChangeType.MODIFIED
 import com.example.socialmediaapp.other.FirebaseChangeType.REMOVED
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -61,6 +63,12 @@ class UserViewModel @Inject constructor(
         }
     }
 
+    fun updateProfilePicture(userId: String, profilePicture: Uri) {
+        viewModelScope.launch(Dispatchers.IO) {
+            userRemoteDatabase.handlePfpUpload(userId, profilePicture)
+        }
+    }
+
     //* Retrieve Data
     fun deleteAllUser() {
         viewModelScope.launch(Dispatchers.IO) {
@@ -92,20 +100,24 @@ class UserViewModel @Inject constructor(
         return userRepository.getUserByName(name)
     }
 
+
+    //TODO fix this function, it doesn't listen for changes
     fun checkIfUserChanges() {
         viewModelScope.launch(Dispatchers.IO) {
             userRemoteDatabase.listenForUsersChanges { changeType, user ->
                 viewModelScope.launch(Dispatchers.IO) {
-                    Log.d("user", changeType.toString())
+                    Log.d("user_listener", changeType.toString())
                     when (changeType) {
-                        ADDED -> {
+                        ADDED, MODIFIED -> {
                             userRepository.upsertUser(user)
+                            Log.d("user_listener", "added: $user")
                         }
                         REMOVED -> {
                             userRepository.deleteUser(user)
+                            Log.d("user_listener", "deleted: $user")
                         }
                         else -> {}
-                        }                        }
+                    }                        }
                 }
 
 

@@ -17,6 +17,7 @@ interface PostDao {
     @Upsert
     suspend fun upsertAllPosts(posts: List<Post>)
 
+    //TODO upsert only one post
     @Upsert
     suspend fun upsertPost(post: Post)
 
