@@ -1,67 +1,62 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@drawable/background_bottom_sheet"
+    android:orientation="vertical"
     tools:context=".ui.fragment.edit.dialog.EditProfilePictureBottomSheetDialog">
 
-    <LinearLayout
+    <com.google.android.material.bottomsheet.BottomSheetDragHandleView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_margin="10dp">
 
-        <com.google.android.material.bottomsheet.BottomSheetDragHandleView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
-
-        <RelativeLayout
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/cancel"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="10dp">
+            android:text="@string/cancel"
+            android:textSize="15sp"
+            android:textColor="@color/black"/>
 
-            <TextView
-                android:id="@+id/cancel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/cancel"
-                android:textSize="15sp"
-                android:textColor="@color/black"/>
-
-            <TextView
-                android:id="@+id/done"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/done"
-                android:textSize="15sp"
-                android:textStyle="bold"
-                android:textColor="@color/dark_orange"
-                android:layout_alignParentEnd="true"/>
-
-        </RelativeLayout>
-
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/user_pfp"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:layout_margin="5dp"
-            android:src="@drawable/milet_pfp"
-            android:layout_marginTop="10dp"
-            android:layout_marginEnd="10dp"
-            android:layout_gravity="center_horizontal"
-            />
-
-        <com.google.android.material.navigation.NavigationView
-            android:id="@+id/navigation_view"
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/done"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:menu="@menu/pf_edit_picture"
-            android:background="@color/white"
-            app:itemTextColor="@color/black"
-            app:itemIconTint="@color/black"/>
+            android:text="@string/done"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            android:textColor="@color/dark_orange"
+            android:layout_alignParentEnd="true"/>
 
-    </LinearLayout>
+    </RelativeLayout>
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/user_pfp"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_margin="5dp"
+        android:src="@drawable/milet_pfp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_gravity="center_horizontal"
+        />
+
+    <com.google.android.material.navigation.NavigationView
+        android:id="@+id/navigation_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:menu="@menu/pf_edit_picture"
+        android:background="@color/white"
+        app:itemTextColor="@color/black"
+        app:itemIconTint="@color/black"/>
 
 
-</androidx.cardview.widget.CardView>
+
+</LinearLayout>

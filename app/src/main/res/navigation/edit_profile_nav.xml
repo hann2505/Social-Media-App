@@ -78,7 +78,7 @@
             android:id="@+id/action_editGenderFragment_to_editProfile"
             app:destination="@id/editProfile" />
     </fragment>
-    <dialog
+    <fragment
         android:id="@+id/editProfilePictureBottomSheetDialog"
         android:name="com.example.socialmediaapp.ui.fragment.edit.dialog.EditProfilePictureBottomSheetDialog"
         android:label="fragment_edit_profile_picture_bottom_sheet_dialog"
@@ -86,5 +86,5 @@
         <argument
             android:name="user"
             app:argType="com.example.socialmediaapp.data.entity.User" />
-    </dialog>
+    </fragment>
 </navigation>
