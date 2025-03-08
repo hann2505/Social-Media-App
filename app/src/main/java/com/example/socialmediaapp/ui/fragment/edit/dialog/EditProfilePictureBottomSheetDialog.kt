@@ -98,25 +98,29 @@ class EditProfilePictureBottomSheetDialog : Fragment() {
         pickImageLauncher.launch("image/*")
     }
 
-    private val cameraLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-        if (result.resultCode == RESULT_OK) {
-            val imageBitmap = result.data!!.extras!!.get("data") as Bitmap
-            binding.userPfp.setImageBitmap(imageBitmap) // Set the captured image to an ImageView
-            userPfp = createImageUri(imageBitmap)
+    private val cameraLauncher = registerForActivityResult(ActivityResultContracts.TakePicture()) { success ->
+        if (success) {
+            userPfp.let {
+//                userPfp = createImageUri(userPfpBitmap)
+                binding.userPfp.setImageURI(it)
+            }
         }
     }
 
 
     private fun openCamera() {
-        val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-        cameraLauncher.launch(intent)
+        userPfp = createImageUri()
+        userPfp.let { uri ->
+            cameraLauncher.launch(uri)
+        }
     }
 
-    private fun createImageUri(bitmap: Bitmap): Uri {
+    private fun createImageUri(): Uri {
         val file = File(requireContext().cacheDir, "profile_picture.jpg")
-        file.outputStream().use { outputStream ->
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream) // Save bitmap to file
-        }
+//        file.outputStream().use { outputStream ->
+//            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream) // Save bitmap to file
+//        }
+//
         return FileProvider.getUriForFile(requireContext(), "${requireContext().packageName}.provider", file)
     }
 }
