@@ -20,14 +20,14 @@
             app:destination="@id/userProfileFragment"
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_to_left"
-            app:popEnterAnim="@anim/silde_in_left"
+            app:popEnterAnim="@anim/slide_in_left"
             app:popExitAnim="@anim/slide_to_right" />
         <action
             android:id="@+id/action_searchFragment_to_profileFragment"
             app:destination="@id/profileFragment"
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_to_left"
-            app:popEnterAnim="@anim/silde_in_left"
+            app:popEnterAnim="@anim/slide_in_left"
             app:popExitAnim="@anim/slide_to_right" />
         <action
             android:id="@+id/action_searchFragment_to_commentListBottomSheetDialog"
@@ -64,7 +64,7 @@
             app:destination="@id/postFragment"
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_to_left"
-            app:popEnterAnim="@anim/silde_in_left"
+            app:popEnterAnim="@anim/slide_in_left"
             app:popExitAnim="@anim/slide_to_right" />
     </fragment>
     <fragment
