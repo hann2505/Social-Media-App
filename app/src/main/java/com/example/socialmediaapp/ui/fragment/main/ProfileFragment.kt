@@ -10,17 +10,20 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewTreeObserver
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.navigation.ui.setupWithNavController
+import androidx.viewpager2.widget.ViewPager2.ScrollState
 import com.bumptech.glide.Glide
 import com.example.socialmediaapp.R
 import com.example.socialmediaapp.data.entity.User
 import com.example.socialmediaapp.data.firebase.authentication.UserAuthentication
 import com.example.socialmediaapp.databinding.FragmentProfileBinding
+import com.example.socialmediaapp.other.Constant.SCROLL_POSITION
 import com.example.socialmediaapp.ui.acitivity.EditProfileActivity
 import com.example.socialmediaapp.ui.acitivity.SettingActivity
 import com.example.socialmediaapp.viewmodel.FollowerViewModel
@@ -83,6 +86,17 @@ class ProfileFragment : Fragment() {
         displayBackButton()
         showCurrentUserInfo()
 
+        savedInstanceState?.let {
+            val scrollPosition = it.getInt(SCROLL_POSITION, 0)
+            binding.userPf.viewTreeObserver.addOnGlobalLayoutListener(object :
+                ViewTreeObserver.OnGlobalLayoutListener {
+                override fun onGlobalLayout() {
+                    binding.userPf.scrollTo(0, scrollPosition)
+                    binding.userPf.viewTreeObserver.removeOnGlobalLayoutListener(this)
+                }
+            })
+        }
+
 
         binding.editProfileBtn.setOnClickListener {
             val intent = Intent(requireActivity(), EditProfileActivity::class.java)
@@ -97,8 +111,11 @@ class ProfileFragment : Fragment() {
 
         }
 
+    }
 
-
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putInt(SCROLL_POSITION, binding.userPf.scrollY)
     }
 
     //* with this approach, app will show the clone user profile when current user is null

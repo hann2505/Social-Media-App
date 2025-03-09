@@ -1,20 +1,14 @@
 package com.example.socialmediaapp.ui.fragment.edit.dialog
 
-import android.app.Activity
-import android.app.Activity.RESULT_OK
-import android.app.Dialog
-import android.content.Intent
-import android.graphics.Bitmap
+
 import android.net.Uri
 import android.os.Bundle
-import android.provider.MediaStore
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.FileProvider
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
@@ -23,14 +17,13 @@ import com.example.socialmediaapp.data.firebase.authentication.UserAuthenticatio
 import com.example.socialmediaapp.databinding.FragmentEditProfilePictureBottomSheetDialogBinding
 import com.example.socialmediaapp.extensions.LiveDataExtensions.observeOnce
 import com.example.socialmediaapp.viewmodel.UserViewModel
-import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
 import java.io.File
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class EditProfilePictureBottomSheetDialog : Fragment() {
+class EditProfilePictureBottomSheetDialog : BottomSheetDialogFragment() {
 
     private var _binding: FragmentEditProfilePictureBottomSheetDialogBinding? = null
     private val binding get() = _binding!!
@@ -40,8 +33,8 @@ class EditProfilePictureBottomSheetDialog : Fragment() {
     @Inject
     lateinit var userAuthentication: UserAuthentication
 
-    private lateinit var userPfp: Uri
-    private lateinit var userPfpBitmap: Bitmap
+    private var userPfp: Uri? = null
+    private var setAsDefault: Boolean = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -59,7 +52,7 @@ class EditProfilePictureBottomSheetDialog : Fragment() {
             Glide.with(this).load(it.profilePictureUrl).into(binding.userPfp)
         }
 
-        binding.navigationView.setNavigationItemSelectedListener {
+        binding.navigationView.setNavigationItemSelectedListener { it ->
             when (it.itemId) {
                 R.id.library -> {
                     pickImage()
@@ -69,7 +62,18 @@ class EditProfilePictureBottomSheetDialog : Fragment() {
                     openCamera()
                     true
                 }
-                R.id.bookmarkFragment -> {
+                R.id.set_default -> {
+                    mUserViewModel.getUserInfoById(userAuthentication.getCurrentUser()!!.uid).observeOnce(viewLifecycleOwner) {
+                        binding.userPfp.setImageResource(
+                            if (it.gender)
+                                R.drawable.man
+                            else
+                                R.drawable.woman
+                        )
+
+                    }
+
+                    setAsDefault = true
                     true
                 }
                 else -> false
@@ -77,13 +81,15 @@ class EditProfilePictureBottomSheetDialog : Fragment() {
         }
 
         binding.done.setOnClickListener {
-            mUserViewModel.updateProfilePicture(userAuthentication.getCurrentUser()!!.uid, userPfp)
+            mUserViewModel.getUserInfoById(userAuthentication.getCurrentUser()!!.uid).observeOnce(viewLifecycleOwner) {
+                mUserViewModel.updateProfilePicture(it.userId, it.gender, userPfp, setAsDefault)
+            }
             Log.d("final userPfp Uri", "onViewCreated: $userPfp")
-            findNavController().popBackStack()
+            dismiss()
         }
 
         binding.cancel.setOnClickListener {
-            findNavController().popBackStack()
+            dismiss()
         }
     }
 
@@ -101,7 +107,6 @@ class EditProfilePictureBottomSheetDialog : Fragment() {
     private val cameraLauncher = registerForActivityResult(ActivityResultContracts.TakePicture()) { success ->
         if (success) {
             userPfp.let {
-//                userPfp = createImageUri(userPfpBitmap)
                 binding.userPfp.setImageURI(it)
             }
         }
@@ -117,10 +122,6 @@ class EditProfilePictureBottomSheetDialog : Fragment() {
 
     private fun createImageUri(): Uri {
         val file = File(requireContext().cacheDir, "profile_picture.jpg")
-//        file.outputStream().use { outputStream ->
-//            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream) // Save bitmap to file
-//        }
-//
         return FileProvider.getUriForFile(requireContext(), "${requireContext().packageName}.provider", file)
     }
 }

@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ui.fragment.main.ProfileFragment"
+    android:id="@+id/user_pf"
     android:orientation="vertical">
 
     <androidx.core.widget.NestedScrollView
@@ -72,7 +73,7 @@
                         android:layout_width="80dp"
                         android:layout_height="80dp"
                         android:layout_margin="5dp"
-                        android:src="@drawable/milet_pfp"
+                        android:src="@drawable/man"
                         />
 
                 </RelativeLayout>

@@ -77,7 +77,9 @@ interface PostDao {
             "FROM Post\n" +
             "INNER JOIN Follower ON Post.userId = Follower.followingId\n" +
             "LEFT JOIN User ON User.userId = Post.userId\n" +
-            "WHERE Follower.followerId = :userId AND strftime('%s', 'now') * 1000 - post.timestamp >= 86400000\n" +
+            "WHERE Follower.followerId = :userId " +
+            "AND strftime('%s', 'now') * 1000 - post.timestamp >= 86400000\n" +
+            "AND Follower.timestamp <= post.timestamp\n" +
             "ORDER BY Post.timestamp DESC;"
             )
     fun getEarlyNotification(userId: String): LiveData<List<Notification>>
@@ -86,7 +88,9 @@ interface PostDao {
             "FROM Post\n" +
             "INNER JOIN Follower ON Post.userId = Follower.followingId\n" +
             "LEFT JOIN User ON User.userId = Post.userId\n" +
-            "WHERE Follower.followerId = :userId AND strftime('%s', 'now') * 1000 - post.timestamp < 86400000\n" +
+            "WHERE Follower.followerId = :userId " +
+            "AND strftime('%s', 'now') * 1000 - post.timestamp < 86400000\n" +
+            "AND Follower.timestamp <= post.timestamp\n" +
             "ORDER BY Post.timestamp DESC;"
     )
     fun getNewNotification(userId: String): LiveData<List<Notification>>

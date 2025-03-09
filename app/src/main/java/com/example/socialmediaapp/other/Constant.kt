@@ -11,6 +11,7 @@ object Constant {
     val COLLECTION_COMMENT_LIKES = "Comment Like"
     val COLLECTION_FOLLOWERS = "Follower"
     val COLLECTION_FOLLOWING = "Following"
+    val SCROLL_POSITION = "Scroll position"
 
     val mediaTypeMap = hashMapOf(
         "image" to MediaType.IMAGE,

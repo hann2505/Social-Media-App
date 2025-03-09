@@ -1,9 +1,11 @@
 package com.example.socialmediaapp.ui.fragment.main
 
 import android.os.Bundle
+import android.os.Parcelable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewTreeObserver
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -13,6 +15,7 @@ import com.example.socialmediaapp.adapter.PostAdapter
 import com.example.socialmediaapp.data.firebase.authentication.UserAuthentication
 import com.example.socialmediaapp.databinding.FragmentPostBinding
 import com.example.socialmediaapp.extensions.LiveDataExtensions.observeOnce
+import com.example.socialmediaapp.other.Constant.SCROLL_POSITION
 import com.example.socialmediaapp.viewmodel.LikeViewModel
 import com.example.socialmediaapp.viewmodel.PostViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -28,6 +31,8 @@ class PostFragment: Fragment() {
 
     private val mPostViewModel: PostViewModel by viewModels()
     private val mLikeViewModel: LikeViewModel by viewModels()
+
+    private var recyclerViewState: Parcelable? = null
 
     @Inject
     lateinit var userAuthentication: UserAuthentication
@@ -51,6 +56,21 @@ class PostFragment: Fragment() {
         }
         subscribeToRecyclerView()
         onClickListeners()
+
+        binding.recyclerView.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
+            override fun onGlobalLayout() {
+                recyclerViewState?.let {
+                    binding.recyclerView.layoutManager?.onRestoreInstanceState(it)
+                }
+                binding.recyclerView.viewTreeObserver.removeOnGlobalLayoutListener(this)
+            }
+        })
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        recyclerViewState = binding.recyclerView.layoutManager?.onSaveInstanceState()
+        outState.putParcelable("RECYCLER_VIEW_STATE", recyclerViewState)
     }
 
     private fun subscribeToRecyclerView() {

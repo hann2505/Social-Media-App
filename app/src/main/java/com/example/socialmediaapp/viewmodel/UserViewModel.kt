@@ -63,9 +63,18 @@ class UserViewModel @Inject constructor(
         }
     }
 
-    fun updateProfilePicture(userId: String, profilePicture: Uri) {
+    fun updateProfilePicture(userId: String, gender: Boolean, profilePicture: Uri?, setAsDefault: Boolean) {
         viewModelScope.launch(Dispatchers.IO) {
-            userRemoteDatabase.handlePfpUpload(userId, profilePicture)
+            if (setAsDefault)
+                userRemoteDatabase.setProfilePictureAsDefault(userId, gender)
+            else
+                userRemoteDatabase.handlePfpUpload(userId, profilePicture)
+        }
+    }
+
+    fun setProfilePictureAsDefault(userId: String, gender: Boolean) {
+        viewModelScope.launch(Dispatchers.IO) {
+            userRemoteDatabase.setProfilePictureAsDefault(userId, gender)
         }
     }
 

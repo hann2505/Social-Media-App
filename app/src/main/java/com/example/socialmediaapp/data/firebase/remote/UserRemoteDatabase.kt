@@ -2,6 +2,7 @@ package com.example.socialmediaapp.data.firebase.remote
 
 import android.net.Uri
 import android.util.Log
+import androidx.core.net.toUri
 import com.example.socialmediaapp.data.entity.User
 import com.example.socialmediaapp.other.Constant.COLLECTION_USERS
 import com.example.socialmediaapp.other.FirebaseChangeType
@@ -17,7 +18,7 @@ import javax.inject.Inject
 
 class UserRemoteDatabase @Inject constructor(
     db: FirebaseFirestore,
-    private val storage: FirebaseStorage
+    storage: FirebaseStorage
 ) {
     private val usersCollection = db.collection(COLLECTION_USERS)
     private val storageRef = storage.reference
@@ -72,10 +73,26 @@ class UserRemoteDatabase @Inject constructor(
         }
     }
 
-    fun handlePfpUpload(userId: String, imageUri: Uri) {
+    fun setProfilePictureAsDefault(userId: String, gender: Boolean) {
+        val imageRef = if (gender) {
+            storageRef.child("pfp/default/man.png")
+        } else {
+            storageRef.child("pfp/default/woman.png")
+        }
+        imageRef.downloadUrl.addOnSuccessListener { url ->
+            Log.d("UserPfp", "Success: $url")
+            CoroutineScope(Dispatchers.IO).launch {
+                updateProfilePicture(userId, url.toString())
+            }
+        }.addOnFailureListener { exception ->
+            Log.d("UserPfp", "Failed to get download URL: $exception")
+        }
+    }
+
+    fun handlePfpUpload(userId: String, imageUri: Uri?) {
         uploadPfpToStorage(
             "pfp/$userId/${System.currentTimeMillis()}.jpg",
-            imageUri,
+            imageUri.toString().toUri(),
             onSuccess = { downloadUrl ->
                 Log.d("Upload", "Success: $downloadUrl")
                 CoroutineScope(Dispatchers.IO).launch {
