@@ -6,21 +6,36 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.activity.viewModels
 import androidx.fragment.app.viewModels
-import com.example.socialmediaapp.R
-import com.example.socialmediaapp.data.entity.User
+import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.socialmediaapp.adapter.PostAdapter
+import com.example.socialmediaapp.data.firebase.authentication.UserAuthentication
+import com.example.socialmediaapp.databinding.FragmentHomeBinding
+import com.example.socialmediaapp.extensions.LiveDataExtensions.observeOnce
 import com.example.socialmediaapp.viewmodel.FollowerViewModel
+import com.example.socialmediaapp.viewmodel.LikeViewModel
 import com.example.socialmediaapp.viewmodel.PostViewModel
 import com.example.socialmediaapp.viewmodel.UserViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class HomeFragment : Fragment() {
 
+
+    private var _binding: FragmentHomeBinding? = null
+    private val binding get() = _binding!!
+
     private val mUserViewModel: UserViewModel by viewModels()
     private val mPostViewModel: PostViewModel by viewModels()
     private val mFollowerViewModel: FollowerViewModel by viewModels()
+    private val mLikeViewModel: LikeViewModel by viewModels()
+
+    @Inject
+    lateinit var userAuthentication: UserAuthentication
+
+    private val postAdapter = PostAdapter()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -31,15 +46,17 @@ class HomeFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
+        _binding = FragmentHomeBinding.inflate(inflater, container, false)
 
-        return inflater.inflate(R.layout.fragment_home, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         println("HomeFragment: OnViewCreated")
-
+        setUpRecyclerView()
+        onClickListener()
     }
 
     override fun onViewStateRestored(savedInstanceState: Bundle?) {
@@ -90,5 +107,43 @@ class HomeFragment : Fragment() {
     override fun onAttach(context: Context) {
         super.onAttach(context)
         println("HomeFragment: OnAttach")
+    }
+
+    private fun setUpRecyclerView() {
+        binding.postRecyclerView.apply {
+            layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+        }
+
+        mPostViewModel.getPostWithUserAndImageOnNewFeed().observe(viewLifecycleOwner) {
+            postAdapter.setData(it)
+            binding.postRecyclerView.adapter = postAdapter
+        }
+
+        mLikeViewModel.getPostIdByUserId(userAuthentication.getCurrentUser()!!.uid).observe(viewLifecycleOwner) {
+            postAdapter.setLikedList(it)
+        }
+    }
+
+    private fun onClickListener() {
+        postAdapter.setOnLikeClickListener { post ->
+            mLikeViewModel.checkIfLiked(userAuthentication.getCurrentUser()!!.uid, post.post.postId).observeOnce(viewLifecycleOwner) {
+                if (it)
+                    mLikeViewModel.unlikePost(
+                        userAuthentication.getCurrentUser()!!.uid,
+                        post.post.postId
+                    )
+                else
+                    mLikeViewModel.likePost(
+                        userAuthentication.getCurrentUser()!!.uid,
+                        post.post.postId
+                    )
+            }
+
+        }
+
+        postAdapter.setOnCommentClickListener {
+            val action = HomeFragmentDirections.actionHomeFragmentToCommentListBottomSheetDialog(it.post.postId)
+            findNavController().navigate(action)
+        }
     }
 }

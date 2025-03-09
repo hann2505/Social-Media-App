@@ -42,6 +42,17 @@ interface PostDao {
     fun getPostWithUserAndMedias(postId: String): LiveData<List<PostWithUserAndMedia>>
 
     @Transaction
+    @Query("SELECT Post.*\n" +
+            "FROM Post\n" +
+            "LEFT JOIN PostLike ON PostLike.postId = Post.postId\n" +
+            "GROUP BY Post.postId\n" +
+            "HAVING COUNT(PostLike.likeId) > 0\n" +
+            "ORDER BY COUNT(PostLike.likeId) DESC, timestamp DESC\n" +
+            "LIMIT 10 OFFSET 0;")
+    fun getPostWithUserAndMediasOnNewFeed(): LiveData<List<PostWithUserAndMedia>>
+
+
+    @Transaction
     @Query("SELECT * FROM Post " +
             "JOIN User ON Post.userId = User.userId " +
             "WHERE user.username LIKE '%' || :query || '%' OR post.content LIKE '%' || :query || '%'" +

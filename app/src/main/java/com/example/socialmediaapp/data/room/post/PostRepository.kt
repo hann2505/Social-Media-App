@@ -44,6 +44,10 @@ class PostRepository(
 
     }
 
+    fun getPostsWithUserAndMediasOnNewFeed(): LiveData<List<PostWithUserAndMedia>> {
+        return postDao.getPostWithUserAndMediasOnNewFeed()
+    }
+
     fun getEarlyNotificationByUserId(userId: String): LiveData<List<Notification>> {
         return postDao.getEarlyNotification(userId)
 

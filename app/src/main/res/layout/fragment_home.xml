@@ -35,7 +35,7 @@
             android:orientation="horizontal"/>
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/status_post"
+            android:id="@+id/post_recycler_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"/>
