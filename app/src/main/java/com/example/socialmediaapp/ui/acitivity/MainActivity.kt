@@ -7,7 +7,9 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.navigation.NavOptions
 import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.setupWithNavController
 import com.example.socialmediaapp.R
 import com.example.socialmediaapp.data.firebase.authentication.UserAuthentication
@@ -97,12 +99,20 @@ class MainActivity : AppCompatActivity() {
         bottomNavigationView.setupWithNavController(navController)
 
         binding.bottomNavigationBarLayout.bottomNavigationBar.setOnItemSelectedListener {
+            val navOptions = NavOptions.Builder()
+                .setEnterAnim(R.anim.fade_in)
+                .setExitAnim(R.anim.fade_out)
+                .setPopEnterAnim(R.anim.fade_in)
+                .setPopExitAnim(R.anim.fade_out)
+                .build()
+
             when (it.itemId) {
                 R.id.homeFragment,
                 R.id.searchFragment,
                 R.id.notificationFragment,
                 R.id.profileFragment -> {
-                    navController.navigate(it.itemId)
+                    navController.navigate(it.itemId, null, navOptions)
+//                    NavigationUI.onNavDestinationSelected(it, navController)
                     true
                 }
                 R.id.addFragment -> {
