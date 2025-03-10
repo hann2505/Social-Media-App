@@ -57,6 +57,13 @@ class HomeFragment : Fragment() {
         println("HomeFragment: OnViewCreated")
         setUpRecyclerView()
         onClickListener()
+
+        mPostViewModel.fetchPostFromFirebase()
+
+        binding.swipeRefreshLayout.setOnRefreshListener {
+            mPostViewModel.fetchPostFromFirebase()
+            binding.swipeRefreshLayout.isRefreshing = false
+        }
     }
 
     override fun onViewStateRestored(savedInstanceState: Bundle?) {

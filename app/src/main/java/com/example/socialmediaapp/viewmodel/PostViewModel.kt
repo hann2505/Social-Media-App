@@ -76,6 +76,42 @@ class PostViewModel@Inject constructor(
         return postRepository.getPostWithUserByUserId(userId)
     }
 
+    fun getPostChangesOnceFromFirebase() {
+        viewModelScope.launch(Dispatchers.IO) {
+            postRemoteDatabase.postChangesOnce { changeType, post ->
+                viewModelScope.launch(Dispatchers.IO) {
+                    when (changeType) {
+                        ADDED, MODIFIED -> {
+                            postRepository.upsertPost(post)
+                        }
+                        REMOVED -> {
+                            postRepository.deletePost(post)
+                        }
+                        else -> {}
+                    }
+                }
+            }
+        }
+    }
+
+    fun getPostMediaChangeOnceFromFirebase() {
+        viewModelScope.launch(Dispatchers.IO) {
+            postRemoteDatabase.postMediaChangesOnce { changeType, post ->
+                viewModelScope.launch(Dispatchers.IO) {
+                    when (changeType) {
+                        ADDED, MODIFIED -> {
+                            postMediaRepository.upsertPostMedia(post)
+                        }
+                        REMOVED -> {
+                            postMediaRepository.deletePostMedia(post)
+                        }
+                        else -> {}
+                    }
+                }
+            }
+        }
+    }
+
     fun checkIfPostChanges() {
         viewModelScope.launch(Dispatchers.IO) {
             postRemoteDatabase.listenForPostChanges { changeType, post ->
@@ -96,6 +132,13 @@ class PostViewModel@Inject constructor(
                     }
                 }
             }
+        }
+    }
+
+    fun fetchPostFromFirebase() {
+        viewModelScope.launch(Dispatchers.IO) {
+            getPostChangesOnceFromFirebase()
+            getPostMediaChangeOnceFromFirebase()
         }
     }
 

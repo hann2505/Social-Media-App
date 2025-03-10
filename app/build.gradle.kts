@@ -123,5 +123,8 @@ dependencies {
     implementation("com.google.android.material:material:1.10.0")
     implementation("com.tbuonomo:dotsindicator:5.0")
 
+    //Swipe to refresh
+    implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
+
 
 }

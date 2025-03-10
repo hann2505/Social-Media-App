@@ -56,6 +56,14 @@ class UserProfileFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         showUserInfo(args.user)
+
+        mPostViewModel.fetchPostFromFirebase()
+
+        binding.swipeRefreshLayout.setOnRefreshListener {
+            mPostViewModel.fetchPostFromFirebase()
+            binding.swipeRefreshLayout.isRefreshing = false
+        }
+
         adapter.setOnCommentClickListener {
             val action = UserProfileFragmentDirections.actionUserProfileFragmentToCommentListBottomSheetDialog(it.post.postId)
             findNavController().navigate(action)

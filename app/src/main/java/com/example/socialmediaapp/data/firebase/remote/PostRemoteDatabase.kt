@@ -5,7 +5,6 @@ import android.util.Log
 import com.example.socialmediaapp.data.entity.MediaType
 import com.example.socialmediaapp.data.entity.Post
 import com.example.socialmediaapp.data.entity.PostMedia
-import com.example.socialmediaapp.data.entity.PostWithUserAndMedia
 import com.example.socialmediaapp.extensions.TimeConverter
 import com.example.socialmediaapp.other.Constant.COLLECTION_POSTS
 import com.example.socialmediaapp.other.Constant.COLLECTION_POST_MEDIAS
@@ -132,6 +131,44 @@ class PostRemoteDatabase @Inject constructor(
                 Log.e("Upload", "Failed to upload image", exception)
             }
         )
+    }
+
+    fun postChangesOnce(onPostChange: (FirebaseChangeType, Post) -> Unit) {
+        postsCollection.get().addOnSuccessListener { snapshots ->
+            for (docChange in snapshots.documentChanges) {
+                val post = docChange.document.toObject(Post::class.java)
+                val result = when (docChange.type) {
+                    DocumentChange.Type.ADDED -> ADDED
+                    DocumentChange.Type.REMOVED -> REMOVED
+                    DocumentChange.Type.MODIFIED -> MODIFIED
+                    else -> NOT_DETECTED
+                }
+                onPostChange(result, post)
+            }
+        }
+            .addOnFailureListener { exception ->
+                Log.e("PostRemoteDatabase", "Failed to fetch posts", exception)
+            }
+
+    }
+
+    fun postMediaChangesOnce(onPostChange: (FirebaseChangeType, PostMedia) -> Unit) {
+        postMediasCollection.get().addOnSuccessListener { snapshots ->
+            for (docChange in snapshots.documentChanges) {
+                val post = docChange.document.toObject(PostMedia::class.java)
+                val result = when (docChange.type) {
+                    DocumentChange.Type.ADDED -> ADDED
+                    DocumentChange.Type.REMOVED -> REMOVED
+                    DocumentChange.Type.MODIFIED -> MODIFIED
+                    else -> NOT_DETECTED
+                }
+                onPostChange(result, post)
+            }
+        }
+            .addOnFailureListener { exception ->
+                Log.e("PostRemoteDatabase", "Failed to fetch posts", exception)
+            }
+
     }
 
 

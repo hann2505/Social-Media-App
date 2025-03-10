@@ -16,6 +16,8 @@ import com.example.socialmediaapp.extensions.TimeConverter
 
 class PostAdapter : RecyclerView.Adapter<PostAdapter.PostViewHolder>() {
 
+    private val adapter = PostImageViewPagerAdapter()
+
     private var postList = listOf<PostWithUserAndMedia>()
     private var likedList = listOf<String>()
 
@@ -56,7 +58,6 @@ class PostAdapter : RecyclerView.Adapter<PostAdapter.PostViewHolder>() {
         }
 
         fun setUpRecyclerView(post: PostWithUserAndMedia) {
-            val adapter = PostImageViewPagerAdapter()
             post.media.map {
                 it.mediaUrl.toUri()
             }.let {

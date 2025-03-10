@@ -88,7 +88,10 @@ class PostListFragment : Fragment() {
 
         mPostViewModel.getPostWithUserAndImage(userAuthentication.getCurrentUser()!!.uid).observe(viewLifecycleOwner) { posts ->
             posts.forEach {
-                Log.d("profile fragment", "postId: ${it.post.postId} and likes: ${it.postLike.size}")
+                Log.d("profile fragment", "postId: ${it.post.postId}")
+                it.media.forEach { postMedia ->
+                    Log.d("profile fragment check url", "media url: ${postMedia.mediaUrl}")
+                }
             }
             postAdapter.setData(posts)
         }
