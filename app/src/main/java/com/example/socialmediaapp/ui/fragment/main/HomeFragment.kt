@@ -121,35 +121,35 @@ class HomeFragment : Fragment() {
             layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
         }
 
-        mPostViewModel.getPostWithUserAndImageOnNewFeed().observe(viewLifecycleOwner) {
-            postAdapter.setData(it)
-            binding.postRecyclerView.adapter = postAdapter
-        }
+//        mPostViewModel.getPostWithUserAndImageOnNewFeed().observe(viewLifecycleOwner) {
+//            postAdapter.setData(it)
+//            binding.postRecyclerView.adapter = postAdapter
+//        }
 
-        mLikeViewModel.getPostIdByUserId(userAuthentication.getCurrentUser()!!.uid).observe(viewLifecycleOwner) {
-            postAdapter.setLikedList(it)
-        }
+//        mLikeViewModel.getPostIdByUserId(userAuthentication.getCurrentUser()!!.uid).observe(viewLifecycleOwner) {
+//            postAdapter.setLikedList(it)
+//        }
     }
 
     private fun onClickListener() {
-        postAdapter.setOnLikeClickListener { post ->
-            mLikeViewModel.checkIfLiked(userAuthentication.getCurrentUser()!!.uid, post.post.postId).observeOnce(viewLifecycleOwner) {
-                if (it)
-                    mLikeViewModel.unlikePost(
-                        userAuthentication.getCurrentUser()!!.uid,
-                        post.post.postId
-                    )
-                else
-                    mLikeViewModel.likePost(
-                        userAuthentication.getCurrentUser()!!.uid,
-                        post.post.postId
-                    )
-            }
-
-        }
+//        postAdapter.setOnLikeClickListener { post ->
+//            mLikeViewModel.checkIfLiked(userAuthentication.getCurrentUser()!!.uid, post.post.postId).observeOnce(viewLifecycleOwner) {
+//                if (it)
+//                    mLikeViewModel.unlikePost(
+//                        userAuthentication.getCurrentUser()!!.uid,
+//                        post.post.postId
+//                    )
+//                else
+//                    mLikeViewModel.likePost(
+//                        userAuthentication.getCurrentUser()!!.uid,
+//                        post.post.postId
+//                    )
+//            }
+//
+//        }
 
         postAdapter.setOnCommentClickListener {
-            val action = HomeFragmentDirections.actionHomeFragmentToCommentListBottomSheetDialog(it.post.postId)
+            val action = HomeFragmentDirections.actionHomeFragmentToCommentListBottomSheetDialog(it.postId)
             findNavController().navigate(action)
         }
     }

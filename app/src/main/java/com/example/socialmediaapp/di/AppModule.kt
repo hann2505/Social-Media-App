@@ -1,6 +1,7 @@
 package com.example.socialmediaapp.di
 
 import android.app.Application
+import com.example.socialmediaapp.other.MediaTypeConverter
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
@@ -25,5 +26,9 @@ object AppModule {
     @Singleton
     @Provides
     fun provideFirebaseStorage() = FirebaseStorage.getInstance()
+
+    @Singleton
+    @Provides
+    fun provideMediaTypeConverter() = MediaTypeConverter()
 
 }

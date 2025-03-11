@@ -57,12 +57,6 @@ class ProfileFragment : Fragment() {
     ): View {
         binding = FragmentProfileBinding.inflate(inflater, container, false)
 
-        mPostViewModel.getPostWithUserAndImage(userAuthentication.getCurrentUser()!!.uid).observe(viewLifecycleOwner) {
-            for (post in it) {
-                Log.d("Observe post", "Post: $post")
-            }
-        }
-
         binding.editProfileBtn.setOnClickListener {
             val intent = Intent(requireActivity(), EditProfileActivity::class.java)
             startActivity(intent)
@@ -86,17 +80,12 @@ class ProfileFragment : Fragment() {
         displayBackButton()
         showCurrentUserInfo()
 
-        savedInstanceState?.let {
-            val scrollPosition = it.getInt(SCROLL_POSITION, 0)
-            binding.userPf.viewTreeObserver.addOnGlobalLayoutListener(object :
-                ViewTreeObserver.OnGlobalLayoutListener {
-                override fun onGlobalLayout() {
-                    binding.userPf.scrollTo(0, scrollPosition)
-                    binding.userPf.viewTreeObserver.removeOnGlobalLayoutListener(this)
-                }
-            })
-        }
+        binding.pfSwipeRefreshLayout.setOnRefreshListener {
+            mUserViewModel.fetchUserInfo(userAuthentication.getCurrentUser()!!.uid)
 
+            binding.pfSwipeRefreshLayout.isRefreshing = false
+
+        }
 
         binding.editProfileBtn.setOnClickListener {
             val intent = Intent(requireActivity(), EditProfileActivity::class.java)
@@ -115,7 +104,6 @@ class ProfileFragment : Fragment() {
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putInt(SCROLL_POSITION, binding.userPf.scrollY)
     }
 
     //* with this approach, app will show the clone user profile when current user is null
@@ -123,8 +111,8 @@ class ProfileFragment : Fragment() {
         if (userAuthentication.getCurrentUser() == null)
             return
         else {
-            mUserViewModel.getUserInfoById(userAuthentication.getCurrentUser()!!.uid).observe(viewLifecycleOwner) {
-                binding.userName.text = it.username
+            mUserViewModel.fetchUserInfo(userAuthentication.getCurrentUser()!!.uid).observe(viewLifecycleOwner) {
+                binding.userName.text = it!!.username
                 binding.name.text = it.name
                 binding.userBio.text = it.bio
                 Glide.with(binding.userPfp).load(it.profilePictureUrl).into(binding.userPfp)
@@ -181,14 +169,6 @@ class ProfileFragment : Fragment() {
     }
 
     private fun getFollowInfo() {
-        mFollowerViewModel.getFollowersOfAnUser(userAuthentication.getCurrentUser()!!.uid).observe(viewLifecycleOwner) {
-            binding.followersNumber.text = it.size.toString()
-        }
-        mFollowerViewModel.getFollowingOfAnUser(userAuthentication.getCurrentUser()!!.uid).observe(viewLifecycleOwner) {
-            binding.followingNumber.text = it.size.toString()
-        }
-        mPostViewModel.getPostWithUserByUserId(userAuthentication.getCurrentUser()!!.uid).observe(viewLifecycleOwner) {
-            binding.postNumber.text = it.size.toString()
-        }
+
     }
 }

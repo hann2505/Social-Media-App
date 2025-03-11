@@ -3,6 +3,8 @@ package com.example.socialmediaapp.data.firebase.remote
 import android.net.Uri
 import android.util.Log
 import androidx.core.net.toUri
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import com.example.socialmediaapp.data.entity.User
 import com.example.socialmediaapp.other.Constant.COLLECTION_USERS
 import com.example.socialmediaapp.other.FirebaseChangeType
@@ -23,13 +25,24 @@ class UserRemoteDatabase @Inject constructor(
     private val usersCollection = db.collection(COLLECTION_USERS)
     private val storageRef = storage.reference
 
-    suspend fun getAllUsers(): List<User> {
+    suspend fun fetchUserInfo(userId: String): User? {
         return try {
-            usersCollection.get().await().toObjects(User::class.java)
+            usersCollection.document(userId).get().await().toObject(User::class.java)
         }
         catch (e: Exception) {
-            emptyList()
+            null
         }
+    }
+
+    fun observeUser(userId: String): LiveData<User?> {
+        val liveData = MutableLiveData<User?>()
+        usersCollection.document(userId)
+            .addSnapshotListener { snapshot, _ ->
+                if (snapshot != null && snapshot.exists()) {
+                    liveData.postValue(snapshot.toObject(User::class.java))
+                }
+            }
+        return liveData
     }
 
     suspend fun upsertUser(user: User) {

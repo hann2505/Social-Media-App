@@ -8,7 +8,7 @@ import androidx.core.net.toUri
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.socialmediaapp.R
-import com.example.socialmediaapp.data.entity.PostLike
+import com.example.socialmediaapp.data.entity.Post
 import com.example.socialmediaapp.data.entity.PostWithUser
 import com.example.socialmediaapp.data.entity.PostWithUserAndMedia
 import com.example.socialmediaapp.databinding.PostBinding
@@ -18,20 +18,20 @@ class PostAdapter : RecyclerView.Adapter<PostAdapter.PostViewHolder>() {
 
     private val adapter = PostImageViewPagerAdapter()
 
-    private var postList = listOf<PostWithUserAndMedia>()
+    private var postList = listOf<PostWithUser>()
     private var likedList = listOf<String>()
 
     private var isNavigatedByNotification = false
 
-    private var onCommentClickListener: ((PostWithUserAndMedia) -> Unit)? = null
+    private var onCommentClickListener: ((PostWithUser) -> Unit)? = null
 
-    fun setOnCommentClickListener(listener: (PostWithUserAndMedia) -> Unit) {
+    fun setOnCommentClickListener(listener: (PostWithUser) -> Unit) {
         onCommentClickListener = listener
     }
 
-    private var onLikeClickListener: ((PostWithUserAndMedia) -> Unit)? = null
+    private var onLikeClickListener: ((PostWithUser) -> Unit)? = null
 
-    fun setOnLikeClickListener(listener: (PostWithUserAndMedia) -> Unit) {
+    fun setOnLikeClickListener(listener: (PostWithUser) -> Unit) {
         onLikeClickListener = listener
     }
 
@@ -44,22 +44,22 @@ class PostAdapter : RecyclerView.Adapter<PostAdapter.PostViewHolder>() {
     inner class PostViewHolder(
         private val binding: PostBinding
     ) : RecyclerView.ViewHolder(binding.root) {
-        fun bindData(post: PostWithUserAndMedia) {
-            binding.userName.text = post.user.username
-            binding.caption.text = post.post.content
-            binding.likeCount.text = post.postLike.size.toString()
-            binding.commentCount.text = post.comment.size.toString()
-            binding.timestamp.text = TimeConverter.convertTimestampToDateTime(post.post.timestamp)
+        fun bindData(post: PostWithUser) {
+            binding.userName.text = post.username
+            binding.caption.text = post.content
+            binding.likeCount.text = post.likeCount.toString()
+            binding.commentCount.text = post.commentCount.toString()
+            binding.timestamp.text = TimeConverter.convertTimestampToDateTime(post.timestamp)
             changeLikeButton(post)
-            Glide.with(binding.userPfp).load(post.user.profilePictureUrl).into(binding.userPfp)
+            Glide.with(binding.userPfp).load(post.profilePictureUrl).into(binding.userPfp)
 
             if (isNavigatedByNotification)
                 binding.backBtn.visibility = View.VISIBLE
         }
 
-        fun setUpRecyclerView(post: PostWithUserAndMedia) {
-            post.media.map {
-                it.mediaUrl.toUri()
+        fun setUpRecyclerView(post: PostWithUser) {
+            post.mediaUrls.map {
+                it.toUri()
             }.let {
                 Log.d("PostAdapter", "setUpRecyclerView: $it")
                 adapter.updateList(it)
@@ -86,8 +86,8 @@ class PostAdapter : RecyclerView.Adapter<PostAdapter.PostViewHolder>() {
             }
         }
 
-        private fun changeLikeButton(postWithUserAndMedia: PostWithUserAndMedia) {
-            val isLiked = likedList.contains(postWithUserAndMedia.post.postId)
+        private fun changeLikeButton(post: PostWithUser) {
+            val isLiked = likedList.contains(post.postId)
             if (isLiked) {
                 binding.likeBtn.setBackgroundResource(R.drawable.ic_hearted)
             }
@@ -130,7 +130,7 @@ class PostAdapter : RecyclerView.Adapter<PostAdapter.PostViewHolder>() {
         holder.setUpRecyclerView(currentPost)
     }
 
-    fun setData(postList: List<PostWithUserAndMedia>) {
+    fun setData(postList: List<PostWithUser>) {
         this.postList = postList
         notifyDataSetChanged()
     }

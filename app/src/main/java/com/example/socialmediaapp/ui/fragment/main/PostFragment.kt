@@ -80,36 +80,36 @@ class PostFragment: Fragment() {
             LinearLayoutManager.VERTICAL,
             false
         )
-        mPostViewModel.getPostWithUserAndImageByPostId(args.postId).observe(viewLifecycleOwner) {
+        mPostViewModel.fetchPostByUserId(args.postId).observe(viewLifecycleOwner) {
             postAdapter.setData(it)
         }
 
-        mLikeViewModel.getPostIdByUserId(userAuthentication.getCurrentUser()!!.uid).observe(viewLifecycleOwner) {
-            postAdapter.setLikedList(it)
-        }
+//        mLikeViewModel(userAuthentication.getCurrentUser()!!.uid).observe(viewLifecycleOwner) {
+//            postAdapter.setLikedList(it)
+//        }
 
         recyclerView.adapter = postAdapter
     }
 
     private fun onClickListeners() {
         postAdapter.setOnLikeClickListener { post ->
-            mLikeViewModel.checkIfLiked(userAuthentication.getCurrentUser()!!.uid, post.post.postId).observeOnce(viewLifecycleOwner) {
-                if (it)
-                    mLikeViewModel.unlikePost(
-                        userAuthentication.getCurrentUser()!!.uid,
-                        post.post.postId
-                    )
-                else
-                    mLikeViewModel.likePost(
-                        userAuthentication.getCurrentUser()!!.uid,
-                        post.post.postId
-                    )
-            }
+//            mLikeViewModel.checkIfLiked(userAuthentication.getCurrentUser()!!.uid, post.post.postId).observeOnce(viewLifecycleOwner) {
+//                if (it)
+//                    mLikeViewModel.unlikePost(
+//                        userAuthentication.getCurrentUser()!!.uid,
+//                        post.post.postId
+//                    )
+//                else
+//                    mLikeViewModel.likePost(
+//                        userAuthentication.getCurrentUser()!!.uid,
+//                        post.post.postId
+//                    )
+//            }
 
         }
 
         postAdapter.setOnCommentClickListener {
-            val action = PostFragmentDirections.actionPostFragmentToCommentListBottomSheetDialog(it.post.postId)
+            val action = PostFragmentDirections.actionPostFragmentToCommentListBottomSheetDialog(it.postId)
             findNavController().navigate(action)
 
         }

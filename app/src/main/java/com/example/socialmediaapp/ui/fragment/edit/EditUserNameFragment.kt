@@ -78,8 +78,8 @@ class EditUserNameFragment : Fragment() {
     }
 
     private fun showCurrentUsername() {
-        mUserViewModel.getUserInfoById(userAuthentication.getCurrentUser()!!.uid).observe(viewLifecycleOwner) {
-            binding.usernameEditText.editText!!.setText(it.username)
+        mUserViewModel.fetchUserInfo(userAuthentication.getCurrentUser()!!.uid).observe(viewLifecycleOwner) {
+            binding.usernameEditText.editText!!.setText(it!!.username)
         }
 
     }

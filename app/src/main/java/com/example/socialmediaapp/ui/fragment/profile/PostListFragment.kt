@@ -44,33 +44,43 @@ class PostListFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentPostListBinding.inflate(inflater, container, false)
+        println("PostListFragment: OnCreateView")
 
-        mPostViewModel.fetchDataFromFirebase()
         subscribeToObservers()
         onLikeClickListener()
-
-        postAdapter.setOnCommentClickListener {
-            val action = ProfileFragmentDirections.actionProfileFragmentToCommentListBottomSheetDialog(it.post.postId)
-            requireActivity().findNavController(R.id.nav_host_fragment).navigate(action)
-        }
 
         return binding.root
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+//        binding.pfSwipeRefreshLayout.setOnRefreshListener {
+//            mPostViewModel.fetchPostByUserId(userAuthentication.getCurrentUser()!!.uid)
+//            binding.pfSwipeRefreshLayout.isRefreshing = false
+//        }
+
+        postAdapter.setOnLikeClickListener {
+            mLikeViewModel.isLiked(
+                userAuthentication.getCurrentUser()!!.uid,
+                it.postId
+            ).observe(viewLifecycleOwner) { isLiked ->
+                if (isLiked) {
+                    mLikeViewModel.unlikePost(userAuthentication.getCurrentUser()!!.uid, it.postId)
+                } else {
+                    mLikeViewModel.likePost(userAuthentication.getCurrentUser()!!.uid, it.postId)
+                }
+            }
+        }
+
+        postAdapter.setOnCommentClickListener {
+            val action = ProfileFragmentDirections.actionProfileFragmentToCommentListBottomSheetDialog(it.postId)
+            requireActivity().findNavController(R.id.nav_host_fragment).navigate(action)
+        }
+    }
+
     private fun onLikeClickListener() {
         postAdapter.setOnLikeClickListener { post ->
-            mLikeViewModel.checkIfLiked(userAuthentication.getCurrentUser()!!.uid, post.post.postId).observeOnce(viewLifecycleOwner) {
-                if (it)
-                    mLikeViewModel.unlikePost(
-                        userAuthentication.getCurrentUser()!!.uid,
-                        post.post.postId
-                    )
-                else
-                    mLikeViewModel.likePost(
-                        userAuthentication.getCurrentUser()!!.uid,
-                        post.post.postId
-                    )
-            }
 
         }
     }
@@ -86,17 +96,16 @@ class PostListFragment : Fragment() {
 
         binding.recyclerView.isNestedScrollingEnabled = false
 
-        mPostViewModel.getPostWithUserAndImage(userAuthentication.getCurrentUser()!!.uid).observe(viewLifecycleOwner) { posts ->
-            posts.forEach {
-                Log.d("profile fragment", "postId: ${it.post.postId}")
-                it.media.forEach { postMedia ->
-                    Log.d("profile fragment check url", "media url: ${postMedia.mediaUrl}")
-                }
+        mPostViewModel.getPostWithUserRealtime(userAuthentication.getCurrentUser()!!.uid).observe(viewLifecycleOwner) { posts ->
+            for (post in posts) {
+                Log.d("post", "${post.likeCount}")
+
             }
             postAdapter.setData(posts)
         }
 
-        mLikeViewModel.getPostIdByUserId(userAuthentication.getCurrentUser()!!.uid).observe(viewLifecycleOwner) {
+        mLikeViewModel.checkIfLikeChanges(userAuthentication.getCurrentUser()!!.uid).observe(viewLifecycleOwner) {
+            Log.d("post like", "$it")
             postAdapter.setLikedList(it)
         }
 

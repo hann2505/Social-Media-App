@@ -48,8 +48,8 @@ class EditProfilePictureBottomSheetDialog : BottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        mUserViewModel.getUserInfoById(userAuthentication.getCurrentUser()!!.uid).observeOnce(viewLifecycleOwner) {
-            Glide.with(this).load(it.profilePictureUrl).into(binding.userPfp)
+        mUserViewModel.fetchUserInfo(userAuthentication.getCurrentUser()!!.uid).observeOnce(viewLifecycleOwner) {
+            Glide.with(this).load(it!!.profilePictureUrl).into(binding.userPfp)
         }
 
         binding.navigationView.setNavigationItemSelectedListener { it ->
@@ -63,9 +63,9 @@ class EditProfilePictureBottomSheetDialog : BottomSheetDialogFragment() {
                     true
                 }
                 R.id.set_default -> {
-                    mUserViewModel.getUserInfoById(userAuthentication.getCurrentUser()!!.uid).observeOnce(viewLifecycleOwner) {
+                    mUserViewModel.fetchUserInfo(userAuthentication.getCurrentUser()!!.uid).observeOnce(viewLifecycleOwner) {
                         binding.userPfp.setImageResource(
-                            if (it.gender)
+                            if (it!!.gender)
                                 R.drawable.man
                             else
                                 R.drawable.woman
@@ -81,8 +81,8 @@ class EditProfilePictureBottomSheetDialog : BottomSheetDialogFragment() {
         }
 
         binding.done.setOnClickListener {
-            mUserViewModel.getUserInfoById(userAuthentication.getCurrentUser()!!.uid).observeOnce(viewLifecycleOwner) {
-                mUserViewModel.updateProfilePicture(it.userId, it.gender, userPfp, setAsDefault)
+            mUserViewModel.fetchUserInfo(userAuthentication.getCurrentUser()!!.uid).observeOnce(viewLifecycleOwner) {
+                mUserViewModel.updateProfilePicture(it!!.userId, it.gender, userPfp, setAsDefault)
             }
             Log.d("final userPfp Uri", "onViewCreated: $userPfp")
             dismiss()

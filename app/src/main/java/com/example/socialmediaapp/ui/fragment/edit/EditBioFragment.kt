@@ -72,8 +72,8 @@ class EditBioFragment : Fragment() {
 
     private fun showCurrentBio() {
 
-        mUserViewModel.getUserInfoById(userAuthentication.getCurrentUser()!!.uid).observe(viewLifecycleOwner) {
-            binding.bioEditText.editText!!.setText(it.bio)
+        mUserViewModel.fetchUserInfo(userAuthentication.getCurrentUser()!!.uid).observe(viewLifecycleOwner) {
+            binding.bioEditText.editText!!.setText(it!!.bio)
         }
     }
 

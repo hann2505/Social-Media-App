@@ -48,8 +48,8 @@ class CommentListBottomSheetDialog : BottomSheetDialogFragment(), TextWatcher {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         binding.comment.addTextChangedListener(this)
 
-        mUserViewModel.getUserInfoById(userAuthentication.getCurrentUser()!!.uid).observe(viewLifecycleOwner) {
-            Glide.with(this).load(it.profilePictureUrl).into(binding.userPfp)
+        mUserViewModel.fetchUserInfo(userAuthentication.getCurrentUser()!!.uid).observe(viewLifecycleOwner) {
+            Glide.with(this).load(it!!.profilePictureUrl).into(binding.userPfp)
         }
 
         subscribeToObservers()
@@ -80,10 +80,10 @@ class CommentListBottomSheetDialog : BottomSheetDialogFragment(), TextWatcher {
             false
             )
 
-        mCommentViewModel.getCommentWithUser(args.postId).observe(viewLifecycleOwner) {
-            commentAdapter.setData(it)
-            recyclerView.adapter = commentAdapter
-        }
+//        mCommentViewModel.getCommentWithUser(args.postId).observe(viewLifecycleOwner) {
+//            commentAdapter.setData(it)
+//            recyclerView.adapter = commentAdapter
+//        }
 
     }
 

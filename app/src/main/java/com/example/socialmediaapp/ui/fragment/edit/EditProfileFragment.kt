@@ -33,7 +33,6 @@ class EditProfileFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentEditProfileBinding.inflate(inflater, container, false)
-//        mUserViewModel.fetchDataFromFirebase()
         showCurrentUserInfo()
 
         binding.name.setOnClickListener {
@@ -56,7 +55,7 @@ class EditProfileFragment : Fragment() {
             requireActivity().finish()
         }
 
-        mUserViewModel.getUserInfoById(userAuthentication.getCurrentUser()!!.uid).observe(viewLifecycleOwner) { user ->
+        mUserViewModel.fetchUserInfo(userAuthentication.getCurrentUser()!!.uid).observe(viewLifecycleOwner) { user ->
             binding.editPfp.setOnClickListener {
                 val action = EditProfileFragmentDirections.actionEditProfileToEditProfilePictureBottomSheetDialog(user)
                 findNavController().navigate(action)
@@ -73,15 +72,15 @@ class EditProfileFragment : Fragment() {
 
         binding.toolBarEdPf.title.text = getString(R.string.edit_profile)
 
-        mUserViewModel.getUserInfoById(userAuthentication.getCurrentUser()!!.uid).observe(viewLifecycleOwner) { user ->
-            Glide.with(binding.userPfp).load(user.profilePictureUrl).into(binding.userPfp)
+        mUserViewModel.fetchUserInfo(userAuthentication.getCurrentUser()!!.uid).observe(viewLifecycleOwner) { user ->
+            Glide.with(binding.userPfp).load(user!!.profilePictureUrl).into(binding.userPfp)
         }
 
     }
 
     private fun showCurrentUserInfo() {
-        mUserViewModel.getUserInfoById(userAuthentication.getCurrentUser()!!.uid).observe(viewLifecycleOwner) {
-            binding.nameTv.text = it.name
+        mUserViewModel.fetchUserInfo(userAuthentication.getCurrentUser()!!.uid).observe(viewLifecycleOwner) {
+            binding.nameTv.text = it!!.name
             binding.usernameTv.text = it.username
             binding.bioTv.text = it.bio
 

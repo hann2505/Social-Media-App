@@ -81,10 +81,8 @@ class EditNameFragment : Fragment() {
     }
 
     private fun showCurrentName() {
-        val name = mUserViewModel.getUserInfoById(userAuthentication.getCurrentUser()!!.uid)
-        Log.d("name", "$name")
-        mUserViewModel.getUserInfoById(userAuthentication.getCurrentUser()!!.uid).observe(viewLifecycleOwner) {
-            binding.nameEditText.editText!!.setText(it.name)
+        mUserViewModel.fetchUserInfo(userAuthentication.getCurrentUser()!!.uid).observe(viewLifecycleOwner) {
+            binding.nameEditText.editText!!.setText(it!!.name)
         }
     }
 }

@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.swiperefreshlayout.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ui.fragment.main.ProfileFragment"
-    android:id="@+id/user_pf"
+    android:id="@+id/pf_swipe_refresh_layout"
     android:orientation="vertical">
 
     <androidx.core.widget.NestedScrollView
@@ -268,4 +268,4 @@
 
     </androidx.core.widget.NestedScrollView>
 
-</RelativeLayout>
+</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

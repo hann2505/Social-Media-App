@@ -86,17 +86,17 @@ class SearchFragment : Fragment(), SearchView.OnQueryTextListener,
     }
 
     private fun searchData(query: String) {
-        mUserViewModel.getUserByUsername(query).observe(viewLifecycleOwner) { userList ->
-
-            Log.d("search user", "$userList")
-            mPostViewModel.getPostWithUserAndImageByQuery(query).observe(viewLifecycleOwner) { postList ->
-                val combinedList = mutableListOf<Any>()
-                combinedList.addAll(userList)
-                combinedList.addAll(postList)
-                searchAdapter.setData(combinedList)
-            }
-
-        }
+//        mUserViewModel.(query).observe(viewLifecycleOwner) { userList ->
+//
+//            Log.d("search user", "$userList")
+//            mPostViewModel.searchPostFromFirebase(query).observe(viewLifecycleOwner) { postList ->
+//                val combinedList = mutableListOf<Any>()
+//                combinedList.addAll(userList)
+//                combinedList.addAll(postList)
+//                searchAdapter.setData(combinedList)
+//            }
+//
+//        }
 
     }
 
@@ -106,9 +106,9 @@ class SearchFragment : Fragment(), SearchView.OnQueryTextListener,
     }
 
     private fun subscribeToObserve() {
-        mLikeViewModel.getPostIdByUserId(userAuthentication.getCurrentUser()!!.uid).observe(viewLifecycleOwner) {
-            searchAdapter.setLikedList(it)
-        }
+//        mLikeViewModel.(userAuthentication.getCurrentUser()!!.uid).observe(viewLifecycleOwner) {
+//            searchAdapter.setLikedList(it)
+//        }
     }
 
     private fun onItemClickListener() {
@@ -124,18 +124,18 @@ class SearchFragment : Fragment(), SearchView.OnQueryTextListener,
         }
 
         searchAdapter.setOnLikeClickListener { post ->
-            mLikeViewModel.checkIfLiked(userAuthentication.getCurrentUser()!!.uid, post.post.postId).observeOnce(viewLifecycleOwner) {
-                if (it)
-                    mLikeViewModel.unlikePost(
-                        userAuthentication.getCurrentUser()!!.uid,
-                        post.post.postId
-                    )
-                else
-                    mLikeViewModel.likePost(
-                        userAuthentication.getCurrentUser()!!.uid,
-                        post.post.postId
-                    )
-            }
+//            mLikeViewModel.checkIfLiked(userAuthentication.getCurrentUser()!!.uid, post.post.postId).observeOnce(viewLifecycleOwner) {
+//                if (it)
+//                    mLikeViewModel.unlikePost(
+//                        userAuthentication.getCurrentUser()!!.uid,
+//                        post.post.postId
+//                    )
+//                else
+//                    mLikeViewModel.likePost(
+//                        userAuthentication.getCurrentUser()!!.uid,
+//                        post.post.postId
+//                    )
+//            }
         }
 
         searchAdapter.setOnCommentClickListener {

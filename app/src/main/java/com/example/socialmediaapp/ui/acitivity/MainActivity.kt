@@ -160,10 +160,8 @@ class MainActivity : AppCompatActivity() {
 
     private fun checkOnRealtimeDatabase() {
         mUserViewModel.checkIfUserChanges()
-        mPostViewModel.checkIfPostChanges()
-        mPostViewModel.checkIfPostMediaChanges()
         mFollowerViewModel.checkIfFollowingChanges()
-        mLikeViewModel.checkIfLikeChanges()
+//        mLikeViewModel.checkIfLikeChanges()
         mCommentViewModel.checkIfCommentChanges()
     }
 }

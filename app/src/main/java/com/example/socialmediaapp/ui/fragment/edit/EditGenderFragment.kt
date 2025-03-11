@@ -91,8 +91,8 @@ class EditGenderFragment : Fragment() {
     }
 
     private fun showCurrentGender() {
-        mUserViewModel.getUserInfoById(userAuthentication.getCurrentUser()!!.uid).observe(viewLifecycleOwner) {
-            if (it.gender) {
+        mUserViewModel.fetchUserInfo(userAuthentication.getCurrentUser()!!.uid).observe(viewLifecycleOwner) {
+            if (it!!.gender) {
                 binding.maleCheckBox.isChecked = true
             } else {
                 binding.femaleCheckBox.isChecked = true

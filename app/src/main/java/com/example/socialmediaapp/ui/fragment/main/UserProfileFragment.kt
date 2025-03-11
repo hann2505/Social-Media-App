@@ -65,7 +65,7 @@ class UserProfileFragment : Fragment() {
         }
 
         adapter.setOnCommentClickListener {
-            val action = UserProfileFragmentDirections.actionUserProfileFragmentToCommentListBottomSheetDialog(it.post.postId)
+            val action = UserProfileFragmentDirections.actionUserProfileFragmentToCommentListBottomSheetDialog(it.postId)
             findNavController().navigate(action)
         }
 
@@ -85,18 +85,18 @@ class UserProfileFragment : Fragment() {
 
     private fun onLikeClickListener() {
         adapter.setOnLikeClickListener { post ->
-            mLikeViewModel.checkIfLiked(userAuthentication.getCurrentUser()!!.uid, post.post.postId).observeOnce(viewLifecycleOwner) {
-                if (it)
-                    mLikeViewModel.unlikePost(
-                        userAuthentication.getCurrentUser()!!.uid,
-                        post.post.postId
-                    )
-                else
-                    mLikeViewModel.likePost(
-                        userAuthentication.getCurrentUser()!!.uid,
-                        post.post.postId
-                    )
-            }
+//            mLikeViewModel.checkIfLiked(userAuthentication.getCurrentUser()!!.uid, post.postId).observeOnce(viewLifecycleOwner) {
+//                if (it)
+//                    mLikeViewModel.unlikePost(
+//                        userAuthentication.getCurrentUser()!!.uid,
+//                        post.postId
+//                    )
+//                else
+//                    mLikeViewModel.likePost(
+//                        userAuthentication.getCurrentUser()!!.uid,
+//                        post.postId
+//                    )
+//            }
 
         }
     }
@@ -122,25 +122,6 @@ class UserProfileFragment : Fragment() {
     }
 
     private fun getFollowInfo(userId: String) {
-        mFollowerViewModel.getFollowersOfAnUser(userId).observe(viewLifecycleOwner) {
-            binding.followersNumber.text = it.size.toString()
-        }
-        mFollowerViewModel.getFollowingOfAnUser(userId).observe(viewLifecycleOwner) {
-            binding.followingNumber.text = it.size.toString()
-        }
-        mPostViewModel.getPostWithUserByUserId(userId).observe(viewLifecycleOwner) {
-            binding.postNumber.text = it.size.toString()
-        }
-        mFollowerViewModel.checkIfFollowing(userAuthentication.getCurrentUser()!!.uid, userId)
-            .observe(viewLifecycleOwner) {
-                if (it > 0) {
-                    binding.followBtn.text = getString(R.string.followed)
-                    followState = FOLLOWING
-                } else {
-                    binding.followBtn.text = getString(R.string.follow)
-                    followState = NOT_FOLLOWING
-                }
-            }
     }
 
     private fun subscribeToRecyclerView() {
@@ -152,13 +133,13 @@ class UserProfileFragment : Fragment() {
             false
         )
 
-        mPostViewModel.getPostWithUserAndImage(args.user.userId).observe(viewLifecycleOwner) {
-            adapter.setData(it)
+        mPostViewModel.getPostWithUserRealtime(args.user.userId).observe(viewLifecycleOwner) { postsList ->
+            adapter.setData(postsList)
         }
 
-        mLikeViewModel.getPostIdByUserId(userAuthentication.getCurrentUser()!!.uid).observe(viewLifecycleOwner) {
-            adapter.setLikedList(it)
-        }
+//        mLikeViewModel.fe(userAuthentication.getCurrentUser()!!.uid).observe(viewLifecycleOwner) {
+//            adapter.setLikedList(it)
+//        }
     }
 }
 

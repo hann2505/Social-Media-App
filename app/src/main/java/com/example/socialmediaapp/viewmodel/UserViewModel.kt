@@ -5,11 +5,11 @@ import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.example.socialmediaapp.data.entity.PostWithUser
 import com.example.socialmediaapp.data.entity.User
 import com.example.socialmediaapp.data.firebase.remote.UserRemoteDatabase
-import com.example.socialmediaapp.data.room.database.AppDatabase
-import com.example.socialmediaapp.data.room.user.UserRepository
 import com.example.socialmediaapp.other.FirebaseChangeType
 import com.example.socialmediaapp.other.FirebaseChangeType.ADDED
 import com.example.socialmediaapp.other.FirebaseChangeType.MODIFIED
@@ -24,15 +24,17 @@ class UserViewModel @Inject constructor(
     application: Application,
     private val userRemoteDatabase: UserRemoteDatabase
 ) : AndroidViewModel(application) {
+    var userLiveData: MutableLiveData<User>? = null
 
-    private val readAllDatabase: LiveData<List<User>>
-    private val userRepository: UserRepository
+    private val _user = MutableLiveData<User?>()
+    val user: LiveData<User?> = _user
 
-    init {
-        val userDao = AppDatabase.getInstance(application).userDao()
-        userRepository = UserRepository(userDao)
-        readAllDatabase = userRepository.readAllDatabase
-        Log.d("view model", "view model created")
+    fun fetchUserInfo(userId: String): LiveData<User?> {
+        viewModelScope.launch(Dispatchers.IO) {
+            val user = userRemoteDatabase.fetchUserInfo(userId)
+            _user.postValue(user)
+        }
+        return user
     }
 
     //* Update
@@ -78,39 +80,7 @@ class UserViewModel @Inject constructor(
         }
     }
 
-    //* Retrieve Data
-    fun deleteAllUser() {
-        viewModelScope.launch(Dispatchers.IO) {
-            userRepository.deleteAllUser()
-        }
-    }
-    fun getAllUser(): LiveData<List<User>> {
-        return readAllDatabase
-    }
-    fun getUserInfoById(uid: String): LiveData<User> {
-        return userRepository.getUserInfoById(uid)
-    }
-    fun fetchDataFromFirebase() {
-        viewModelScope.launch(Dispatchers.IO) {
-            val users = userRemoteDatabase.getAllUsers()
-            for (user in users) {
-                Log.d("view model", "$users")
-            }
 
-            userRepository.upsertAllUsers(users)
-        }
-    }
-
-    fun getUserByUsername(username: String): LiveData<List<User>> {
-        return userRepository.getUserByUsername(username)
-    }
-
-    fun getUserByName(name: String): LiveData<List<User>> {
-        return userRepository.getUserByName(name)
-    }
-
-
-    //TODO fix this function, it doesn't listen for changes
     fun checkIfUserChanges() {
         viewModelScope.launch(Dispatchers.IO) {
             userRemoteDatabase.listenForUsersChanges { changeType, user ->
@@ -118,11 +88,9 @@ class UserViewModel @Inject constructor(
                     Log.d("user_listener", changeType.toString())
                     when (changeType) {
                         ADDED, MODIFIED -> {
-                            userRepository.upsertUser(user)
                             Log.d("user_listener", "added: $user")
                         }
                         REMOVED -> {
-                            userRepository.deleteUser(user)
                             Log.d("user_listener", "deleted: $user")
                         }
                         else -> {}

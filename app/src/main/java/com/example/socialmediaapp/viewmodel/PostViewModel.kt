@@ -7,17 +7,13 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.example.socialmediaapp.data.entity.Notification
 import com.example.socialmediaapp.data.entity.Post
 import com.example.socialmediaapp.data.entity.PostWithUser
-import com.example.socialmediaapp.data.entity.PostWithUserAndMedia
 import com.example.socialmediaapp.data.firebase.remote.PostRemoteDatabase
-import com.example.socialmediaapp.data.room.database.AppDatabase
-import com.example.socialmediaapp.data.room.media.PostMediaRepository
-import com.example.socialmediaapp.data.room.post.PostRepository
 import com.example.socialmediaapp.other.FirebaseChangeType.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -27,33 +23,40 @@ class PostViewModel@Inject constructor(
     private val postRemoteDatabase: PostRemoteDatabase
 ) : AndroidViewModel(application) {
 
-    private val readAllDatabase: LiveData<List<Post>>
-    private val postRepository: PostRepository
-    private val postMediaRepository: PostMediaRepository
+//    private val readAllDatabase: LiveData<List<Post>>
+//    private val postRepository: PostRepository
+//    private val postMediaRepository: PostMediaRepository
 
-    private val _imageUrl = MutableLiveData<String>()
-    val imageUrl: LiveData<String> = _imageUrl
+    private val _posts = MutableLiveData<List<PostWithUser>>()
+    val posts: LiveData<List<PostWithUser>> = _posts
 
-    private val _error = MutableLiveData<Boolean>()
-    val error: LiveData<Boolean> = _error
+    private val _searchPosts = MutableLiveData<List<PostWithUser>>()
+    val searchPosts: LiveData<List<PostWithUser>> = _searchPosts
 
-    init {
-        val postDao = AppDatabase.getInstance(application).postDao()
-        val postMediaDao = AppDatabase.getInstance(application).postMediaDao()
-        postRepository = PostRepository(postDao)
-        postMediaRepository = PostMediaRepository(postMediaDao)
-        readAllDatabase = postRepository.readAllDatabase
+//    init {
+//        val postDao = AppDatabase.getInstance(application).postDao()
+//        val postMediaDao = AppDatabase.getInstance(application).postMediaDao()
+//        postRepository = PostRepository(postDao)
+//        postMediaRepository = PostMediaRepository(postMediaDao)
+//        readAllDatabase = postRepository.readAllDatabase
+//    }
+
+    fun fetchPostByUserId(userId: String): LiveData<List<PostWithUser>> {
+        viewModelScope.launch(Dispatchers.IO) {
+            val posts = postRemoteDatabase.getPostByUserIdFromFirebase(userId)
+            _posts.postValue(posts)
+        }
+        return posts
     }
 
-    fun fetchDataFromFirebase() {
+    fun getPostWithUserRealtime(userId: String): LiveData<List<PostWithUser>> {
+        val postsLiveData = MutableLiveData<List<PostWithUser>>()
         viewModelScope.launch(Dispatchers.IO) {
-            val posts = postRemoteDatabase.getAllPost()
-            for (post in posts) {
-                Log.d("post view model", "$post")
+            postRemoteDatabase.getPostWithUserRealTime(userId) { posts ->
+                postsLiveData.postValue(posts)
             }
-
-            postRepository.upsertAllPosts(posts)
         }
+        return postsLiveData
     }
 
     fun uploadPost(
@@ -72,20 +75,24 @@ class PostViewModel@Inject constructor(
         }
     }
 
-    fun getPostWithUserByUserId(userId: String): LiveData<List<PostWithUser>> {
-        return postRepository.getPostWithUserByUserId(userId)
+    fun searchPostFromFirebase(userId: String): LiveData<List<PostWithUser>> {
+        viewModelScope.launch(Dispatchers.IO) {
+            val posts = postRemoteDatabase.getPostByUserIdFromFirebase(userId)
+            _searchPosts.postValue(posts)
+        }
+        return searchPosts
     }
 
-    fun getPostChangesOnceFromFirebase() {
-        viewModelScope.launch(Dispatchers.IO) {
+    private fun getPostChangesOnceFromFirebase(): Job {
+        return viewModelScope.launch(Dispatchers.IO) {
             postRemoteDatabase.postChangesOnce { changeType, post ->
                 viewModelScope.launch(Dispatchers.IO) {
                     when (changeType) {
                         ADDED, MODIFIED -> {
-                            postRepository.upsertPost(post)
+
                         }
                         REMOVED -> {
-                            postRepository.deletePost(post)
+
                         }
                         else -> {}
                     }
@@ -94,16 +101,16 @@ class PostViewModel@Inject constructor(
         }
     }
 
-    fun getPostMediaChangeOnceFromFirebase() {
+    private fun getPostMediaChangeOnceFromFirebase() {
         viewModelScope.launch(Dispatchers.IO) {
             postRemoteDatabase.postMediaChangesOnce { changeType, post ->
                 viewModelScope.launch(Dispatchers.IO) {
                     when (changeType) {
                         ADDED, MODIFIED -> {
-                            postMediaRepository.upsertPostMedia(post)
+
                         }
                         REMOVED -> {
-                            postMediaRepository.deletePostMedia(post)
+
                         }
                         else -> {}
                     }
@@ -119,13 +126,11 @@ class PostViewModel@Inject constructor(
                     Log.d("post", changeType.toString())
                     when (changeType) {
                         ADDED, MODIFIED -> {
-                            postRepository.upsertPost(post)
                             Log.d("post", "added: $post")
                         }
 
                         REMOVED -> {
                             Log.d("post", "removed: $post")
-                            postRepository.deletePost(post)
                         }
 
                         else -> {}
@@ -137,8 +142,7 @@ class PostViewModel@Inject constructor(
 
     fun fetchPostFromFirebase() {
         viewModelScope.launch(Dispatchers.IO) {
-            getPostChangesOnceFromFirebase()
-            getPostMediaChangeOnceFromFirebase()
+            getPostChangesOnceFromFirebase().join()
         }
     }
 
@@ -149,13 +153,11 @@ class PostViewModel@Inject constructor(
                     Log.d("post", changeType.toString())
                     when (changeType) {
                         ADDED, MODIFIED -> {
-                            postMediaRepository.upsertPostMedia(postMedia)
                             Log.d("post", "added: $postMedia")
                         }
 
                         REMOVED -> {
                             Log.d("post", "removed: $postMedia")
-                            postMediaRepository.deletePostMedia(postMedia)
                         }
 
                         else -> {}
@@ -165,32 +167,5 @@ class PostViewModel@Inject constructor(
         }
     }
 
-    fun getPostWithUserByText(username: String): LiveData<List<PostWithUser>> {
-        return postRepository.getPostWithUserByText(username)
-    }
-
-    fun getPostWithUserAndImage(userId: String): LiveData<List<PostWithUserAndMedia>> {
-        return postRepository.getPostWithUserAndMedias(userId)
-    }
-
-    fun getPostWithUserAndImageByPostId(postId: String): LiveData<List<PostWithUserAndMedia>> {
-        return postRepository.getPostWithUserAndMediasByPostId(postId)
-    }
-
-    fun getPostWithUserAndImageByQuery(query: String): LiveData<List<PostWithUserAndMedia>> {
-        return postRepository.getPostWithUserAndMediasByQuery(query)
-    }
-
-    fun getPostWithUserAndImageOnNewFeed(): LiveData<List<PostWithUserAndMedia>> {
-        return postRepository.getPostsWithUserAndMediasOnNewFeed()
-    }
-
-    fun getEarlyNotificationByUserId(userId: String): LiveData<List<Notification>> {
-        return postRepository.getEarlyNotificationByUserId(userId)
-    }
-
-    fun getNewNotificationByUserId(userId: String): LiveData<List<Notification>> {
-        return postRepository.getNewNotificationByUserId(userId)
-    }
 
 }

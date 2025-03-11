@@ -7,8 +7,6 @@ import androidx.lifecycle.viewModelScope
 import com.example.socialmediaapp.data.entity.Comment
 import com.example.socialmediaapp.data.entity.CommentWithUser
 import com.example.socialmediaapp.data.firebase.remote.CommentRemoteDatabase
-import com.example.socialmediaapp.data.room.Comment.CommentRepository
-import com.example.socialmediaapp.data.room.database.AppDatabase
 import com.example.socialmediaapp.other.FirebaseChangeType
 import com.example.socialmediaapp.other.FirebaseChangeType.ADDED
 import com.example.socialmediaapp.other.FirebaseChangeType.MODIFIED
@@ -24,26 +22,15 @@ class CommentViewModel @Inject constructor(
     application: Application
 ) : AndroidViewModel(application) {
 
-    private val readAllDatabase: LiveData<List<Comment>>
-    private val commentRepository: CommentRepository
-
-    init {
-        val commentDao = AppDatabase.getInstance(application).commentDao()
-        commentRepository = CommentRepository(commentDao)
-        readAllDatabase = commentRepository.readAllDatabase
-    }
-
     fun checkIfCommentChanges() {
         viewModelScope.launch(Dispatchers.IO) {
             commentRemoteDatabase.listenForCommentsChanges { changeType, comment ->
                 viewModelScope.launch(Dispatchers.IO) {
                     when (changeType) {
                         ADDED, MODIFIED -> {
-                            commentRepository.upsertComments(comment)
                         }
 
                         REMOVED -> {
-                            commentRepository.deleteComment(comment)
                         }
 
                         else -> {}
@@ -58,9 +45,5 @@ class CommentViewModel @Inject constructor(
             commentRemoteDatabase.addComment(userId, postId, content)
         }
 
-    }
-
-    fun getCommentWithUser(postId: String): LiveData<List<CommentWithUser>> {
-        return commentRepository.getCommentWithUserByUserId(postId)
     }
 }

@@ -40,35 +40,51 @@ class PostLikeRemoteFirebase @Inject constructor(
                 }
     }
 
-    fun listenToPostLikesChange(onPostLikeChange: (FirebaseChangeType, PostLike) -> Unit) {
-        postLikeCollection.addSnapshotListener { snapshots, error ->
+    fun getLikeCountRealtime(postId: String, onResult: (Int) -> Unit) {
+        postLikeCollection.whereEqualTo("postId", postId).addSnapshotListener { snapshots, error ->
+            if (error != null) {
+                Log.e("Firestore", "Error listening for like count changes", error)
+                return@addSnapshotListener
+            }
+            val likeCount = snapshots?.documents?.size ?: 0
+            onResult(likeCount)
+        }
+    }
+
+    suspend fun isLiked(userId: String, postId: String): Boolean {
+        return try {
+            val documents = postLikeCollection
+                .whereEqualTo("userId", userId)
+                .whereEqualTo("postId", postId)
+                .get().await()
+
+            !documents.isEmpty
+        } catch (e: Exception) {
+            throw e
+        }
+    }
+
+    suspend fun getLikedPostByCurrentUser(userId: String): List<String> {
+        return try {
+            val documents= postLikeCollection.whereEqualTo("userId", userId).get().await()
+            documents.mapNotNull {
+                it.getString("postId")
+            }
+        } catch (e: Exception) {
+            throw e
+        }
+    }
+
+    fun listenToPostLikesChange(userId: String, onPostLikeChange: (List<String>) -> Unit) {
+        postLikeCollection.whereEqualTo("userId", userId).addSnapshotListener { snapshots, error ->
             if (error != null) {
                 Log.e("Firestore", "Error listening for post like changes", error)
                 return@addSnapshotListener
             }
 
-            snapshots?.let {
-                for (docChange in it.documentChanges) {
-                    val likeId = docChange.document.getString("likeId") ?: continue
-                    val userId = docChange.document.getString("userId") ?: continue
-                    val postId = docChange.document.getString("postId") ?: continue
-                    val timestamp = docChange.document.getLong("timestamp") ?: continue
+            val likedPostIds = snapshots?.documents?.mapNotNull { it.getString("postId") } ?: emptyList()
+            onPostLikeChange(likedPostIds)
 
-                    val postLike = PostLike(likeId, userId, postId, timestamp)
-
-                    val result: FirebaseChangeType = when (docChange.type) {
-                        DocumentChange.Type.ADDED -> {
-                            ADDED
-                        }
-                        DocumentChange.Type.REMOVED -> {
-                            REMOVED
-                        }
-                        else -> FirebaseChangeType.NOT_DETECTED
-                    }
-
-                    onPostLikeChange(result, postLike)
-                }
-            }
         }
     }
 

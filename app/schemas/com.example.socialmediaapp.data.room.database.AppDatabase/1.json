@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "287975333ded95df2c9b0ed008aafd00",
+    "identityHash": "6e17112267434496f3749d43f5a7023b",
     "entities": [
       {
         "tableName": "Post",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`postId` TEXT NOT NULL, `userId` TEXT NOT NULL, `content` TEXT NOT NULL, `mediaType` TEXT NOT NULL, `postState` INTEGER NOT NULL, `timestamp` INTEGER NOT NULL, PRIMARY KEY(`postId`), FOREIGN KEY(`userId`) REFERENCES `User`(`userId`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`postId` TEXT NOT NULL, `userId` TEXT NOT NULL, `content` TEXT NOT NULL, `listMediaUrls` TEXT NOT NULL, `mediaType` TEXT NOT NULL, `postState` INTEGER NOT NULL, `timestamp` INTEGER NOT NULL, PRIMARY KEY(`postId`))",
         "fields": [
           {
             "fieldPath": "postId",
@@ -23,6 +23,12 @@
           {
             "fieldPath": "content",
             "columnName": "content",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "listMediaUrls",
+            "columnName": "listMediaUrls",
             "affinity": "TEXT",
             "notNull": true
           },
@@ -52,19 +58,7 @@
           ]
         },
         "indices": [],
-        "foreignKeys": [
-          {
-            "table": "User",
-            "onDelete": "CASCADE",
-            "onUpdate": "NO ACTION",
-            "columns": [
-              "userId"
-            ],
-            "referencedColumns": [
-              "userId"
-            ]
-          }
-        ]
+        "foreignKeys": []
       },
       {
         "tableName": "User",
@@ -124,7 +118,7 @@
       },
       {
         "tableName": "Follower",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`fid` TEXT NOT NULL, `followerId` TEXT NOT NULL, `followingId` TEXT NOT NULL, `timestamp` INTEGER NOT NULL, PRIMARY KEY(`fid`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`fid` TEXT NOT NULL, `followerId` TEXT NOT NULL, `followingId` TEXT NOT NULL, `timestamp` INTEGER NOT NULL)",
         "fields": [
           {
             "fieldPath": "fid",
@@ -153,16 +147,14 @@
         ],
         "primaryKey": {
           "autoGenerate": false,
-          "columnNames": [
-            "fid"
-          ]
+          "columnNames": []
         },
         "indices": [],
         "foreignKeys": []
       },
       {
         "tableName": "Comment",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`commentId` TEXT NOT NULL, `userId` TEXT NOT NULL, `postId` TEXT NOT NULL, `content` TEXT NOT NULL, `timestamp` INTEGER NOT NULL, PRIMARY KEY(`commentId`), FOREIGN KEY(`userId`) REFERENCES `User`(`userId`) ON UPDATE NO ACTION ON DELETE CASCADE , FOREIGN KEY(`postId`) REFERENCES `Post`(`postId`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`commentId` TEXT NOT NULL, `userId` TEXT NOT NULL, `postId` TEXT NOT NULL, `content` TEXT NOT NULL, `timestamp` INTEGER NOT NULL, PRIMARY KEY(`commentId`))",
         "fields": [
           {
             "fieldPath": "commentId",
@@ -202,34 +194,11 @@
           ]
         },
         "indices": [],
-        "foreignKeys": [
-          {
-            "table": "User",
-            "onDelete": "CASCADE",
-            "onUpdate": "NO ACTION",
-            "columns": [
-              "userId"
-            ],
-            "referencedColumns": [
-              "userId"
-            ]
-          },
-          {
-            "table": "Post",
-            "onDelete": "CASCADE",
-            "onUpdate": "NO ACTION",
-            "columns": [
-              "postId"
-            ],
-            "referencedColumns": [
-              "postId"
-            ]
-          }
-        ]
+        "foreignKeys": []
       },
       {
         "tableName": "PostLike",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`likeId` TEXT NOT NULL, `userId` TEXT NOT NULL, `postId` TEXT NOT NULL, `timestamp` INTEGER NOT NULL, PRIMARY KEY(`likeId`), FOREIGN KEY(`postId`) REFERENCES `Post`(`postId`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`likeId` TEXT NOT NULL, `userId` TEXT NOT NULL, `postId` TEXT NOT NULL, `timestamp` INTEGER NOT NULL, PRIMARY KEY(`likeId`))",
         "fields": [
           {
             "fieldPath": "likeId",
@@ -263,23 +232,11 @@
           ]
         },
         "indices": [],
-        "foreignKeys": [
-          {
-            "table": "Post",
-            "onDelete": "CASCADE",
-            "onUpdate": "NO ACTION",
-            "columns": [
-              "postId"
-            ],
-            "referencedColumns": [
-              "postId"
-            ]
-          }
-        ]
+        "foreignKeys": []
       },
       {
         "tableName": "CommentLike",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`likeId` TEXT NOT NULL, `userId` TEXT NOT NULL, `commentId` TEXT NOT NULL, `timestamp` INTEGER NOT NULL, PRIMARY KEY(`likeId`), FOREIGN KEY(`commentId`) REFERENCES `Comment`(`commentId`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`likeId` TEXT NOT NULL, `userId` TEXT NOT NULL, `commentId` TEXT NOT NULL, `timestamp` INTEGER NOT NULL)",
         "fields": [
           {
             "fieldPath": "likeId",
@@ -308,28 +265,14 @@
         ],
         "primaryKey": {
           "autoGenerate": false,
-          "columnNames": [
-            "likeId"
-          ]
+          "columnNames": []
         },
         "indices": [],
-        "foreignKeys": [
-          {
-            "table": "Comment",
-            "onDelete": "CASCADE",
-            "onUpdate": "NO ACTION",
-            "columns": [
-              "commentId"
-            ],
-            "referencedColumns": [
-              "commentId"
-            ]
-          }
-        ]
+        "foreignKeys": []
       },
       {
         "tableName": "Post Medias",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`imageId` TEXT NOT NULL, `postId` TEXT NOT NULL, `mediaUrl` TEXT NOT NULL DEFAULT '', PRIMARY KEY(`imageId`), FOREIGN KEY(`postId`) REFERENCES `Post`(`postId`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`imageId` TEXT NOT NULL, `postId` TEXT NOT NULL, `mediaUrl` TEXT NOT NULL DEFAULT '', PRIMARY KEY(`imageId`))",
         "fields": [
           {
             "fieldPath": "imageId",
@@ -358,25 +301,13 @@
           ]
         },
         "indices": [],
-        "foreignKeys": [
-          {
-            "table": "Post",
-            "onDelete": "CASCADE",
-            "onUpdate": "NO ACTION",
-            "columns": [
-              "postId"
-            ],
-            "referencedColumns": [
-              "postId"
-            ]
-          }
-        ]
+        "foreignKeys": []
       }
     ],
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '287975333ded95df2c9b0ed008aafd00')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '6e17112267434496f3749d43f5a7023b')"
     ]
   }
 }

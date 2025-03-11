@@ -38,8 +38,8 @@ class NotificationFragment : Fragment() {
     ): View {
         _binding = FragmentNotificationBinding.inflate(inflater, container, false)
 
-        mUserViewModel.getUserInfoById(userAuthentication.getCurrentUser()!!.uid).observe(viewLifecycleOwner) {
-            binding.userName.text = it.username
+        mUserViewModel.fetchUserInfo(userAuthentication.getCurrentUser()!!.uid).observe(viewLifecycleOwner) {
+            binding.userName.text = it!!.username
         }
 
         return binding.root
@@ -79,14 +79,14 @@ class NotificationFragment : Fragment() {
             false
         )
 
-        nPostViewModel.getNewNotificationByUserId(userAuthentication.getCurrentUser()!!.uid).observe(viewLifecycleOwner) {
-            newNotificationAdapter.updateList(it)
-            newRecyclerView.adapter = newNotificationAdapter
-        }
+//        nPostViewModel.getNewNotificationByUserId(userAuthentication.getCurrentUser()!!.uid).observe(viewLifecycleOwner) {
+//            newNotificationAdapter.updateList(it)
+//            newRecyclerView.adapter = newNotificationAdapter
+//        }
 
-        nPostViewModel.getEarlyNotificationByUserId(userAuthentication.getCurrentUser()!!.uid).observe(viewLifecycleOwner) {
-            earlyNotificationAdapter.updateList(it)
-            earlyRecyclerView.adapter = earlyNotificationAdapter
-        }
+//        nPostViewModel.getEarlyNotificationByUserId(userAuthentication.getCurrentUser()!!.uid).observe(viewLifecycleOwner) {
+//            earlyNotificationAdapter.updateList(it)
+//            earlyRecyclerView.adapter = earlyNotificationAdapter
+//        }
     }
 }
