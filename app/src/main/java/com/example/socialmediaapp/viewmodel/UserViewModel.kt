@@ -24,17 +24,15 @@ class UserViewModel @Inject constructor(
     application: Application,
     private val userRemoteDatabase: UserRemoteDatabase
 ) : AndroidViewModel(application) {
-    var userLiveData: MutableLiveData<User>? = null
 
-    private val _user = MutableLiveData<User?>()
-    val user: LiveData<User?> = _user
+    private val _user = MutableLiveData<User>()
+    val user: LiveData<User> = _user
 
-    fun fetchUserInfo(userId: String): LiveData<User?> {
+    fun fetchUserInfo(userId: String) {
         viewModelScope.launch(Dispatchers.IO) {
             val user = userRemoteDatabase.fetchUserInfo(userId)
             _user.postValue(user)
         }
-        return user
     }
 
     //* Update

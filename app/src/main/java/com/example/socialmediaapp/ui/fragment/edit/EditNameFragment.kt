@@ -49,6 +49,9 @@ class EditNameFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.toolBarEdPf.title.text = getString(R.string.name)
+
+        mUserViewModel.fetchUserInfo(userAuthentication.getCurrentUser()!!.uid)
+
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -81,7 +84,7 @@ class EditNameFragment : Fragment() {
     }
 
     private fun showCurrentName() {
-        mUserViewModel.fetchUserInfo(userAuthentication.getCurrentUser()!!.uid).observe(viewLifecycleOwner) {
+        mUserViewModel.user.observe(viewLifecycleOwner) {
             binding.nameEditText.editText!!.setText(it!!.name)
         }
     }

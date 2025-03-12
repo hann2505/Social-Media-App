@@ -49,6 +49,8 @@ class EditGenderFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.toolBarEdGender.title.text = getString(R.string.gender)
+        mUserViewModel.fetchUserInfo(userAuthentication.getCurrentUser()!!.uid)
+
 
         setupCheckBoxListeners()
     }
@@ -91,7 +93,7 @@ class EditGenderFragment : Fragment() {
     }
 
     private fun showCurrentGender() {
-        mUserViewModel.fetchUserInfo(userAuthentication.getCurrentUser()!!.uid).observe(viewLifecycleOwner) {
+        mUserViewModel.user.observe(viewLifecycleOwner) {
             if (it!!.gender) {
                 binding.maleCheckBox.isChecked = true
             } else {

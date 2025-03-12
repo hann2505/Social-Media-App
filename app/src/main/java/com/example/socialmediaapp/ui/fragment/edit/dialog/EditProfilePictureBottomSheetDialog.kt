@@ -47,9 +47,10 @@ class EditProfilePictureBottomSheetDialog : BottomSheetDialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        mUserViewModel.fetchUserInfo(userAuthentication.getCurrentUser()!!.uid)
 
-        mUserViewModel.fetchUserInfo(userAuthentication.getCurrentUser()!!.uid).observeOnce(viewLifecycleOwner) {
-            Glide.with(this).load(it!!.profilePictureUrl).into(binding.userPfp)
+        mUserViewModel.user.observeOnce(viewLifecycleOwner) {
+            Glide.with(this).load(it.profilePictureUrl).into(binding.userPfp)
         }
 
         binding.navigationView.setNavigationItemSelectedListener { it ->
@@ -63,9 +64,9 @@ class EditProfilePictureBottomSheetDialog : BottomSheetDialogFragment() {
                     true
                 }
                 R.id.set_default -> {
-                    mUserViewModel.fetchUserInfo(userAuthentication.getCurrentUser()!!.uid).observeOnce(viewLifecycleOwner) {
+                    mUserViewModel.user.observeOnce(viewLifecycleOwner) {
                         binding.userPfp.setImageResource(
-                            if (it!!.gender)
+                            if (it.gender)
                                 R.drawable.man
                             else
                                 R.drawable.woman
@@ -81,8 +82,8 @@ class EditProfilePictureBottomSheetDialog : BottomSheetDialogFragment() {
         }
 
         binding.done.setOnClickListener {
-            mUserViewModel.fetchUserInfo(userAuthentication.getCurrentUser()!!.uid).observeOnce(viewLifecycleOwner) {
-                mUserViewModel.updateProfilePicture(it!!.userId, it.gender, userPfp, setAsDefault)
+            mUserViewModel.user.observeOnce(viewLifecycleOwner) {
+                mUserViewModel.updateProfilePicture(it.userId, it.gender, userPfp, setAsDefault)
             }
             Log.d("final userPfp Uri", "onViewCreated: $userPfp")
             dismiss()

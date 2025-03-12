@@ -1,68 +1,65 @@
 package com.example.socialmediaapp.data.firebase.remote
 
+import android.util.Log
 import com.example.socialmediaapp.data.entity.Comment
+import com.example.socialmediaapp.data.entity.CommentWithUser
+import com.example.socialmediaapp.data.entity.User
 import com.example.socialmediaapp.other.Constant.COLLECTION_COMMENTS
-import com.example.socialmediaapp.other.FirebaseChangeType
-import com.example.socialmediaapp.other.FirebaseChangeType.ADDED
-import com.example.socialmediaapp.other.FirebaseChangeType.NOT_DETECTED
-import com.example.socialmediaapp.other.FirebaseChangeType.REMOVED
-import com.google.firebase.firestore.DocumentChange.*
+import com.example.socialmediaapp.other.Constant.COLLECTION_POSTS
+import com.example.socialmediaapp.other.Constant.COLLECTION_USERS
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 class CommentRemoteDatabase @Inject constructor(
-    db: FirebaseFirestore
+    db: FirebaseFirestore,
+    private val auth: FirebaseAuth
 ) {
 
-    private val commentCollection = db.collection(COLLECTION_COMMENTS)
+    private val userCollection = db.collection(COLLECTION_USERS)
 
-    suspend fun getAllComments(): List<Comment> {
-        return try {
-            commentCollection.get().await().toObjects(Comment::class.java)
-        }
-        catch (e: Exception) {
-            emptyList()
+
+    fun addComment(user: User, postOwnerId: String, postId: String, content: String) {
+        val commentCollection = userCollection
+            .document(postOwnerId)
+            .collection(COLLECTION_POSTS)
+            .document(postId)
+            .collection(COLLECTION_COMMENTS)
+
+        val comment = Comment(
+            commentCollection.document().id,
+            postId,
+            user.username,
+            user.profilePictureUrl,
+            content
+        )
+        commentCollection.document(comment.commentId).set(comment)
+    }
+
+    fun observeCommentCount(postOwnerId: String, postId: String, onUpdate: (Int) -> Unit) {
+        val postLikesCollection = userCollection
+            .document(postOwnerId)
+            .collection(COLLECTION_POSTS)
+            .document(postId)
+            .collection(COLLECTION_COMMENTS)
+
+        postLikesCollection.addSnapshotListener { snapshot, error ->
+            if (error != null) return@addSnapshotListener
+            val likeCount = snapshot?.count() ?: 0
+            onUpdate(likeCount)
         }
     }
 
-    suspend fun addComment(userI: String, postId: String, content: String) {
-        try {
-            val comment = Comment(
-                commentCollection.document().id,
-                userI,
-                postId,
-                content
-            )
-            commentCollection.add(comment).await()
-        } catch (e: Exception) {
-            throw e
-        }
-    }
+    fun getCommentsRealtimeUpdates(postOwnerId: String, postId: String, onUpdate: (List<Comment>) -> Unit) {
+        userCollection.document(postOwnerId).collection(COLLECTION_POSTS).document(postId).collection(COLLECTION_COMMENTS)
+            .addSnapshotListener { snapshot, error ->
+                if (error != null) return@addSnapshotListener
+                val comments = snapshot?.documents?.mapNotNull {
+                    it.toObject(Comment::class.java)
+                }?: emptyList()
+                onUpdate(comments)
+            }
 
-    fun listenForCommentsChanges(onCommentChange: (FirebaseChangeType, Comment) -> Unit) {
-        commentCollection.addSnapshotListener { snapshots, error ->
-            if (error != null) {
-                return@addSnapshotListener
-            }
-            snapshots?.let {
-                for (docChange in it.documentChanges) {
-                    val comment = docChange.document.toObject(Comment::class.java)
-                    val result: FirebaseChangeType = when (docChange.type) {
-                        Type.ADDED -> {
-                            ADDED
-                        }
-                        Type.REMOVED -> {
-                            REMOVED
-                        }
-                        else -> {
-                            NOT_DETECTED
-                        }
-                    }
-                    onCommentChange(result, comment)
-                }
-            }
-        }
     }
 
 }

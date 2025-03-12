@@ -145,7 +145,7 @@ class HomeFragment : Fragment() {
 //        }
 
         postAdapter.setOnCommentClickListener {
-            val action = HomeFragmentDirections.actionHomeFragmentToCommentListBottomSheetDialog(it.postId)
+            val action = HomeFragmentDirections.actionHomeFragmentToCommentListBottomSheetDialog(it.userId, it.postId)
             findNavController().navigate(action)
         }
     }

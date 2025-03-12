@@ -55,7 +55,7 @@ class EditProfileFragment : Fragment() {
             requireActivity().finish()
         }
 
-        mUserViewModel.fetchUserInfo(userAuthentication.getCurrentUser()!!.uid).observe(viewLifecycleOwner) { user ->
+        mUserViewModel.user.observe(viewLifecycleOwner) { user ->
             binding.editPfp.setOnClickListener {
                 val action = EditProfileFragmentDirections.actionEditProfileToEditProfilePictureBottomSheetDialog(user)
                 findNavController().navigate(action)
@@ -69,17 +69,18 @@ class EditProfileFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        mUserViewModel.fetchUserInfo(userAuthentication.getCurrentUser()!!.uid)
 
         binding.toolBarEdPf.title.text = getString(R.string.edit_profile)
 
-        mUserViewModel.fetchUserInfo(userAuthentication.getCurrentUser()!!.uid).observe(viewLifecycleOwner) { user ->
+        mUserViewModel.user.observe(viewLifecycleOwner) { user ->
             Glide.with(binding.userPfp).load(user!!.profilePictureUrl).into(binding.userPfp)
         }
 
     }
 
     private fun showCurrentUserInfo() {
-        mUserViewModel.fetchUserInfo(userAuthentication.getCurrentUser()!!.uid).observe(viewLifecycleOwner) {
+        mUserViewModel.user.observe(viewLifecycleOwner) {
             binding.nameTv.text = it!!.name
             binding.usernameTv.text = it.username
             binding.bioTv.text = it.bio

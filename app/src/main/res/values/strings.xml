@@ -49,6 +49,7 @@
     <string name="videos">Videos</string>
     <string name="bookmark">Bookmark</string>
     <string name="notification_sample">%1$s shared a post</string>
+    <string name="like_comment">%1$s likes</string>
     <string name="settings_and_activity">Settings and activity</string>
     <string name="add_account">Add account</string>
     <string name="log_out">Log out</string>

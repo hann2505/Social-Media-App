@@ -29,6 +29,9 @@ class PostViewModel@Inject constructor(
     private val _searchPosts = MutableLiveData<List<PostWithUser>>()
     val searchPosts: LiveData<List<PostWithUser>> = _searchPosts
 
+    private val _postCount = MutableLiveData<Int>()
+    val postCount: LiveData<Int> = _postCount
+
     fun fetchPostByUserId(userId: String): LiveData<List<PostWithUser>> {
         viewModelScope.launch(Dispatchers.IO) {
             val posts = postRemoteDatabase.getPostByUserIdFromFirebase(userId)
@@ -67,6 +70,14 @@ class PostViewModel@Inject constructor(
             _searchPosts.postValue(posts)
         }
         return searchPosts
+    }
+
+    fun getPostCountUpdate(userId: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            postRemoteDatabase.getPostCount(userId) { postCount ->
+                _postCount.postValue(postCount)
+            }
+        }
     }
 
 

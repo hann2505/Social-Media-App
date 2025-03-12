@@ -5,12 +5,12 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.bumptech.glide.Glide
 import com.example.socialmediaapp.data.entity.Comment
-import com.example.socialmediaapp.data.entity.CommentWithUser
 import com.example.socialmediaapp.databinding.CommentBinding
+import com.example.socialmediaapp.extensions.TimeConverter
 
 class CommentAdapter: RecyclerView.Adapter<CommentAdapter.CommentViewHolder>() {
 
-    private val commentList = mutableListOf<CommentWithUser>()
+    private val commentList = mutableListOf<Comment>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CommentViewHolder {
 
@@ -32,14 +32,15 @@ class CommentAdapter: RecyclerView.Adapter<CommentAdapter.CommentViewHolder>() {
     override fun getItemCount(): Int = commentList.size
 
     inner class CommentViewHolder(private val binding: CommentBinding) : RecyclerView.ViewHolder(binding.root)  {
-        fun bindData(comment: CommentWithUser) {
+        fun bindData(comment: Comment) {
             binding.userComment.text = comment.content
             binding.userName.text = comment.username
+            binding.timestamp.text = TimeConverter.convertTimestampToDateTime(comment.timestamp)
             Glide.with(binding.userPfp).load(comment.profilePictureUrl).into(binding.userPfp)
         }
     }
 
-    fun setData(commentList: List<CommentWithUser>) {
+    fun setData(commentList: List<Comment>) {
         this.commentList.clear()
         this.commentList.addAll(commentList)
         notifyDataSetChanged()

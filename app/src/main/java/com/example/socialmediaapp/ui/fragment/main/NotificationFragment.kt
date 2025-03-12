@@ -38,17 +38,18 @@ class NotificationFragment : Fragment() {
     ): View {
         _binding = FragmentNotificationBinding.inflate(inflater, container, false)
 
-        mUserViewModel.fetchUserInfo(userAuthentication.getCurrentUser()!!.uid).observe(viewLifecycleOwner) {
-            binding.userName.text = it!!.username
-        }
-
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        mUserViewModel.fetchUserInfo(userAuthentication.getCurrentUser()!!.uid)
         subscribeToRecyclerView()
         onClickListener()
+
+        mUserViewModel.user.observe(viewLifecycleOwner) {
+            binding.userName.text = it!!.username
+        }
     }
 
     private fun onClickListener() {

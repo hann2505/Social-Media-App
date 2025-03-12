@@ -65,7 +65,6 @@ class MainActivity : AppCompatActivity() {
         super.onResume()
         println("MainActivity: OnResume")
         checkIfUserLoggedIn()
-        checkOnRealtimeDatabase()
     }
 
     override fun onPause() {
@@ -154,12 +153,5 @@ class MainActivity : AppCompatActivity() {
             .setPopEnterAnim(slideIn)
             .setPopExitAnim(slideOut)
             .build()
-    }
-
-    private fun checkOnRealtimeDatabase() {
-        mUserViewModel.checkIfUserChanges()
-        mFollowerViewModel.checkIfFollowingChanges()
-//        mLikeViewModel.checkIfLikeChanges()
-        mCommentViewModel.checkIfCommentChanges()
     }
 }

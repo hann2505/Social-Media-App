@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.socialmediaapp.R
 import com.example.socialmediaapp.data.entity.PostWithUser
+import com.example.socialmediaapp.data.firebase.remote.CommentRemoteDatabase
 import com.example.socialmediaapp.data.firebase.remote.PostLikeRemoteFirebase
 import com.example.socialmediaapp.databinding.PostBinding
 import com.example.socialmediaapp.extensions.TimeConverter
@@ -17,6 +18,7 @@ import javax.inject.Inject
 
 class PostAdapter @Inject constructor(
     private val postLikeRemoteFirebase: PostLikeRemoteFirebase,
+    private val commentRemoteFirebase: CommentRemoteDatabase,
     private val auth: FirebaseAuth
 ) : RecyclerView.Adapter<PostAdapter.PostViewHolder>() {
 
@@ -33,10 +35,10 @@ class PostAdapter @Inject constructor(
         onCommentClickListener = listener
     }
 
-    private var onLikeClickListener: ((PostWithUser) -> Unit)? = null
+    private var onItemClickListener: ((PostWithUser) -> Unit)? = null
 
-    fun setOnLikeClickListener(listener: (PostWithUser) -> Unit) {
-        onLikeClickListener = listener
+    fun setOnItemClickListener(listener: (PostWithUser) -> Unit) {
+        onItemClickListener = listener
     }
 
     private var onBackClickListener: (() -> Unit)? = null
@@ -55,6 +57,11 @@ class PostAdapter @Inject constructor(
             postLikeRemoteFirebase.observeLikeCount(post.userId, post.postId) {
                 binding.likeCount.text = it.toString()
             }
+
+            commentRemoteFirebase.observeCommentCount(post.userId, post.postId) {
+                binding.commentCount.text = it.toString()
+            }
+
             binding.userName.text = post.username
             binding.caption.text = post.content
             binding.commentCount.text = post.commentCount.toString()
@@ -144,6 +151,12 @@ class PostAdapter @Inject constructor(
 
         holder.setOnBackClickListener {
             onBackClickListener?.invoke()
+        }
+
+        holder.itemView.setOnClickListener {
+            onItemClickListener?.let {
+                it(currentPost)
+            }
         }
 
         holder.setUpRecyclerView(currentPost)

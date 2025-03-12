@@ -1,15 +1,9 @@
 ﻿package com.example.socialmediaapp.data.firebase.remote
 
-import android.util.Log
 import com.example.socialmediaapp.data.entity.Follower
 import com.example.socialmediaapp.data.firebase.authentication.UserAuthentication
 import com.example.socialmediaapp.other.Constant.COLLECTION_FOLLOWERS
 import com.example.socialmediaapp.other.Constant.COLLECTION_USERS
-import com.example.socialmediaapp.other.FirebaseChangeType
-import com.example.socialmediaapp.other.FirebaseChangeType.ADDED
-import com.example.socialmediaapp.other.FirebaseChangeType.NOT_DETECTED
-import com.example.socialmediaapp.other.FirebaseChangeType.REMOVED
-import com.google.firebase.firestore.DocumentChange
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
@@ -35,7 +29,7 @@ class FollowerRemoteDatabase @Inject constructor(
     suspend fun followUser(followerId: String, followingId: String) {
         val followersCollection = userCollection.document(followerId).collection(COLLECTION_FOLLOWERS)
 
-        val follower =getFollower(followerId, followingId)
+        val follower = getFollower(followerId, followingId)
         followersCollection.document(follower.fid).set(follower).await()
 
     }
@@ -50,41 +44,13 @@ class FollowerRemoteDatabase @Inject constructor(
         }
     }
 
-    fun listenForFollowerChanges(onFollowerChange: (FirebaseChangeType, Follower) -> Unit) {
-        FirebaseFirestore.getInstance()
-            .collection(COLLECTION_FOLLOWERS)
-//            .whereEqualTo("followingId", followingId) // Listen for changes related to the current user
-            .addSnapshotListener { snapshots, error ->
-                if (error != null) {
-                    Log.e("Firestore", "Error listening for follower changes", error)
-                    return@addSnapshotListener
-                }
+    fun getFollowerCountUpdate(userId: String, onFollowerChange: (Int) -> Unit) {
+        userCollection.document(userId).collection(COLLECTION_FOLLOWERS).addSnapshotListener { snapshot, error ->
+            if (error != null) return@addSnapshotListener
+            val followerCount = snapshot?.count() ?: 0
+            onFollowerChange(followerCount)
+        }
 
-                snapshots?.let {
-                    for (docChange in it.documentChanges) {
-                        val fid = docChange.document.getString("fid") ?: continue
-                        val flrId = docChange.document.getString("followerId") ?: continue
-                        val flingId = docChange.document.getString("followingId") ?: continue
-                        val timestamp = docChange.document.getLong("timestamp") ?: continue
-
-                        val follower = Follower(fid, flrId, flingId, timestamp)
-
-                        val result: FirebaseChangeType = when (docChange.type) {
-                            DocumentChange.Type.ADDED -> {
-                                ADDED
-                            }
-                            DocumentChange.Type.REMOVED -> {
-                                REMOVED
-                            }
-                            else -> {
-                                NOT_DETECTED
-                            }
-                        }
-                        onFollowerChange(result, follower)
-
-                    }
-                }
-            }
     }
 
 }

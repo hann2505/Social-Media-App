@@ -37,6 +37,7 @@ class PostRemoteDatabase @Inject constructor(
 ) {
     private val usersCollection = db.collection(COLLECTION_USERS)
     private val postsCollection = usersCollection.document().collection(COLLECTION_POSTS)
+    private val postGroupCollection = db.collectionGroup(COLLECTION_POST_LIKES)
 
     private val storageRef = storage.reference
 
@@ -87,6 +88,19 @@ class PostRemoteDatabase @Inject constructor(
         }
         catch (e: Exception) {
             emptyList()
+        }
+    }
+
+    fun getPostCount(userId: String, onUpdate: (Int) -> Unit) {
+        usersCollection.document(userId).collection(COLLECTION_POSTS).addSnapshotListener { snapshot, e ->
+            if (e != null) {
+                Log.w("PostRemoteDatabase", "Listen failed.", e)
+                return@addSnapshotListener
+            }
+
+            val postCount = snapshot?.count() ?: 0
+            onUpdate(postCount)
+
         }
     }
 
@@ -153,68 +167,13 @@ class PostRemoteDatabase @Inject constructor(
 
     suspend fun searchPostsByContentOrUsername(query: String): List<PostWithUser> {
         return try {
-            val lowercaseQuery = query.lowercase()
-            val results = mutableListOf<PostWithUser>()
-
-            val matchingUsers = usersCollection
-                .whereGreaterThanOrEqualTo("username", lowercaseQuery)
-                .whereLessThanOrEqualTo("username", lowercaseQuery + "\uf8ff")
-
+            postGroupCollection
+                .whereLessThanOrEqualTo("content", query)
+                .whereGreaterThanOrEqualTo("content", query)
+                .orderBy("timestamp", Query.Direction.DESCENDING)
                 .get()
                 .await()
-                .toObjects(User::class.java)
-                .associateBy { it.userId }
-
-            val contentMatches = postsCollection
-                .whereGreaterThanOrEqualTo("content", lowercaseQuery)
-                .whereLessThanOrEqualTo("content", lowercaseQuery + "\uf8ff")
-                .get()
-                .await()
-                .toObjects(Post::class.java)
-
-            val userIdMatches = if (matchingUsers.isNotEmpty()) {
-                postsCollection
-                    .whereIn("userId", matchingUsers.keys.toList())
-                    .get()
-                    .await()
-                    .toObjects(Post::class.java)
-            } else {
-                emptyList()
-            }
-
-            val allMatchingPosts = (contentMatches + userIdMatches).distinctBy { it.postId }
-
-            val userIds = allMatchingPosts.map { it.userId }.distinct()
-            val users = if (userIds.isNotEmpty()) {
-                usersCollection
-                    .whereIn("userId", userIds)
-                    .get()
-                    .await()
-                    .toObjects(User::class.java)
-                    .associateBy { it.userId }
-            } else {
-                emptyMap()
-            }
-
-            allMatchingPosts.forEach { post ->
-                val user = users[post.userId] ?: return@forEach
-
-                results.add(
-                    PostWithUser(
-                        postId = post.postId,
-                        userId = user.userId,
-                        username = user.username,
-                        profilePictureUrl = user.profilePictureUrl,
-                        content = post.content,
-                        mediaUrls = post.listMediaUrls,
-                        likeCount = 0,
-                        commentCount = 0,
-                        timestamp = post.timestamp
-                    )
-                )
-            }
-
-            results
+                .toObjects()
         } catch (e: Exception) {
             emptyList()
         }

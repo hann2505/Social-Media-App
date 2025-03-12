@@ -75,10 +75,17 @@ class ProfileFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        mUserViewModel.fetchUserInfo(userAuthentication.getCurrentUser()!!.uid)
+        mFollowerViewModel.getFollowerCount(userAuthentication.getCurrentUser()!!.uid)
+        mPostViewModel.getPostCountUpdate(userAuthentication.getCurrentUser()!!.uid)
+
+
         setupToolbar()
         replaceFragment()
         displayBackButton()
         showCurrentUserInfo()
+
+
 
         binding.pfSwipeRefreshLayout.setOnRefreshListener {
             mUserViewModel.fetchUserInfo(userAuthentication.getCurrentUser()!!.uid)
@@ -86,6 +93,7 @@ class ProfileFragment : Fragment() {
             binding.pfSwipeRefreshLayout.isRefreshing = false
 
         }
+
 
         binding.editProfileBtn.setOnClickListener {
             val intent = Intent(requireActivity(), EditProfileActivity::class.java)
@@ -111,8 +119,8 @@ class ProfileFragment : Fragment() {
         if (userAuthentication.getCurrentUser() == null)
             return
         else {
-            mUserViewModel.fetchUserInfo(userAuthentication.getCurrentUser()!!.uid).observe(viewLifecycleOwner) {
-                binding.userName.text = it!!.username
+            mUserViewModel.user.observe(viewLifecycleOwner) {
+                binding.userName.text = it.username
                 binding.name.text = it.name
                 binding.userBio.text = it.bio
                 Glide.with(binding.userPfp).load(it.profilePictureUrl).into(binding.userPfp)
@@ -169,6 +177,12 @@ class ProfileFragment : Fragment() {
     }
 
     private fun getFollowInfo() {
+        mFollowerViewModel.followerCount.observe(viewLifecycleOwner) {
+            binding.followersNumber.text = it.toString()
+        }
 
+        mPostViewModel.postCount.observe(viewLifecycleOwner) {
+            binding.postNumber.text = it.toString()
+        }
     }
 }

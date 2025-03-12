@@ -54,14 +54,25 @@ class UserProfileFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         showUserInfo(args.user)
 
+        mPostViewModel.getPostCountUpdate(args.user.userId)
+        mFollowerViewModel.getFollowerCount(args.user.userId)
+
 
         binding.swipeRefreshLayout.setOnRefreshListener {
 
             binding.swipeRefreshLayout.isRefreshing = false
         }
 
+        mPostViewModel.postCount.observe(viewLifecycleOwner) {
+            binding.postNumber.text = it.toString()
+        }
+
+        mFollowerViewModel.followerCount.observe(viewLifecycleOwner) {
+            binding.followersNumber.text = it.toString()
+        }
+
         adapter.setOnCommentClickListener {
-            val action = UserProfileFragmentDirections.actionUserProfileFragmentToCommentListBottomSheetDialog(it.postId)
+            val action = UserProfileFragmentDirections.actionUserProfileFragmentToCommentListBottomSheetDialog(it.userId, it.postId)
             findNavController().navigate(action)
         }
 

@@ -62,7 +62,7 @@ class PostListFragment : Fragment() {
         mPostViewModel.fetchPostByUserId(userAuthentication.getCurrentUser()!!.uid)
 
         postAdapter.setOnCommentClickListener {
-            val action = ProfileFragmentDirections.actionProfileFragmentToCommentListBottomSheetDialog(it.postId)
+            val action = ProfileFragmentDirections.actionProfileFragmentToCommentListBottomSheetDialog(it.userId, it.postId)
             requireActivity().findNavController(R.id.nav_host_fragment).navigate(action)
         }
     }

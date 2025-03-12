@@ -4,6 +4,7 @@ import android.app.Application
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.socialmediaapp.data.entity.Follower
 import com.example.socialmediaapp.data.firebase.remote.FollowerRemoteDatabase
@@ -20,6 +21,14 @@ class FollowerViewModel @Inject constructor(
     private val followerRemoteDatabase: FollowerRemoteDatabase
 ) : AndroidViewModel(application)
 {
+    private val _followers = MutableLiveData<List<Follower>>()
+    val followers: LiveData<List<Follower>> = _followers
+
+    private val _followerCount = MutableLiveData<Int>()
+    val followerCount: LiveData<Int> = _followerCount
+
+    private val _followingCount = MutableLiveData<Int>()
+    val followingCount: LiveData<Int> = _followingCount
 
     fun followUser(followerId: String, followingId: String) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -35,21 +44,10 @@ class FollowerViewModel @Inject constructor(
 
     }
 
-    fun checkIfFollowingChanges() {
+    fun getFollowerCount(userId: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            followerRemoteDatabase.listenForFollowerChanges {changeType, follower ->
-                viewModelScope.launch(Dispatchers.IO) {
-                    Log.d("follow", changeType.toString())
-                    when (changeType) {
-                        ADDED -> {
-                            Log.d("follow", "added: $follower")
-                        }
-                        REMOVED -> {
-                            Log.d("follow", "deleted: $follower")
-                        }
-                        else -> {}
-                    }
-                }
+            followerRemoteDatabase.getFollowerCountUpdate(userId) { followerCount ->
+                _followerCount.postValue(followerCount)
             }
         }
     }

@@ -10,6 +10,7 @@ import android.widget.SearchView
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.socialmediaapp.adapter.PostAdapter
 import com.example.socialmediaapp.adapter.SearchAdapter
 import com.example.socialmediaapp.adapter.UserAdapter
 import com.example.socialmediaapp.data.firebase.authentication.UserAuthentication
@@ -27,7 +28,11 @@ class SearchFragment : Fragment(), SearchView.OnQueryTextListener,
     private var _binding: FragmentSearchBinding? = null
     private val binding get() = _binding!!
 
-    private val searchAdapter = SearchAdapter()
+    private val userAdapter = UserAdapter()
+
+    @Inject
+    lateinit var postAdapter: PostAdapter
+
     private val mUserViewModel: UserViewModel by viewModels()
     private val mPostViewModel: PostViewModel by viewModels()
     private val mFollowerViewModel: FollowerViewModel by viewModels()
@@ -42,14 +47,6 @@ class SearchFragment : Fragment(), SearchView.OnQueryTextListener,
         _binding = FragmentSearchBinding.inflate(inflater, container, false)
         onItemClickListener()
 
-        binding.recyclerView.layoutManager = LinearLayoutManager(
-            requireContext(),
-            LinearLayoutManager.VERTICAL,
-            false
-        )
-
-        binding.recyclerView.adapter = searchAdapter
-
         return binding.root
     }
 
@@ -60,12 +57,13 @@ class SearchFragment : Fragment(), SearchView.OnQueryTextListener,
 
     override fun onStart() {
         super.onStart()
-        subscribeToObserve()
+        subscribeToRecyclerView()
     }
 
     override fun onQueryTextSubmit(query: String?): Boolean {
         if (query.isNullOrEmpty()) {
-            searchAdapter.setData(emptyList())
+            userAdapter.setData(emptyList())
+            postAdapter.setData(emptyList())
         }
         else {
             searchData(query)
@@ -75,7 +73,8 @@ class SearchFragment : Fragment(), SearchView.OnQueryTextListener,
 
     override fun onQueryTextChange(newText: String?): Boolean {
         if (newText.isNullOrEmpty()) {
-            searchAdapter.setData(emptyList())
+            userAdapter.setData(emptyList())
+            postAdapter.setData(emptyList())
         }
         else {
             searchData(newText)
@@ -84,27 +83,14 @@ class SearchFragment : Fragment(), SearchView.OnQueryTextListener,
     }
 
     private fun searchData(query: String) {
-//        mUserViewModel.(query).observe(viewLifecycleOwner) { userList ->
-//
-//            Log.d("search user", "$userList")
-//            mPostViewModel.searchPostFromFirebase(query).observe(viewLifecycleOwner) { postList ->
-//                val combinedList = mutableListOf<Any>()
-//                combinedList.addAll(userList)
-//                combinedList.addAll(postList)
-//                searchAdapter.setData(combinedList)
-//            }
-//
-//        }
 
         mUserViewModel.searchUser(query).observe(viewLifecycleOwner) { userList ->
-            mPostViewModel.searchPostFromFirebaseByContentOrUsername(query).observe(viewLifecycleOwner) { postList ->
-                val combinedList = mutableListOf<Any>()
-                combinedList.addAll(userList)
-                combinedList.addAll(postList)
-                searchAdapter.setData(combinedList)
-            }
+            userAdapter.setData(userList)
         }
 
+        mPostViewModel.searchPostFromFirebaseByContentOrUsername(query).observe(viewLifecycleOwner) { postList ->
+            postAdapter.setData(postList)
+        }
 
     }
 
@@ -113,14 +99,26 @@ class SearchFragment : Fragment(), SearchView.OnQueryTextListener,
         searchView.setOnQueryTextListener(this)
     }
 
-    private fun subscribeToObserve() {
-//        mLikeViewModel.(userAuthentication.getCurrentUser()!!.uid).observe(viewLifecycleOwner) {
-//            searchAdapter.setLikedList(it)
-//        }
+    private fun subscribeToRecyclerView() {
+        binding.userRecyclerView.layoutManager = LinearLayoutManager(
+            requireContext(),
+            LinearLayoutManager.VERTICAL,
+            false
+        )
+
+        binding.postRecyclerView.layoutManager = LinearLayoutManager(
+            requireContext(),
+            LinearLayoutManager.VERTICAL,
+            false
+        )
+
+        binding.userRecyclerView.adapter = userAdapter
+        binding.postRecyclerView.adapter = postAdapter
+
     }
 
     private fun onItemClickListener() {
-        searchAdapter.setOnUserItemClickListener {
+        userAdapter.setOnItemClickListener {
             if (userAuthentication.getCurrentUser()!!.uid == it.userId){
                 val action = SearchFragmentDirections.actionSearchFragmentToProfileFragment(true)
                 findNavController().navigate(action)
@@ -131,25 +129,11 @@ class SearchFragment : Fragment(), SearchView.OnQueryTextListener,
             }
         }
 
-        searchAdapter.setOnLikeClickListener { post ->
-//            mLikeViewModel.checkIfLiked(userAuthentication.getCurrentUser()!!.uid, post.post.postId).observeOnce(viewLifecycleOwner) {
-//                if (it)
-//                    mLikeViewModel.unlikePost(
-//                        userAuthentication.getCurrentUser()!!.uid,
-//                        post.post.postId
-//                    )
-//                else
-//                    mLikeViewModel.likePost(
-//                        userAuthentication.getCurrentUser()!!.uid,
-//                        post.post.postId
-//                    )
-//            }
+        postAdapter.setOnItemClickListener {
+//            val action = SearchFragmentDirections.actionS(it)
+//            findNavController().navigate(action)
         }
 
-        searchAdapter.setOnCommentClickListener {
-            val action = SearchFragmentDirections.actionSearchFragmentToCommentListBottomSheetDialog(it.post.postId)
-            findNavController().navigate(action)
-        }
 
     }
 

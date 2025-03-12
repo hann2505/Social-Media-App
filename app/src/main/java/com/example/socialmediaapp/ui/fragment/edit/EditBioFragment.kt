@@ -46,7 +46,9 @@ class EditBioFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.toolBarEdPf.title.text = getString(R.string.bio)
-    }
+        mUserViewModel.fetchUserInfo(userAuthentication.getCurrentUser()!!.uid)
+
+        }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
@@ -72,7 +74,7 @@ class EditBioFragment : Fragment() {
 
     private fun showCurrentBio() {
 
-        mUserViewModel.fetchUserInfo(userAuthentication.getCurrentUser()!!.uid).observe(viewLifecycleOwner) {
+        mUserViewModel.user.observe(viewLifecycleOwner) {
             binding.bioEditText.editText!!.setText(it!!.bio)
         }
     }

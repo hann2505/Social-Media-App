@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
@@ -18,6 +19,8 @@ import com.example.socialmediaapp.viewmodel.CommentViewModel
 import com.example.socialmediaapp.viewmodel.UserViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -46,15 +49,24 @@ class CommentListBottomSheetDialog : BottomSheetDialogFragment(), TextWatcher {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        mCommentViewModel.getCommentsRealtimeUpdates(args.postOwnerId, args.postId)
+//        mCommentViewModel.getCommentsRealtimeUpdatesLiveData(args.postOwnerId, args.postId)
+        mUserViewModel.fetchUserInfo(userAuthentication.getCurrentUser()!!.uid)
+
         binding.comment.addTextChangedListener(this)
 
-        mUserViewModel.fetchUserInfo(userAuthentication.getCurrentUser()!!.uid).observe(viewLifecycleOwner) {
+
+        mUserViewModel.user.observe(viewLifecycleOwner) {
             Glide.with(this).load(it!!.profilePictureUrl).into(binding.userPfp)
         }
 
         subscribeToObservers()
         binding.uploadButton.setOnClickListener {
-            mCommentViewModel.addComment(userAuthentication.getCurrentUser()!!.uid, args.postId, binding.comment.text.toString())
+            mUserViewModel.user.observe(viewLifecycleOwner) {
+
+                mCommentViewModel.addComment(it, args.postOwnerId, args.postId, binding.comment.text.toString())
+
+            }
             binding.comment.text.clear()
         }
     }
@@ -80,11 +92,20 @@ class CommentListBottomSheetDialog : BottomSheetDialogFragment(), TextWatcher {
             false
             )
 
-//        mCommentViewModel.getCommentWithUser(args.postId).observe(viewLifecycleOwner) {
-//            commentAdapter.setData(it)
-//            recyclerView.adapter = commentAdapter
-//        }
+        recyclerView.adapter = commentAdapter
 
+        lifecycleScope.launch {
+            mCommentViewModel.comment.collectLatest {
+                commentAdapter.setData(it)
+            }
+        }
+
+//        mCommentViewModel.commentLiveData.observe(viewLifecycleOwner) {
+//            Log.d("CommentList", "subscribeToObservers: $it")
+//
+//            commentAdapter.setData(it)
+//
+//        }
     }
 
 }

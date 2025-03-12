@@ -91,7 +91,7 @@ class PostFragment: Fragment() {
     private fun onClickListeners() {
 
         postAdapter.setOnCommentClickListener {
-            val action = PostFragmentDirections.actionPostFragmentToCommentListBottomSheetDialog(it.postId)
+            val action = PostFragmentDirections.actionPostFragmentToCommentListBottomSheetDialog(it.userId, it.postId)
             findNavController().navigate(action)
 
         }

@@ -36,6 +36,7 @@
         <action
             android:id="@+id/action_searchFragment_to_commentListBottomSheetDialog"
             app:destination="@id/commentListBottomSheetDialog" />
+
     </fragment>
     <fragment
         android:id="@+id/addFragment"
@@ -107,12 +108,13 @@
         <action
             android:id="@+id/action_commentListBottomSheetDialog_to_searchFragment"
             app:destination="@id/searchFragment" />
-        <argument
-            android:name="postId"
-            app:argType="string" />
         <action
             android:id="@+id/action_commentListBottomSheetDialog_to_postFragment"
             app:destination="@id/postFragment" />
+        <argument
+            android:name="postOwnerId"
+            app:argType="string" />
+        <argument android:name="postId" />
     </dialog>
     <fragment
         android:id="@+id/postFragment"
