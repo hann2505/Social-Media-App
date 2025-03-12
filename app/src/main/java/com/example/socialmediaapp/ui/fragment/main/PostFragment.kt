@@ -14,9 +14,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.socialmediaapp.adapter.PostAdapter
 import com.example.socialmediaapp.data.firebase.authentication.UserAuthentication
 import com.example.socialmediaapp.databinding.FragmentPostBinding
-import com.example.socialmediaapp.extensions.LiveDataExtensions.observeOnce
-import com.example.socialmediaapp.other.Constant.SCROLL_POSITION
-import com.example.socialmediaapp.viewmodel.LikeViewModel
 import com.example.socialmediaapp.viewmodel.PostViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -30,14 +27,14 @@ class PostFragment: Fragment() {
     private val args: PostFragmentArgs by navArgs()
 
     private val mPostViewModel: PostViewModel by viewModels()
-    private val mLikeViewModel: LikeViewModel by viewModels()
 
     private var recyclerViewState: Parcelable? = null
 
     @Inject
     lateinit var userAuthentication: UserAuthentication
 
-    private val postAdapter = PostAdapter()
+    @Inject
+    lateinit var postAdapter: PostAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -92,21 +89,6 @@ class PostFragment: Fragment() {
     }
 
     private fun onClickListeners() {
-        postAdapter.setOnLikeClickListener { post ->
-//            mLikeViewModel.checkIfLiked(userAuthentication.getCurrentUser()!!.uid, post.post.postId).observeOnce(viewLifecycleOwner) {
-//                if (it)
-//                    mLikeViewModel.unlikePost(
-//                        userAuthentication.getCurrentUser()!!.uid,
-//                        post.post.postId
-//                    )
-//                else
-//                    mLikeViewModel.likePost(
-//                        userAuthentication.getCurrentUser()!!.uid,
-//                        post.post.postId
-//                    )
-//            }
-
-        }
 
         postAdapter.setOnCommentClickListener {
             val action = PostFragmentDirections.actionPostFragmentToCommentListBottomSheetDialog(it.postId)

@@ -12,9 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.socialmediaapp.adapter.PostAdapter
 import com.example.socialmediaapp.data.firebase.authentication.UserAuthentication
 import com.example.socialmediaapp.databinding.FragmentHomeBinding
-import com.example.socialmediaapp.extensions.LiveDataExtensions.observeOnce
 import com.example.socialmediaapp.viewmodel.FollowerViewModel
-import com.example.socialmediaapp.viewmodel.LikeViewModel
 import com.example.socialmediaapp.viewmodel.PostViewModel
 import com.example.socialmediaapp.viewmodel.UserViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -30,12 +28,12 @@ class HomeFragment : Fragment() {
     private val mUserViewModel: UserViewModel by viewModels()
     private val mPostViewModel: PostViewModel by viewModels()
     private val mFollowerViewModel: FollowerViewModel by viewModels()
-    private val mLikeViewModel: LikeViewModel by viewModels()
 
     @Inject
     lateinit var userAuthentication: UserAuthentication
 
-    private val postAdapter = PostAdapter()
+    @Inject
+    lateinit var postAdapter: PostAdapter
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -58,10 +56,8 @@ class HomeFragment : Fragment() {
         setUpRecyclerView()
         onClickListener()
 
-        mPostViewModel.fetchPostFromFirebase()
-
         binding.swipeRefreshLayout.setOnRefreshListener {
-            mPostViewModel.fetchPostFromFirebase()
+
             binding.swipeRefreshLayout.isRefreshing = false
         }
     }

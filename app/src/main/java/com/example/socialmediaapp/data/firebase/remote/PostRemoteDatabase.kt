@@ -8,6 +8,7 @@ import com.example.socialmediaapp.data.entity.PostMedia
 import com.example.socialmediaapp.data.entity.PostWithUser
 import com.example.socialmediaapp.data.entity.User
 import com.example.socialmediaapp.extensions.TimeConverter
+import com.example.socialmediaapp.other.Constant.COLLECTION_COMMENTS
 import com.example.socialmediaapp.other.Constant.COLLECTION_POSTS
 import com.example.socialmediaapp.other.Constant.COLLECTION_POST_LIKES
 import com.example.socialmediaapp.other.Constant.COLLECTION_POST_MEDIAS
@@ -17,8 +18,16 @@ import com.example.socialmediaapp.other.FirebaseChangeType.*
 import com.example.socialmediaapp.other.MediaTypeConverter
 import com.google.firebase.firestore.DocumentChange
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ListenerRegistration
+import com.google.firebase.firestore.Query
+import com.google.firebase.firestore.toObject
+import com.google.firebase.firestore.toObjects
 import com.google.firebase.storage.FirebaseStorage
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class PostRemoteDatabase @Inject constructor(
@@ -28,35 +37,51 @@ class PostRemoteDatabase @Inject constructor(
 ) {
     private val usersCollection = db.collection(COLLECTION_USERS)
     private val postsCollection = usersCollection.document().collection(COLLECTION_POSTS)
-    private val likesCollection = db.collection(COLLECTION_POST_LIKES)
-    private val postMediasCollection = db.collection(COLLECTION_POST_MEDIAS)
+
     private val storageRef = storage.reference
 
     suspend fun getPostByUserIdFromFirebase(userId: String): List<PostWithUser> {
         return try {
-            val userSnapshot = usersCollection.document(userId).get().await()
-            val user = userSnapshot.toObject(User::class.java) ?: return emptyList()
 
-            val documents = postsCollection.whereEqualTo("userId", userId).get().await()
+            val user = usersCollection.document(userId).get().await().toObject<User>()
 
-            val postIds = documents.documents.mapNotNull { it.getString("postId") }
-            val likesSnapshot = likesCollection.whereIn("postId", postIds).get().await()
+            val posts = usersCollection
+                .document(userId)
+                .collection(COLLECTION_POSTS)
+                .orderBy("timestamp", Query.Direction.DESCENDING)
+                .get()
+                .await()
+                .toObjects(Post::class.java)
 
-            val likeCounts = likesSnapshot.documents.groupBy { it.getString("postId") }
-                .mapValues { it.value.size }
+            posts.map {
 
-            documents.map { document ->
-                val postId = document.getString("postId") ?: ""
+                val postLikeCount = usersCollection.document(userId)
+                    .collection(COLLECTION_POSTS)
+                    .document(it.postId)
+                    .collection(COLLECTION_POST_LIKES)
+                    .get()
+                    .await()
+                    .size()
+
+
+                val commentCount = usersCollection.document(userId)
+                    .collection(COLLECTION_POSTS)
+                    .document(it.postId)
+                    .collection(COLLECTION_COMMENTS)
+                    .get()
+                    .await()
+                    .size()
 
                 PostWithUser(
-                    postId = postId,
-                    username = user.username, // From user document
-                    profilePictureUrl = user.profilePictureUrl, // From user document
-                    content = document.getString("content") ?: "",
-                    mediaUrls = document.get("listMediaUrls") as? List<String> ?: emptyList(),
-                    likeCount = likeCounts[postId] ?: 0,
-                    commentCount = (document.getLong("commentCount") ?: 0).toInt(),
-                    timestamp = document.getLong("timestamp") ?: 0
+                    postId = it.postId,
+                    userId = user!!.userId,
+                    username = user.username,
+                    profilePictureUrl = user.profilePictureUrl,
+                    content = it.content,
+                    mediaUrls = it.listMediaUrls,
+                    likeCount = postLikeCount,
+                    commentCount = commentCount,
+                    timestamp = it.timestamp
                 )
             }
         }
@@ -65,51 +90,133 @@ class PostRemoteDatabase @Inject constructor(
         }
     }
 
-    fun getPostWithUserRealTime(userId: String, onResult: (List<PostWithUser>) -> Unit) {
-        usersCollection.document(userId).addSnapshotListener { userSnapshot, error ->
-            if (error != null || userSnapshot == null || !userSnapshot.exists()) {
-                onResult(emptyList())
-                return@addSnapshotListener
+    suspend fun getPostRealtimeUpdate(userId: String, onUpdate: (List<PostWithUser>) -> Unit): ListenerRegistration {
+         return usersCollection
+             .document(userId)
+             .collection(COLLECTION_POSTS)
+             .orderBy("timestamp", Query.Direction.DESCENDING)
+             .addSnapshotListener { snapshot, e ->
+                 if (e != null) {
+                    Log.w("PostRemoteDatabase", "Listen failed.", e)
+                    return@addSnapshotListener
+                 }
+
+                 if (snapshot == null) {
+                    onUpdate(emptyList())
+                    return@addSnapshotListener
+                 }
+
+                 CoroutineScope(Dispatchers.IO).launch {
+                    val user = usersCollection.document(userId).get().await().toObject<User>()
+
+                    val posts = snapshot.toObjects(Post::class.java)
+
+                     val postWithUserList = posts.map { post ->
+                         val postLikeCount = usersCollection.document(userId)
+                             .collection(COLLECTION_POSTS)
+                             .document(post.postId)
+                             .collection(COLLECTION_POST_LIKES)
+                             .get()
+                             .await()
+                             .size()
+
+                         val commentCount = usersCollection.document(userId)
+                             .collection(COLLECTION_POSTS)
+                             .document(post.postId)
+                             .collection(COLLECTION_COMMENTS)
+                             .get()
+                             .await()
+                             .size()
+
+                         PostWithUser(
+                             postId = post.postId,
+                             userId = user!!.userId,
+                             username = user.username,
+                             profilePictureUrl = user.profilePictureUrl,
+                             content = post.content,
+                             mediaUrls = post.listMediaUrls,
+                             likeCount = postLikeCount,
+                             commentCount = commentCount,
+                             timestamp = post.timestamp
+                         )
+                     }
+
+                     withContext(Dispatchers.Main) {
+                         onUpdate(postWithUserList) // Send updated list to UI
+                     }
+                 }
             }
 
-            val user = userSnapshot.toObject(User::class.java) ?: return@addSnapshotListener
 
-            postsCollection.whereEqualTo("userId", userId)
-                .addSnapshotListener { postSnapshot, postError ->
-                    if (postError != null || postSnapshot == null) {
-                        onResult(emptyList())
-                        return@addSnapshotListener
-                    }
 
-                    val postIds = postSnapshot.documents.mapNotNull { it.getString("postId") }
+    }
 
-                    likesCollection.whereIn("postId", postIds).addSnapshotListener { likesSnapshot, likeError ->
-                        if (likeError != null || likesSnapshot == null) {
-                            onResult(emptyList())
-                            return@addSnapshotListener
-                        }
+    suspend fun searchPostsByContentOrUsername(query: String): List<PostWithUser> {
+        return try {
+            val lowercaseQuery = query.lowercase()
+            val results = mutableListOf<PostWithUser>()
 
-                        val likeCounts = likesSnapshot.documents.groupBy { it.getString("postId") }
-                            .mapValues { it.value.size }
+            val matchingUsers = usersCollection
+                .whereGreaterThanOrEqualTo("username", lowercaseQuery)
+                .whereLessThanOrEqualTo("username", lowercaseQuery + "\uf8ff")
 
-                        val postsWithUser = postSnapshot.documents.map { document ->
-                            val postId = document.getString("postId") ?: ""
+                .get()
+                .await()
+                .toObjects(User::class.java)
+                .associateBy { it.userId }
 
-                            PostWithUser(
-                                postId = postId,
-                                username = user.username,
-                                profilePictureUrl = user.profilePictureUrl,
-                                content = document.getString("content") ?: "",
-                                mediaUrls = document.get("listMediaUrls") as? List<String> ?: emptyList(),
-                                likeCount = likeCounts[postId] ?: 0,
-                                commentCount = (document.getLong("commentCount") ?: 0).toInt(),
-                                timestamp = document.getLong("timestamp") ?: 0
-                            )
-                        }
+            val contentMatches = postsCollection
+                .whereGreaterThanOrEqualTo("content", lowercaseQuery)
+                .whereLessThanOrEqualTo("content", lowercaseQuery + "\uf8ff")
+                .get()
+                .await()
+                .toObjects(Post::class.java)
 
-                        onResult(postsWithUser)
-                    }
-                }
+            val userIdMatches = if (matchingUsers.isNotEmpty()) {
+                postsCollection
+                    .whereIn("userId", matchingUsers.keys.toList())
+                    .get()
+                    .await()
+                    .toObjects(Post::class.java)
+            } else {
+                emptyList()
+            }
+
+            val allMatchingPosts = (contentMatches + userIdMatches).distinctBy { it.postId }
+
+            val userIds = allMatchingPosts.map { it.userId }.distinct()
+            val users = if (userIds.isNotEmpty()) {
+                usersCollection
+                    .whereIn("userId", userIds)
+                    .get()
+                    .await()
+                    .toObjects(User::class.java)
+                    .associateBy { it.userId }
+            } else {
+                emptyMap()
+            }
+
+            allMatchingPosts.forEach { post ->
+                val user = users[post.userId] ?: return@forEach
+
+                results.add(
+                    PostWithUser(
+                        postId = post.postId,
+                        userId = user.userId,
+                        username = user.username,
+                        profilePictureUrl = user.profilePictureUrl,
+                        content = post.content,
+                        mediaUrls = post.listMediaUrls,
+                        likeCount = 0,
+                        commentCount = 0,
+                        timestamp = post.timestamp
+                    )
+                )
+            }
+
+            results
+        } catch (e: Exception) {
+            emptyList()
         }
     }
 
@@ -119,7 +226,7 @@ class PostRemoteDatabase @Inject constructor(
         } ?: MediaType.TEXT
     }
 
-    private fun uploadPost(post: Post) {
+    private fun uploadPost(userId: String, post: Post) {
         try {
             val postMap = mapOf(
                 "postId" to post.postId,
@@ -130,7 +237,7 @@ class PostRemoteDatabase @Inject constructor(
                 "postState" to post.postState,
                 "timestamp" to post.timestamp
             )
-            postsCollection.document(post.postId).set(postMap)
+            usersCollection.document(userId).collection(COLLECTION_POSTS).document(post.postId).set(postMap)
         } catch (e: Exception) {
             Log.e("PostRemoteDatabase", "Upload failed: ${e.message}", e)
         }
@@ -184,121 +291,12 @@ class PostRemoteDatabase @Inject constructor(
                     mediaType = MediaType.IMAGE,
                     postState = postState
                 )
-                uploadPost(post)
+                uploadPost(userId, post)
             },
             onFailure = { exception ->
                 Log.e("Upload", "Failed to upload image", exception)
             }
         )
-    }
-
-    fun postChangesOnce(onPostChange: (FirebaseChangeType, Post) -> Unit) {
-        postsCollection.get().addOnSuccessListener { snapshots ->
-            for (docChange in snapshots.documentChanges) {
-                val post = docChange.document.toObject(Post::class.java)
-                val result = when (docChange.type) {
-                    DocumentChange.Type.ADDED -> ADDED
-                    DocumentChange.Type.REMOVED -> REMOVED
-                    DocumentChange.Type.MODIFIED -> MODIFIED
-                    else -> NOT_DETECTED
-                }
-                onPostChange(result, post)
-            }
-        }
-            .addOnFailureListener { exception ->
-                Log.e("PostRemoteDatabase", "Failed to fetch posts", exception)
-            }
-
-    }
-
-    fun postMediaChangesOnce(onPostChange: (FirebaseChangeType, PostMedia) -> Unit) {
-        postMediasCollection.get().addOnSuccessListener { snapshots ->
-            for (docChange in snapshots.documentChanges) {
-                val post = docChange.document.toObject(PostMedia::class.java)
-                val result = when (docChange.type) {
-                    DocumentChange.Type.ADDED -> ADDED
-                    DocumentChange.Type.REMOVED -> REMOVED
-                    DocumentChange.Type.MODIFIED -> MODIFIED
-                    else -> NOT_DETECTED
-                }
-                onPostChange(result, post)
-            }
-        }
-            .addOnFailureListener { exception ->
-                Log.e("PostRemoteDatabase", "Failed to fetch posts", exception)
-            }
-
-    }
-
-
-    fun listenForPostChanges(onPostChange: (FirebaseChangeType, Post) -> Unit) {
-        postsCollection.addSnapshotListener { snapshots, error ->
-            if (error != null) {
-                return@addSnapshotListener
-            }
-            snapshots?.let {
-                for (docChange in it.documentChanges) {
-                    val postId = docChange.document.getString("postId") ?: continue
-                    val userId = docChange.document.getString("userId") ?: continue
-                    val content = docChange.document.getString("content") ?: continue
-                    val listMediaUrls = docChange.document.get("listMediaUrls") as? List<String> ?: continue
-                    val mediaType = docChange.document.getString("mediaType")?.toMediaType() ?: MediaType.TEXT
-                    val postState = docChange.document.getBoolean("postState") ?: true
-                    val timestamp = docChange.document.getLong("timestamp") ?: continue
-                    val post = Post(postId, userId, content, listMediaUrls, mediaType, postState, timestamp)
-
-                    val result: FirebaseChangeType = when (docChange.type) {
-                        DocumentChange.Type.ADDED -> {
-                            ADDED
-                        }
-                        DocumentChange.Type.REMOVED -> {
-                            REMOVED
-                        }
-                        DocumentChange.Type.MODIFIED -> {
-                            MODIFIED
-                        }
-                        else -> {
-                            NOT_DETECTED
-                        }
-                    }
-                    onPostChange(result, post)
-                }
-
-            }
-        }
-    }
-
-    fun listenForPostMediaChanges(onPostMediaChange: (FirebaseChangeType, PostMedia) -> Unit) {
-        postMediasCollection.addSnapshotListener { snapshots, error ->
-            if (error != null) {
-                return@addSnapshotListener
-            }
-            snapshots?.let {
-                for (docChange in it.documentChanges) {
-                    val imageId = docChange.document.getString("imageId") ?: continue
-                    val postId = docChange.document.getString("postId") ?: continue
-                    val mediaUrl = docChange.document.getString("mediaUrl") ?: continue
-                    val postMedia = PostMedia(imageId, postId, mediaUrl)
-
-                    val result: FirebaseChangeType = when (docChange.type) {
-                        DocumentChange.Type.ADDED -> {
-                            ADDED
-                        }
-                        DocumentChange.Type.REMOVED -> {
-                            REMOVED
-                        }
-                        DocumentChange.Type.MODIFIED -> {
-                            MODIFIED
-                        }
-                        else -> {
-                            NOT_DETECTED
-                        }
-                    }
-                    onPostMediaChange(result, postMedia)
-                }
-
-            }
-        }
     }
 
 }

@@ -4,6 +4,7 @@ import android.util.Log
 import com.example.socialmediaapp.data.entity.Follower
 import com.example.socialmediaapp.data.firebase.authentication.UserAuthentication
 import com.example.socialmediaapp.other.Constant.COLLECTION_FOLLOWERS
+import com.example.socialmediaapp.other.Constant.COLLECTION_USERS
 import com.example.socialmediaapp.other.FirebaseChangeType
 import com.example.socialmediaapp.other.FirebaseChangeType.ADDED
 import com.example.socialmediaapp.other.FirebaseChangeType.NOT_DETECTED
@@ -18,9 +19,12 @@ class FollowerRemoteDatabase @Inject constructor(
     private val userAuthentication: UserAuthentication,
 ) {
 
-    private val followersCollection = db.collection(COLLECTION_FOLLOWERS)
+    private val userCollection = db.collection(COLLECTION_USERS)
 
     private fun getFollower(followerId: String, followingId: String): Follower {
+
+        val followersCollection = userCollection.document(followerId).collection(COLLECTION_FOLLOWERS)
+
         return Follower(
             fid = followersCollection.document().id,
             followerId = followerId,
@@ -29,21 +33,16 @@ class FollowerRemoteDatabase @Inject constructor(
     }
 
     suspend fun followUser(followerId: String, followingId: String) {
+        val followersCollection = userCollection.document(followerId).collection(COLLECTION_FOLLOWERS)
+
         val follower =getFollower(followerId, followingId)
         followersCollection.document(follower.fid).set(follower).await()
 
     }
 
-    suspend fun getAllFollower(): List<Follower> {
-        return try {
-            followersCollection.get().await().toObjects(Follower::class.java)
-        }
-        catch (e: Exception) {
-            emptyList()
-        }
-    }
-
     fun unfollowUser(followerId: String, followingId: String) {
+        val followersCollection = userCollection.document(followerId).collection(COLLECTION_FOLLOWERS)
+
         followersCollection.whereEqualTo("followerId", followerId).whereEqualTo("followingId", followingId).get().addOnSuccessListener {
             for (document in it) {
                 followersCollection.document(document.id).delete()

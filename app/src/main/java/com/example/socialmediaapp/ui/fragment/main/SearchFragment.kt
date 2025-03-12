@@ -16,7 +16,6 @@ import com.example.socialmediaapp.data.firebase.authentication.UserAuthenticatio
 import com.example.socialmediaapp.databinding.FragmentSearchBinding
 import com.example.socialmediaapp.extensions.LiveDataExtensions.observeOnce
 import com.example.socialmediaapp.viewmodel.FollowerViewModel
-import com.example.socialmediaapp.viewmodel.LikeViewModel
 import com.example.socialmediaapp.viewmodel.PostViewModel
 import com.example.socialmediaapp.viewmodel.UserViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -32,7 +31,6 @@ class SearchFragment : Fragment(), SearchView.OnQueryTextListener,
     private val mUserViewModel: UserViewModel by viewModels()
     private val mPostViewModel: PostViewModel by viewModels()
     private val mFollowerViewModel: FollowerViewModel by viewModels()
-    private val mLikeViewModel: LikeViewModel by viewModels()
 
     @Inject
     lateinit var userAuthentication: UserAuthentication
@@ -97,6 +95,16 @@ class SearchFragment : Fragment(), SearchView.OnQueryTextListener,
 //            }
 //
 //        }
+
+        mUserViewModel.searchUser(query).observe(viewLifecycleOwner) { userList ->
+            mPostViewModel.searchPostFromFirebaseByContentOrUsername(query).observe(viewLifecycleOwner) { postList ->
+                val combinedList = mutableListOf<Any>()
+                combinedList.addAll(userList)
+                combinedList.addAll(postList)
+                searchAdapter.setData(combinedList)
+            }
+        }
+
 
     }
 

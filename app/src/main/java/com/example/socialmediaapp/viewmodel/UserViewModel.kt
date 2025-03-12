@@ -74,6 +74,15 @@ class UserViewModel @Inject constructor(
         }
     }
 
+    fun searchUser(query: String): LiveData<List<User>> {
+        val searchResults = MutableLiveData<List<User>>()
+        viewModelScope.launch(Dispatchers.IO) {
+            val users = userRemoteDatabase.searchUser(query)
+            searchResults.postValue(users)
+        }
+        return searchResults
+    }
+
     fun setProfilePictureAsDefault(userId: String, gender: Boolean) {
         viewModelScope.launch(Dispatchers.IO) {
             userRemoteDatabase.setProfilePictureAsDefault(userId, gender)

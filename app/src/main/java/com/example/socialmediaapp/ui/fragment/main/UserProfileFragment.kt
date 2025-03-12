@@ -10,15 +10,12 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
-import com.example.socialmediaapp.R
 import com.example.socialmediaapp.adapter.PostAdapter
 import com.example.socialmediaapp.data.entity.User
 import com.example.socialmediaapp.data.firebase.authentication.UserAuthentication
 import com.example.socialmediaapp.databinding.FragmentUserProfileBinding
-import com.example.socialmediaapp.extensions.LiveDataExtensions.observeOnce
 import com.example.socialmediaapp.ui.fragment.main.FollowState.*
 import com.example.socialmediaapp.viewmodel.FollowerViewModel
-import com.example.socialmediaapp.viewmodel.LikeViewModel
 import com.example.socialmediaapp.viewmodel.PostViewModel
 import com.example.socialmediaapp.viewmodel.UserViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -35,9 +32,9 @@ class UserProfileFragment : Fragment() {
     private val mUserViewModel: UserViewModel by viewModels()
     private val mFollowerViewModel: FollowerViewModel by viewModels()
     private val mPostViewModel: PostViewModel by viewModels()
-    private val mLikeViewModel: LikeViewModel by viewModels()
 
-    private val adapter = PostAdapter()
+    @Inject
+    lateinit var adapter: PostAdapter
 
     @Inject
     lateinit var userAuthentication: UserAuthentication
@@ -57,10 +54,9 @@ class UserProfileFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         showUserInfo(args.user)
 
-        mPostViewModel.fetchPostFromFirebase()
 
         binding.swipeRefreshLayout.setOnRefreshListener {
-            mPostViewModel.fetchPostFromFirebase()
+
             binding.swipeRefreshLayout.isRefreshing = false
         }
 
@@ -84,21 +80,7 @@ class UserProfileFragment : Fragment() {
 
 
     private fun onLikeClickListener() {
-        adapter.setOnLikeClickListener { post ->
-//            mLikeViewModel.checkIfLiked(userAuthentication.getCurrentUser()!!.uid, post.postId).observeOnce(viewLifecycleOwner) {
-//                if (it)
-//                    mLikeViewModel.unlikePost(
-//                        userAuthentication.getCurrentUser()!!.uid,
-//                        post.postId
-//                    )
-//                else
-//                    mLikeViewModel.likePost(
-//                        userAuthentication.getCurrentUser()!!.uid,
-//                        post.postId
-//                    )
-//            }
 
-        }
     }
 
     private fun showUserInfo(user: User) {
@@ -133,7 +115,7 @@ class UserProfileFragment : Fragment() {
             false
         )
 
-        mPostViewModel.getPostWithUserRealtime(args.user.userId).observe(viewLifecycleOwner) { postsList ->
+        mPostViewModel.fetchPostByUserId(args.user.userId).observe(viewLifecycleOwner) { postsList ->
             adapter.setData(postsList)
         }
 

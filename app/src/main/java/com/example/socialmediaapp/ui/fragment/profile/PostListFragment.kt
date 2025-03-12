@@ -15,7 +15,6 @@ import com.example.socialmediaapp.data.firebase.authentication.UserAuthenticatio
 import com.example.socialmediaapp.databinding.FragmentPostListBinding
 import com.example.socialmediaapp.extensions.LiveDataExtensions.observeOnce
 import com.example.socialmediaapp.ui.fragment.main.ProfileFragmentDirections
-import com.example.socialmediaapp.viewmodel.LikeViewModel
 import com.example.socialmediaapp.viewmodel.PostViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -26,13 +25,13 @@ class PostListFragment : Fragment() {
     private var _binding: FragmentPostListBinding? = null
     private val binding get() = _binding!!
 
-    private val postAdapter = PostAdapter()
+    @Inject
+    lateinit var postAdapter: PostAdapter
 
     @Inject
     lateinit var userAuthentication: UserAuthentication
 
     private val mPostViewModel: PostViewModel by viewModels()
-    private val mLikeViewModel: LikeViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,7 +46,6 @@ class PostListFragment : Fragment() {
         println("PostListFragment: OnCreateView")
 
         subscribeToObservers()
-        onLikeClickListener()
 
         return binding.root
     }
@@ -56,22 +54,12 @@ class PostListFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
 //        binding.pfSwipeRefreshLayout.setOnRefreshListener {
-//            mPostViewModel.fetchPostByUserId(userAuthentication.getCurrentUser()!!.uid)
 //            binding.pfSwipeRefreshLayout.isRefreshing = false
 //        }
 
-        postAdapter.setOnLikeClickListener {
-            mLikeViewModel.isLiked(
-                userAuthentication.getCurrentUser()!!.uid,
-                it.postId
-            ).observe(viewLifecycleOwner) { isLiked ->
-                if (isLiked) {
-                    mLikeViewModel.unlikePost(userAuthentication.getCurrentUser()!!.uid, it.postId)
-                } else {
-                    mLikeViewModel.likePost(userAuthentication.getCurrentUser()!!.uid, it.postId)
-                }
-            }
-        }
+        onLikeClickListener()
+
+        mPostViewModel.fetchPostByUserId(userAuthentication.getCurrentUser()!!.uid)
 
         postAdapter.setOnCommentClickListener {
             val action = ProfileFragmentDirections.actionProfileFragmentToCommentListBottomSheetDialog(it.postId)
@@ -80,9 +68,7 @@ class PostListFragment : Fragment() {
     }
 
     private fun onLikeClickListener() {
-        postAdapter.setOnLikeClickListener { post ->
 
-        }
     }
 
     private fun subscribeToObservers() {
@@ -96,17 +82,9 @@ class PostListFragment : Fragment() {
 
         binding.recyclerView.isNestedScrollingEnabled = false
 
-        mPostViewModel.getPostWithUserRealtime(userAuthentication.getCurrentUser()!!.uid).observe(viewLifecycleOwner) { posts ->
-            for (post in posts) {
-                Log.d("post", "${post.likeCount}")
+        mPostViewModel.fetchPostByUserId(userAuthentication.getCurrentUser()!!.uid).observe(viewLifecycleOwner) { posts ->
 
-            }
             postAdapter.setData(posts)
-        }
-
-        mLikeViewModel.checkIfLikeChanges(userAuthentication.getCurrentUser()!!.uid).observe(viewLifecycleOwner) {
-            Log.d("post like", "$it")
-            postAdapter.setLikedList(it)
         }
 
     }

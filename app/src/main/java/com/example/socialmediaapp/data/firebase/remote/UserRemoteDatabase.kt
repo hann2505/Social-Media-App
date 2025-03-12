@@ -25,12 +25,12 @@ class UserRemoteDatabase @Inject constructor(
     private val usersCollection = db.collection(COLLECTION_USERS)
     private val storageRef = storage.reference
 
-    suspend fun fetchUserInfo(userId: String): User? {
+    suspend fun fetchUserInfo(userId: String): User {
         return try {
-            usersCollection.document(userId).get().await().toObject(User::class.java)
+            usersCollection.document(userId).get().await().toObject(User::class.java) ?: User()
         }
         catch (e: Exception) {
-            null
+            User()
         }
     }
 
@@ -155,6 +155,22 @@ class UserRemoteDatabase @Inject constructor(
                     onUserChange(result, user)
                 }
             }
+        }
+    }
+
+    suspend fun searchUser(query: String): List<User> {
+        return try {
+            val lowercaseQuery = query.lowercase()
+
+            usersCollection
+                .whereGreaterThanOrEqualTo("username", lowercaseQuery)
+                .whereLessThanOrEqualTo("username", lowercaseQuery + "\uf8ff")
+                .get()
+                .await()
+                .toObjects(User::class.java)
+        }
+        catch (e: Exception) {
+            emptyList()
         }
     }
 }

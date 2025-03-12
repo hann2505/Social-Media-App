@@ -8,18 +8,22 @@ import androidx.core.net.toUri
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.socialmediaapp.R
-import com.example.socialmediaapp.data.entity.Post
 import com.example.socialmediaapp.data.entity.PostWithUser
-import com.example.socialmediaapp.data.entity.PostWithUserAndMedia
+import com.example.socialmediaapp.data.firebase.remote.PostLikeRemoteFirebase
 import com.example.socialmediaapp.databinding.PostBinding
 import com.example.socialmediaapp.extensions.TimeConverter
+import com.google.firebase.auth.FirebaseAuth
+import javax.inject.Inject
 
-class PostAdapter : RecyclerView.Adapter<PostAdapter.PostViewHolder>() {
-
-    private val adapter = PostImageViewPagerAdapter()
+class PostAdapter @Inject constructor(
+    private val postLikeRemoteFirebase: PostLikeRemoteFirebase,
+    private val auth: FirebaseAuth
+) : RecyclerView.Adapter<PostAdapter.PostViewHolder>() {
 
     private var postList = listOf<PostWithUser>()
-    private var likedList = listOf<String>()
+
+    val currentUserId: String
+        get() = auth.currentUser?.uid ?: ""
 
     private var isNavigatedByNotification = false
 
@@ -44,13 +48,17 @@ class PostAdapter : RecyclerView.Adapter<PostAdapter.PostViewHolder>() {
     inner class PostViewHolder(
         private val binding: PostBinding
     ) : RecyclerView.ViewHolder(binding.root) {
+
+        val adapter = PostImageViewPagerAdapter()
+
         fun bindData(post: PostWithUser) {
+            postLikeRemoteFirebase.observeLikeCount(post.userId, post.postId) {
+                binding.likeCount.text = it.toString()
+            }
             binding.userName.text = post.username
             binding.caption.text = post.content
-            binding.likeCount.text = post.likeCount.toString()
             binding.commentCount.text = post.commentCount.toString()
             binding.timestamp.text = TimeConverter.convertTimestampToDateTime(post.timestamp)
-            changeLikeButton(post)
             Glide.with(binding.userPfp).load(post.profilePictureUrl).into(binding.userPfp)
 
             if (isNavigatedByNotification)
@@ -58,6 +66,9 @@ class PostAdapter : RecyclerView.Adapter<PostAdapter.PostViewHolder>() {
         }
 
         fun setUpRecyclerView(post: PostWithUser) {
+
+            adapter.updateList(emptyList())
+
             post.mediaUrls.map {
                 it.toUri()
             }.let {
@@ -74,9 +85,19 @@ class PostAdapter : RecyclerView.Adapter<PostAdapter.PostViewHolder>() {
             }
         }
 
-        fun setOnLikeClickListener(listener: () -> Unit) {
+        fun setOnLikeClickListener(post: PostWithUser) {
             binding.likeBtn.setOnClickListener {
-                listener()
+                postLikeRemoteFirebase.isLiked(currentUserId, post.userId, post.postId) {
+                    if (it) {
+                        postLikeRemoteFirebase.deletePostLike(currentUserId, post.userId, post.postId)
+                        binding.likeBtn.setBackgroundResource(R.drawable.ic_heart)
+                    }
+                    else {
+                        postLikeRemoteFirebase.addPostLike(currentUserId, post.userId, post.postId)
+                        binding.likeBtn.setBackgroundResource(R.drawable.ic_hearted)
+                    }
+                }
+
             }
         }
 
@@ -86,13 +107,14 @@ class PostAdapter : RecyclerView.Adapter<PostAdapter.PostViewHolder>() {
             }
         }
 
-        private fun changeLikeButton(post: PostWithUser) {
-            val isLiked = likedList.contains(post.postId)
-            if (isLiked) {
-                binding.likeBtn.setBackgroundResource(R.drawable.ic_hearted)
-            }
-            else {
-                binding.likeBtn.setBackgroundResource(R.drawable.ic_heart)
+        fun checkIfLiked(post: PostWithUser) {
+            postLikeRemoteFirebase.isLiked(currentUserId, post.userId, post.postId) {
+                if (it) {
+                    binding.likeBtn.setBackgroundResource(R.drawable.ic_hearted)
+                }
+                else {
+                    binding.likeBtn.setBackgroundResource(R.drawable.ic_heart)
+                }
             }
         }
 
@@ -118,25 +140,19 @@ class PostAdapter : RecyclerView.Adapter<PostAdapter.PostViewHolder>() {
         holder.setOnCommentClickListener {
             onCommentClickListener?.invoke(currentPost)
         }
-
-        holder.setOnLikeClickListener {
-            onLikeClickListener?.invoke(currentPost)
-        }
+        holder.setOnLikeClickListener(currentPost)
 
         holder.setOnBackClickListener {
             onBackClickListener?.invoke()
         }
 
         holder.setUpRecyclerView(currentPost)
+
+        holder.checkIfLiked(currentPost)
     }
 
     fun setData(postList: List<PostWithUser>) {
         this.postList = postList
-        notifyDataSetChanged()
-    }
-
-    fun setLikedList(likedList: List<String>) {
-        this.likedList = likedList
         notifyDataSetChanged()
     }
 
