@@ -6,19 +6,21 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
+import com.example.socialmediaapp.R
 import com.example.socialmediaapp.adapter.PostAdapter
 import com.example.socialmediaapp.data.entity.User
 import com.example.socialmediaapp.data.firebase.authentication.UserAuthentication
 import com.example.socialmediaapp.databinding.FragmentUserProfileBinding
-import com.example.socialmediaapp.ui.fragment.main.FollowState.*
 import com.example.socialmediaapp.viewmodel.FollowerViewModel
 import com.example.socialmediaapp.viewmodel.PostViewModel
 import com.example.socialmediaapp.viewmodel.UserViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -26,8 +28,6 @@ class UserProfileFragment : Fragment() {
 
     private var _binding: FragmentUserProfileBinding? = null
     private val binding get() = _binding!!
-
-    private lateinit var followState: FollowState
 
     private val mUserViewModel: UserViewModel by viewModels()
     private val mFollowerViewModel: FollowerViewModel by viewModels()
@@ -56,6 +56,7 @@ class UserProfileFragment : Fragment() {
 
         mPostViewModel.getPostCountUpdate(args.user.userId)
         mFollowerViewModel.getFollowerCount(args.user.userId)
+        mFollowerViewModel.checkIfFollowing(userAuthentication.getCurrentUser()!!.uid, args.user.userId)
 
 
         binding.swipeRefreshLayout.setOnRefreshListener {
@@ -65,6 +66,19 @@ class UserProfileFragment : Fragment() {
 
         mPostViewModel.postCount.observe(viewLifecycleOwner) {
             binding.postNumber.text = it.toString()
+        }
+
+        lifecycleScope.launch {
+            mFollowerViewModel.followState.collect { isFollowing ->
+                if (isFollowing) {
+                    binding.followBtn.text = getString(R.string.following)
+                } else {
+                    binding.followBtn.text = getString(R.string.follow)
+                }
+                binding.followBtn.setOnClickListener {
+                    followUser(isFollowing)
+                }
+            }
         }
 
         mFollowerViewModel.followerCount.observe(viewLifecycleOwner) {
@@ -83,9 +97,6 @@ class UserProfileFragment : Fragment() {
             findNavController().popBackStack()
         }
 
-        binding.followBtn.setOnClickListener {
-            followUser()
-        }
     }
 
 
@@ -104,13 +115,13 @@ class UserProfileFragment : Fragment() {
 
     }
 
-    private fun followUser() {
-        val isFollowing = followState == FOLLOWING
+    private fun followUser(isFollowing: Boolean) {
         if (isFollowing) {
             mFollowerViewModel.unfollowUser(userAuthentication.getCurrentUser()!!.uid, args.user.userId)
         }
         else {
             mFollowerViewModel.followUser(userAuthentication.getCurrentUser()!!.uid, args.user.userId)
+
         }
     }
 
@@ -134,10 +145,4 @@ class UserProfileFragment : Fragment() {
 //            adapter.setLikedList(it)
 //        }
     }
-}
-
-enum class FollowState {
-    FOLLOWING,
-    NOT_FOLLOWING,
-    NOT_DETECTED
 }

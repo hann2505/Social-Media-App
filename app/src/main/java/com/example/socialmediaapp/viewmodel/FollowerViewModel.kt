@@ -1,17 +1,15 @@
 package com.example.socialmediaapp.viewmodel
 
 import android.app.Application
-import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.socialmediaapp.data.entity.Follower
 import com.example.socialmediaapp.data.firebase.remote.FollowerRemoteDatabase
-import com.example.socialmediaapp.other.FirebaseChangeType.ADDED
-import com.example.socialmediaapp.other.FirebaseChangeType.REMOVED
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -30,6 +28,9 @@ class FollowerViewModel @Inject constructor(
     private val _followingCount = MutableLiveData<Int>()
     val followingCount: LiveData<Int> = _followingCount
 
+    private val _followState = MutableStateFlow(false)
+    val followState: MutableStateFlow<Boolean> = _followState
+
     fun followUser(followerId: String, followingId: String) {
         viewModelScope.launch(Dispatchers.IO) {
             followerRemoteDatabase.followUser(followerId, followingId)
@@ -42,6 +43,14 @@ class FollowerViewModel @Inject constructor(
             followerRemoteDatabase.unfollowUser(followerId, followingId)
         }
 
+    }
+
+    fun checkIfFollowing(followerId: String, followingId: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            followerRemoteDatabase.checkIfFollowing(followerId, followingId) { isFollowing ->
+                _followState.value = isFollowing
+            }
+        }
     }
 
     fun getFollowerCount(userId: String) {

@@ -15,21 +15,16 @@ class FollowerRemoteDatabase @Inject constructor(
 
     private val userCollection = db.collection(COLLECTION_USERS)
 
-    private fun getFollower(followerId: String, followingId: String): Follower {
-
-        val followersCollection = userCollection.document(followerId).collection(COLLECTION_FOLLOWERS)
-
-        return Follower(
-            fid = followersCollection.document().id,
-            followerId = followerId,
-            followingId = followingId
-        )
-    }
+    // *store follow in current user's collection
 
     suspend fun followUser(followerId: String, followingId: String) {
         val followersCollection = userCollection.document(followerId).collection(COLLECTION_FOLLOWERS)
 
-        val follower = getFollower(followerId, followingId)
+        val follower = Follower(
+            fid = followersCollection.document().id,
+            followerId = followerId,
+            followingId = followingId
+        )
         followersCollection.document(follower.fid).set(follower).await()
 
     }
@@ -42,6 +37,19 @@ class FollowerRemoteDatabase @Inject constructor(
                 followersCollection.document(document.id).delete()
             }
         }
+    }
+
+    fun checkIfFollowing(followerId: String, followingId: String, onResult: (Boolean) -> Unit) {
+        val followersCollection = userCollection.document(followerId).collection(COLLECTION_FOLLOWERS)
+        followersCollection
+            .whereEqualTo("followerId", followerId)
+            .whereEqualTo("followingId", followingId)
+            .addSnapshotListener{ snapshot, e->
+                if (e != null) return@addSnapshotListener
+                val isFollowing = snapshot?.isEmpty == false
+                onResult(isFollowing)
+            }
+
     }
 
     fun getFollowerCountUpdate(userId: String, onFollowerChange: (Int) -> Unit) {
