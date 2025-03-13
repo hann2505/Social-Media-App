@@ -48,7 +48,7 @@ class PostFragment: Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        if (args.isNavigatedByNotification) {
+        if (args.isNavigatedFromNotification) {
             postAdapter.setIsNavigatedByNotification()
         }
         subscribeToRecyclerView()
@@ -77,13 +77,8 @@ class PostFragment: Fragment() {
             LinearLayoutManager.VERTICAL,
             false
         )
-        mPostViewModel.fetchPostByUserId(args.postId).observe(viewLifecycleOwner) {
-            postAdapter.setData(it)
-        }
-
-//        mLikeViewModel(userAuthentication.getCurrentUser()!!.uid).observe(viewLifecycleOwner) {
-//            postAdapter.setLikedList(it)
-//        }
+        val postList = listOf(args.postWithUser)
+        postAdapter.setData(postList)
 
         recyclerView.adapter = postAdapter
     }

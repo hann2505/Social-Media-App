@@ -20,7 +20,7 @@ class PostLikeRemoteFirebase @Inject constructor(
     db: FirebaseFirestore
 ) {
     private val userCollection = db.collection(COLLECTION_USERS)
-    private val postCollection = db.collectionGroup(COLLECTION_POST_LIKES)
+    private val postCollection = db.collectionGroup(COLLECTION_POSTS)
 
     fun addPostLike(currentUserId: String, userId: String, postId: String) {
         val postLikesCollection = userCollection
@@ -49,32 +49,13 @@ class PostLikeRemoteFirebase @Inject constructor(
             .collection(COLLECTION_POST_LIKES)
 
         postLikesCollection
-                .whereEqualTo("userId", userId)
+                .whereEqualTo("userId", currentUserId)
                 .whereEqualTo("postId", postId)
                 .get().addOnSuccessListener {
                     for (document in it) {
                         postLikesCollection.document(document.id).delete()
                     }
                 }
-    }
-
-    fun updateLikeCount(userId: String, postId: String, onUpdate: (Int) -> Unit) {
-        val postLikesCollection = userCollection
-            .document(userId)
-            .collection(COLLECTION_POSTS)
-            .document(postId)
-            .collection(COLLECTION_POST_LIKES)
-
-        postLikesCollection
-            .whereEqualTo("userId", userId)
-            .whereEqualTo("postId", postId)
-            .get().addOnSuccessListener {
-                onUpdate(it.count())
-            }.addOnFailureListener {
-                onUpdate(0)
-            }
-
-
     }
 
     fun observeLikeCount(postOwnerId: String, postId: String, onUpdate: (Int) -> Unit) {
@@ -107,23 +88,6 @@ class PostLikeRemoteFirebase @Inject constructor(
                 onResult(false)
             }
 
-    }
-
-    fun getLikedPostIdsByUser(userId: String, onUpdate: (List<String>) -> Unit) {
-        postCollection
-            .whereEqualTo("userId", userId)
-            .addSnapshotListener { snapshot, error ->
-                if (error != null) {
-                    Log.d("post", "Listen failed.", error)
-                    return@addSnapshotListener
-                }
-                val likedPostIds = snapshot?.documents?.mapNotNull {
-                    it.getString("postId")
-                }
-                if (likedPostIds != null) {
-                    onUpdate(likedPostIds)
-                }
-            }
     }
 
 

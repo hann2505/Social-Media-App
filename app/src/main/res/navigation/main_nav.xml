@@ -124,16 +124,16 @@
         <action
             android:id="@+id/action_postFragment_to_notificationFragment"
             app:destination="@id/notificationFragment" />
-        <argument
-            android:name="postId"
-            app:argType="string" />
-        <argument
-            android:name="isNavigatedByNotification"
-            app:argType="boolean"
-            android:defaultValue="false" />
         <action
             android:id="@+id/action_postFragment_to_commentListBottomSheetDialog"
             app:destination="@id/commentListBottomSheetDialog" />
+        <argument
+            android:name="postWithUser"
+            app:argType="com.example.socialmediaapp.data.entity.PostWithUser" />
+        <argument
+            android:name="isNavigatedFromNotification"
+            app:argType="boolean"
+            android:defaultValue="false" />
     </fragment>
 
 </navigation>

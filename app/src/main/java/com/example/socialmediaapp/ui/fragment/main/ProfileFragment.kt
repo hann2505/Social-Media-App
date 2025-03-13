@@ -177,8 +177,8 @@ class ProfileFragment : Fragment() {
     }
 
     private fun getFollowInfo() {
-        mFollowerViewModel.followerCount.observe(viewLifecycleOwner) {
-            binding.followersNumber.text = it.toString()
+        mFollowerViewModel.followingCount.observe(viewLifecycleOwner) {
+            binding.followingNumber.text = it.toString()
         }
 
         mPostViewModel.postCount.observe(viewLifecycleOwner) {

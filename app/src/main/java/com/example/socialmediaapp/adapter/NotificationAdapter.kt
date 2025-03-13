@@ -6,17 +6,18 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.socialmediaapp.R
 import com.example.socialmediaapp.data.entity.Notification
+import com.example.socialmediaapp.data.entity.PostWithUser
 import com.example.socialmediaapp.databinding.NotificationBinding
 import com.example.socialmediaapp.extensions.TimeConverter
 
 class NotificationAdapter(
 ) : RecyclerView.Adapter<NotificationAdapter.PostViewHolder>() {
 
-    private val notifications = mutableListOf<Notification>()
+    private val notifications = mutableListOf<PostWithUser>()
 
-    private var onItemClickListener: ((Notification) -> Unit)? = null
+    private var onItemClickListener: ((PostWithUser) -> Unit)? = null
 
-    fun setOnItemClickListener(listener: (Notification) -> Unit) {
+    fun setOnItemClickListener(listener: (PostWithUser) -> Unit) {
         onItemClickListener = listener
     }
 
@@ -24,7 +25,7 @@ class NotificationAdapter(
         private val binding: NotificationBinding
     ) : RecyclerView.ViewHolder(binding.root) {
 
-        fun bindData(notification: Notification) {
+        fun bindData(notification: PostWithUser) {
             val text = binding.root.context.getString(R.string.notification_sample, "<b>${notification.username}</b>")
             val styledText = Html.fromHtml(text, Html.FROM_HTML_MODE_LEGACY)
             binding.notificationTv.text = styledText
@@ -55,7 +56,7 @@ class NotificationAdapter(
         }
     }
 
-    fun updateList(newList: List<Notification>) {
+    fun updateList(newList: List<PostWithUser>) {
         notifications.clear()
         notifications.addAll(newList)
         notifyDataSetChanged()

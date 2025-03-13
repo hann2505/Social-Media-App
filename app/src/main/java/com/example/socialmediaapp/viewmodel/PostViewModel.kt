@@ -14,6 +14,8 @@ import com.example.socialmediaapp.other.FirebaseChangeType.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -32,20 +34,18 @@ class PostViewModel@Inject constructor(
     private val _postCount = MutableLiveData<Int>()
     val postCount: LiveData<Int> = _postCount
 
+    private val _notification = MutableLiveData<List<PostWithUser>>()
+    val notification: LiveData<List<PostWithUser>> = _notification
+
+    private val _newFeed = MutableStateFlow<List<PostWithUser>>(emptyList())
+    val newFeed: StateFlow<List<PostWithUser>> = _newFeed
+
     fun fetchPostByUserId(userId: String): LiveData<List<PostWithUser>> {
         viewModelScope.launch(Dispatchers.IO) {
             val posts = postRemoteDatabase.getPostByUserIdFromFirebase(userId)
             _posts.postValue(posts)
         }
         return posts
-    }
-
-    fun fetchPostRealtimeUpdate(userId: String): Job {
-        return viewModelScope.launch(Dispatchers.IO) {
-            postRemoteDatabase.getPostRealtimeUpdate(userId) { posts ->
-                _posts.postValue(posts)
-            }
-        }
     }
 
     fun uploadPost(
@@ -61,6 +61,13 @@ class PostViewModel@Inject constructor(
                 imageUri = imageUrl,
                 postState = postState
             )
+        }
+    }
+
+    fun getNewestPost() {
+        viewModelScope.launch(Dispatchers.IO) {
+            val posts = postRemoteDatabase.getNewestPost()
+            _newFeed.value = posts
         }
     }
 
@@ -80,6 +87,12 @@ class PostViewModel@Inject constructor(
         }
     }
 
-
+    fun getNotification(userList: List<String>) {
+        viewModelScope.launch(Dispatchers.IO) {
+            postRemoteDatabase.getNotification(userList) {
+                _notification.postValue(it)
+            }
+        }
+    }
 
 }

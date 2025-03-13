@@ -31,6 +31,9 @@ class FollowerViewModel @Inject constructor(
     private val _followState = MutableStateFlow(false)
     val followState: MutableStateFlow<Boolean> = _followState
 
+    private val _followingIds = MutableStateFlow(emptyList<String>())
+    val followingIds: MutableStateFlow<List<String>> = _followingIds
+
     fun followUser(followerId: String, followingId: String) {
         viewModelScope.launch(Dispatchers.IO) {
             followerRemoteDatabase.followUser(followerId, followingId)
@@ -45,6 +48,14 @@ class FollowerViewModel @Inject constructor(
 
     }
 
+    fun getFollowingUserIds(userId: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            followerRemoteDatabase.getFollowingUserIds(userId) { followingList ->
+                _followingIds.value = followingList
+            }
+        }
+    }
+
     fun checkIfFollowing(followerId: String, followingId: String) {
         viewModelScope.launch(Dispatchers.IO) {
             followerRemoteDatabase.checkIfFollowing(followerId, followingId) { isFollowing ->
@@ -56,7 +67,7 @@ class FollowerViewModel @Inject constructor(
     fun getFollowerCount(userId: String) {
         viewModelScope.launch(Dispatchers.IO) {
             followerRemoteDatabase.getFollowerCountUpdate(userId) { followerCount ->
-                _followerCount.postValue(followerCount)
+                _followingCount.postValue(followerCount)
             }
         }
     }

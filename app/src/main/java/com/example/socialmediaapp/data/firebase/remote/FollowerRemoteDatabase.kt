@@ -9,7 +9,7 @@ import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 class FollowerRemoteDatabase @Inject constructor(
-    private val db: FirebaseFirestore,
+    db: FirebaseFirestore,
     private val userAuthentication: UserAuthentication,
 ) {
 
@@ -50,6 +50,17 @@ class FollowerRemoteDatabase @Inject constructor(
                 onResult(isFollowing)
             }
 
+    }
+
+    fun getFollowingUserIds(userId: String, onResult: (List<String>) -> Unit) {
+        val followingCollection = userCollection.document(userId).collection(COLLECTION_FOLLOWERS)
+
+        followingCollection.addSnapshotListener { snapshot, error ->
+            if (error != null) return@addSnapshotListener
+            val followingUserIds =
+                snapshot?.documents?.map { it.getString("followingId") ?: "" } ?: emptyList()
+            onResult(followingUserIds)
+        }
     }
 
     fun getFollowerCountUpdate(userId: String, onFollowerChange: (Int) -> Unit) {

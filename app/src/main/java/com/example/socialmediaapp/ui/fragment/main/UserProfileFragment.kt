@@ -81,7 +81,7 @@ class UserProfileFragment : Fragment() {
             }
         }
 
-        mFollowerViewModel.followerCount.observe(viewLifecycleOwner) {
+        mFollowerViewModel.followingCount.observe(viewLifecycleOwner) {
             binding.followersNumber.text = it.toString()
         }
 

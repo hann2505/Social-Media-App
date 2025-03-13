@@ -4,19 +4,13 @@ import android.net.Uri
 import android.util.Log
 import com.example.socialmediaapp.data.entity.MediaType
 import com.example.socialmediaapp.data.entity.Post
-import com.example.socialmediaapp.data.entity.PostMedia
 import com.example.socialmediaapp.data.entity.PostWithUser
 import com.example.socialmediaapp.data.entity.User
-import com.example.socialmediaapp.extensions.TimeConverter
 import com.example.socialmediaapp.other.Constant.COLLECTION_COMMENTS
 import com.example.socialmediaapp.other.Constant.COLLECTION_POSTS
 import com.example.socialmediaapp.other.Constant.COLLECTION_POST_LIKES
-import com.example.socialmediaapp.other.Constant.COLLECTION_POST_MEDIAS
 import com.example.socialmediaapp.other.Constant.COLLECTION_USERS
-import com.example.socialmediaapp.other.FirebaseChangeType
-import com.example.socialmediaapp.other.FirebaseChangeType.*
 import com.example.socialmediaapp.other.MediaTypeConverter
-import com.google.firebase.firestore.DocumentChange
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.Query
@@ -27,7 +21,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class PostRemoteDatabase @Inject constructor(
@@ -37,7 +30,7 @@ class PostRemoteDatabase @Inject constructor(
 ) {
     private val usersCollection = db.collection(COLLECTION_USERS)
     private val postsCollection = usersCollection.document().collection(COLLECTION_POSTS)
-    private val postGroupCollection = db.collectionGroup(COLLECTION_POST_LIKES)
+    private val postGroupCollection = db.collectionGroup(COLLECTION_POSTS)
 
     private val storageRef = storage.reference
 
@@ -63,7 +56,6 @@ class PostRemoteDatabase @Inject constructor(
                     .get()
                     .await()
                     .size()
-
 
                 val commentCount = usersCollection.document(userId)
                     .collection(COLLECTION_POSTS)
@@ -104,80 +96,136 @@ class PostRemoteDatabase @Inject constructor(
         }
     }
 
-    suspend fun getPostRealtimeUpdate(userId: String, onUpdate: (List<PostWithUser>) -> Unit): ListenerRegistration {
-         return usersCollection
-             .document(userId)
-             .collection(COLLECTION_POSTS)
-             .orderBy("timestamp", Query.Direction.DESCENDING)
-             .addSnapshotListener { snapshot, e ->
-                 if (e != null) {
-                    Log.w("PostRemoteDatabase", "Listen failed.", e)
-                    return@addSnapshotListener
-                 }
+    suspend fun getNewestPost(): List<PostWithUser> {
+        return try {
+            val posts = postGroupCollection
+                .orderBy("timestamp", Query.Direction.DESCENDING)
+                .limit(10)
+                .get()
+                .await()
+                .toObjects<Post>()
 
-                 if (snapshot == null) {
-                    onUpdate(emptyList())
-                    return@addSnapshotListener
-                 }
+            Log.d("New feed", "Post List: $posts")
 
-                 CoroutineScope(Dispatchers.IO).launch {
-                    val user = usersCollection.document(userId).get().await().toObject<User>()
+            // Extract unique user IDs from the posts
+            val userIds = posts.map { it.userId }.toSet()
 
-                    val posts = snapshot.toObjects(Post::class.java)
-
-                     val postWithUserList = posts.map { post ->
-                         val postLikeCount = usersCollection.document(userId)
-                             .collection(COLLECTION_POSTS)
-                             .document(post.postId)
-                             .collection(COLLECTION_POST_LIKES)
-                             .get()
-                             .await()
-                             .size()
-
-                         val commentCount = usersCollection.document(userId)
-                             .collection(COLLECTION_POSTS)
-                             .document(post.postId)
-                             .collection(COLLECTION_COMMENTS)
-                             .get()
-                             .await()
-                             .size()
-
-                         PostWithUser(
-                             postId = post.postId,
-                             userId = user!!.userId,
-                             username = user.username,
-                             profilePictureUrl = user.profilePictureUrl,
-                             content = post.content,
-                             mediaUrls = post.listMediaUrls,
-                             likeCount = postLikeCount,
-                             commentCount = commentCount,
-                             timestamp = post.timestamp
-                         )
-                     }
-
-                     withContext(Dispatchers.Main) {
-                         onUpdate(postWithUserList) // Send updated list to UI
-                     }
-                 }
+            // Fetch user details in parallel for performance
+            val usersMap = userIds.associateWith { userId ->
+                usersCollection.document(userId).get().await().toObject<User>()
             }
 
+            // Map posts to PostWithUser by attaching the corresponding user data
+            posts.mapNotNull { post ->
+                val user = usersMap[post.userId]
+                user?.let {
+                    val postLikeCount = usersCollection.document(it.userId)
+                        .collection(COLLECTION_POSTS)
+                        .document(post.postId)
+                        .collection(COLLECTION_POST_LIKES)
+                        .get()
+                        .await()
+                        .size()
 
+                    val commentCount = usersCollection.document(it.userId)
+                        .collection(COLLECTION_POSTS)
+                        .document(post.postId)
+                        .collection(COLLECTION_COMMENTS)
+                        .get()
+                        .await()
+                        .size()
 
+                    PostWithUser(
+                        postId = post.postId,
+                        userId = it.userId,
+                        username = it.username,
+                        profilePictureUrl = it.profilePictureUrl,
+                        content = post.content,
+                        mediaUrls = post.listMediaUrls,
+                        likeCount = postLikeCount,
+                        commentCount = commentCount,
+                        timestamp = post.timestamp
+                    )
+                }  // Only include posts where user data exists
+            }
+        } catch (e: Exception) {
+            Log.e("New feed", "Search failed: ${e.message}", e)
+            emptyList()
+        }
+    }
+
+    suspend fun getNotification(userList: List<String>, onUpdate: (List<PostWithUser>) -> Unit) {
+        val notificationList = mutableListOf<PostWithUser>()
+        for (user in userList) {
+            notificationList.addAll(getPostByUserIdFromFirebase(user))
+        }
+        notificationList.sortByDescending {
+            it.timestamp
+        }
+        onUpdate(notificationList)
     }
 
     suspend fun searchPostsByContentOrUsername(query: String): List<PostWithUser> {
         return try {
-            postGroupCollection
-                .whereLessThanOrEqualTo("content", query)
+            // Fetch posts that match the query
+            val posts = postGroupCollection
                 .whereGreaterThanOrEqualTo("content", query)
+                .whereLessThan("content", query + "\uf8ff")
+                .orderBy("content")
                 .orderBy("timestamp", Query.Direction.DESCENDING)
                 .get()
                 .await()
-                .toObjects()
+                .toObjects<Post>()
+
+            Log.d("Search Post", "Post List: $posts")
+
+            // Extract unique user IDs from the posts
+            val userIds = posts.map { it.userId }.toSet()
+
+            // Fetch user details in parallel for performance
+            val usersMap = userIds.associateWith { userId ->
+                usersCollection.document(userId).get().await().toObject<User>()
+            }
+
+            // Map posts to PostWithUser by attaching the corresponding user data
+            posts.mapNotNull { post ->
+                val user = usersMap[post.userId]
+                user?.let {
+                    val postLikeCount = usersCollection.document(it.userId)
+                        .collection(COLLECTION_POSTS)
+                        .document(post.postId)
+                        .collection(COLLECTION_POST_LIKES)
+                        .get()
+                        .await()
+                        .size()
+
+                    val commentCount = usersCollection.document(it.userId)
+                        .collection(COLLECTION_POSTS)
+                        .document(post.postId)
+                        .collection(COLLECTION_COMMENTS)
+                        .get()
+                        .await()
+                        .size()
+
+                    PostWithUser(
+                        postId = post.postId,
+                        userId = it.userId,
+                        username = it.username,
+                        profilePictureUrl = it.profilePictureUrl,
+                        content = post.content,
+                        mediaUrls = post.listMediaUrls,
+                        likeCount = postLikeCount,
+                        commentCount = commentCount,
+                        timestamp = post.timestamp
+                    )
+                }  // Only include posts where user data exists
+            }
         } catch (e: Exception) {
+            Log.e("SearchPost", "Search failed: ${e.message}", e)
             emptyList()
         }
     }
+
 
     private fun String.toMediaType(): MediaType {
         return MediaType.entries.find {

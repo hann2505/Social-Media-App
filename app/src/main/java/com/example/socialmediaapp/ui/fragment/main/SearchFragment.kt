@@ -89,6 +89,7 @@ class SearchFragment : Fragment(), SearchView.OnQueryTextListener,
         }
 
         mPostViewModel.searchPostFromFirebaseByContentOrUsername(query).observe(viewLifecycleOwner) { postList ->
+            Log.d("SearchFragment", "Post List: $postList")
             postAdapter.setData(postList)
         }
 

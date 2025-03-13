@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -10,56 +10,61 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginTop="10dp"
-        android:layout_marginStart="15dp"
-        android:layout_marginEnd="15dp"
-        android:layout_marginBottom="10dp"
-        >
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-        <androidx.appcompat.widget.SearchView
-            android:id="@+id/search_view"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:queryHint="@string/search"
-            app:iconifiedByDefault="false"
-            style="@style/CustomSearchView"
-            android:background="@drawable/custom_search_view"
-            />
+            android:orientation="horizontal"
+            android:layout_marginTop="10dp"
+            android:layout_marginStart="15dp"
+            android:layout_marginEnd="15dp"
+            android:layout_marginBottom="10dp"
+            >
 
-<!--            <TextView-->
-<!--                android:id="@+id/cancel"-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:text="@string/cancel"-->
-<!--                android:textColor="@color/gray"-->
-<!--                android:textSize="15sp"-->
-<!--                android:layout_marginStart="10dp"-->
-<!--                android:layout_gravity="center_vertical" />-->
+            <androidx.appcompat.widget.SearchView
+                android:id="@+id/search_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:queryHint="@string/search"
+                app:iconifiedByDefault="false"
+                style="@style/CustomSearchView"
+                android:background="@drawable/custom_search_view"
+                />
 
+            <!--            <TextView-->
+            <!--                android:id="@+id/cancel"-->
+            <!--                android:layout_width="wrap_content"-->
+            <!--                android:layout_height="wrap_content"-->
+            <!--                android:text="@string/cancel"-->
+            <!--                android:textColor="@color/gray"-->
+            <!--                android:textSize="15sp"-->
+            <!--                android:layout_marginStart="10dp"-->
+            <!--                android:layout_gravity="center_vertical" />-->
+
+        </LinearLayout>
+
+
+        <!--    <androidx.fragment.app.FragmentContainerView-->
+        <!--        android:id="@+id/fragmentContainerView4"-->
+        <!--        android:name="androidx.navigation.fragment.NavHostFragment"-->
+        <!--        android:layout_width="match_parent"-->
+        <!--        android:layout_height="match_parent"-->
+        <!--        app:defaultNavHost="true"-->
+        <!--        app:navGraph="@navigation/search_view_nav" />-->
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/user_recyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:layout_marginTop="10dp"
+            android:id="@+id/post_recyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
     </LinearLayout>
 
-
-<!--    <androidx.fragment.app.FragmentContainerView-->
-<!--        android:id="@+id/fragmentContainerView4"-->
-<!--        android:name="androidx.navigation.fragment.NavHostFragment"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="match_parent"-->
-<!--        app:defaultNavHost="true"-->
-<!--        app:navGraph="@navigation/search_view_nav" />-->
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/user_recyclerView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
-
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:layout_marginTop="10dp"
-        android:id="@+id/post_recyclerView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
-
-
-</LinearLayout>
+</androidx.core.widget.NestedScrollView>
