@@ -5,7 +5,6 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
-
     <application
         android:name=".other.MyApplication"
         android:allowBackup="true"
@@ -17,6 +16,9 @@
         android:supportsRtl="true"
         android:theme="@style/Base.Theme.SocialMediaApp"
         tools:targetApi="35">
+        <activity
+            android:name=".ui.acitivity.ChatActivity"
+            android:exported="false" />
 
         <provider
             android:name="androidx.core.content.FileProvider"
@@ -30,14 +32,10 @@
 
         <meta-data
             android:name="com.google.android.gms.version"
-            android:value="@integer/google_play_services_version" />
-
-        <!-- Required for Google Sign-In -->
+            android:value="@integer/google_play_services_version" /> <!-- Required for Google Sign-In -->
         <meta-data
             android:name="com.google.android.gms.auth.api.signin"
-            android:value="true" />
-
-        <!-- Firebase Authentication App ID -->
+            android:value="true" /> <!-- Firebase Authentication App ID -->
         <meta-data
             android:name="com.google.firebase.database.application.id"
             android:value="@string/google_app_id" />

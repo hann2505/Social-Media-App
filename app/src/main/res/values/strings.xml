@@ -86,5 +86,7 @@
     <string name="remove_your_current_picture">Remove your current picture</string>
     <string name="choose_from_library">Choose from library</string>
     <string name="set_default_profile_picture">Set default profile picture</string>
+    <string name="timestamp">Timestamp</string>
+    <string name="_message">Message...</string>
 
 </resources>

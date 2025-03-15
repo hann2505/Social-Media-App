@@ -146,7 +146,7 @@ class PostRemoteDatabase @Inject constructor(
                         commentCount = commentCount,
                         timestamp = post.timestamp
                     )
-                }  // Only include posts where user data exists
+                }
             }
         } catch (e: Exception) {
             Log.e("New feed", "Search failed: ${e.message}", e)

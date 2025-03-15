@@ -10,20 +10,16 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.view.ViewTreeObserver
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.navigation.ui.setupWithNavController
-import androidx.viewpager2.widget.ViewPager2.ScrollState
 import com.bumptech.glide.Glide
 import com.example.socialmediaapp.R
-import com.example.socialmediaapp.data.entity.User
 import com.example.socialmediaapp.data.firebase.authentication.UserAuthentication
 import com.example.socialmediaapp.databinding.FragmentProfileBinding
-import com.example.socialmediaapp.other.Constant.SCROLL_POSITION
 import com.example.socialmediaapp.ui.acitivity.EditProfileActivity
 import com.example.socialmediaapp.ui.acitivity.SettingActivity
 import com.example.socialmediaapp.viewmodel.FollowerViewModel
@@ -76,6 +72,7 @@ class ProfileFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         mUserViewModel.fetchUserInfo(userAuthentication.getCurrentUser()!!.uid)
+        mFollowerViewModel.getFollowingCount(userAuthentication.getCurrentUser()!!.uid)
         mFollowerViewModel.getFollowerCount(userAuthentication.getCurrentUser()!!.uid)
         mPostViewModel.getPostCountUpdate(userAuthentication.getCurrentUser()!!.uid)
 
@@ -179,6 +176,10 @@ class ProfileFragment : Fragment() {
     private fun getFollowInfo() {
         mFollowerViewModel.followingCount.observe(viewLifecycleOwner) {
             binding.followingNumber.text = it.toString()
+        }
+
+        mFollowerViewModel.followerCount.observe(viewLifecycleOwner) {
+            binding.followersNumber.text = it.toString()
         }
 
         mPostViewModel.postCount.observe(viewLifecycleOwner) {

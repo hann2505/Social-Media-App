@@ -1,5 +1,6 @@
 ﻿package com.example.socialmediaapp.data.firebase.remote
 
+import android.util.Log
 import com.example.socialmediaapp.data.entity.Follower
 import com.example.socialmediaapp.data.firebase.authentication.UserAuthentication
 import com.example.socialmediaapp.other.Constant.COLLECTION_FOLLOWERS
@@ -14,6 +15,7 @@ class FollowerRemoteDatabase @Inject constructor(
 ) {
 
     private val userCollection = db.collection(COLLECTION_USERS)
+    private val followersGroupCollection = db.collectionGroup(COLLECTION_FOLLOWERS)
 
     // *store follow in current user's collection
 
@@ -63,13 +65,22 @@ class FollowerRemoteDatabase @Inject constructor(
         }
     }
 
-    fun getFollowerCountUpdate(userId: String, onFollowerChange: (Int) -> Unit) {
+    fun getFollowingCountUpdate(userId: String, onFollowerChange: (Int) -> Unit) {
         userCollection.document(userId).collection(COLLECTION_FOLLOWERS).addSnapshotListener { snapshot, error ->
             if (error != null) return@addSnapshotListener
             val followerCount = snapshot?.count() ?: 0
             onFollowerChange(followerCount)
         }
 
+    }
+
+    fun getFollowerCountUpdate(userId: String, onFollowingChange: (Int) -> Unit) {
+        followersGroupCollection.whereEqualTo("followingId", userId).addSnapshotListener { snapshot, error ->
+            Log.d("FollowerRemoteDatabase", "error: $error")
+            if (error != null) return@addSnapshotListener
+            val followingCount = snapshot?.count() ?: 0
+            onFollowingChange(followingCount)
+        }
     }
 
 }

@@ -64,10 +64,18 @@ class FollowerViewModel @Inject constructor(
         }
     }
 
+    fun getFollowingCount(userId: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            followerRemoteDatabase.getFollowingCountUpdate(userId) { followerCount ->
+                _followingCount.postValue(followerCount)
+            }
+        }
+    }
+
     fun getFollowerCount(userId: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            followerRemoteDatabase.getFollowerCountUpdate(userId) { followerCount ->
-                _followingCount.postValue(followerCount)
+            followerRemoteDatabase.getFollowerCountUpdate(userId) { followingCount ->
+                _followerCount.postValue(followingCount)
             }
         }
     }

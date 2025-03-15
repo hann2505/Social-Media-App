@@ -55,6 +55,7 @@ class UserProfileFragment : Fragment() {
         showUserInfo(args.user)
 
         mPostViewModel.getPostCountUpdate(args.user.userId)
+        mFollowerViewModel.getFollowingCount(args.user.userId)
         mFollowerViewModel.getFollowerCount(args.user.userId)
         mFollowerViewModel.checkIfFollowing(userAuthentication.getCurrentUser()!!.uid, args.user.userId)
 
@@ -72,8 +73,13 @@ class UserProfileFragment : Fragment() {
             mFollowerViewModel.followState.collect { isFollowing ->
                 if (isFollowing) {
                     binding.followBtn.text = getString(R.string.following)
+                    binding.followBtn.setTextColor(resources.getColor(R.color.black))
+                    binding.followBtn.setBackgroundResource(R.drawable.custom_followed_button)
                 } else {
                     binding.followBtn.text = getString(R.string.follow)
+                    binding.followBtn.setTextColor(resources.getColor(R.color.white))
+                    binding.followBtn.setBackgroundResource(R.drawable.custom_follow_button)
+
                 }
                 binding.followBtn.setOnClickListener {
                     followUser(isFollowing)
@@ -82,6 +88,10 @@ class UserProfileFragment : Fragment() {
         }
 
         mFollowerViewModel.followingCount.observe(viewLifecycleOwner) {
+            binding.followingNumber.text = it.toString()
+        }
+
+        mFollowerViewModel.followerCount.observe(viewLifecycleOwner) {
             binding.followersNumber.text = it.toString()
         }
 

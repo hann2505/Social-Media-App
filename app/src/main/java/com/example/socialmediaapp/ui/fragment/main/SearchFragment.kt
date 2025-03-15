@@ -6,16 +6,14 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.SearchView
+import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.socialmediaapp.adapter.PostAdapter
-import com.example.socialmediaapp.adapter.SearchAdapter
 import com.example.socialmediaapp.adapter.UserAdapter
 import com.example.socialmediaapp.data.firebase.authentication.UserAuthentication
 import com.example.socialmediaapp.databinding.FragmentSearchBinding
-import com.example.socialmediaapp.extensions.LiveDataExtensions.observeOnce
 import com.example.socialmediaapp.viewmodel.FollowerViewModel
 import com.example.socialmediaapp.viewmodel.PostViewModel
 import com.example.socialmediaapp.viewmodel.UserViewModel
@@ -23,8 +21,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class SearchFragment : Fragment(), SearchView.OnQueryTextListener,
-    androidx.appcompat.widget.SearchView.OnQueryTextListener {
+class SearchFragment : Fragment(), SearchView.OnQueryTextListener {
     private var _binding: FragmentSearchBinding? = null
     private val binding get() = _binding!!
 
@@ -53,6 +50,7 @@ class SearchFragment : Fragment(), SearchView.OnQueryTextListener,
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         subscribeSearchView()
+
     }
 
     override fun onStart() {
