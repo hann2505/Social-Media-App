@@ -1,7 +1,4 @@
-package com.example.socialmediaapp.data.entity
-
-import androidx.room.Entity
-import androidx.room.PrimaryKey
+package com.example.socialmediaapp.data.entity.follower
 
 data class Follower(
     val fid: String = "",

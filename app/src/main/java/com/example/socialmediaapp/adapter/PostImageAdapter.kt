@@ -5,8 +5,6 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.example.socialmediaapp.data.entity.PostWithUserAndMedia
-import com.example.socialmediaapp.data.entity.User
 import com.example.socialmediaapp.databinding.PostImageBinding
 
 class PostImageAdapter(

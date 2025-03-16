@@ -6,10 +6,9 @@ import android.view.ViewGroup
 import androidx.core.net.toUri
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.example.socialmediaapp.R
-import com.example.socialmediaapp.data.entity.PostWithUser
-import com.example.socialmediaapp.data.entity.PostWithUserAndMedia
-import com.example.socialmediaapp.data.entity.User
+import com.example.socialmediaapp.adapter.post.PostImageViewPagerAdapter
+import com.example.socialmediaapp.data.entity.post.PostWithUser
+import com.example.socialmediaapp.data.entity.user.User
 import com.example.socialmediaapp.databinding.PostBinding
 import com.example.socialmediaapp.databinding.UserBinding
 import com.example.socialmediaapp.extensions.TimeConverter

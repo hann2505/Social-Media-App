@@ -1,4 +1,4 @@
-package com.example.socialmediaapp.data.entity
+package com.example.socialmediaapp.data.entity.notification
 
 data class Notification(
     val userId: String,

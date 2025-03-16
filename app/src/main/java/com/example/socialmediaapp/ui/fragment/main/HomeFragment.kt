@@ -3,7 +3,6 @@ package com.example.socialmediaapp.ui.fragment.main
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.Menu
@@ -17,7 +16,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.socialmediaapp.R
-import com.example.socialmediaapp.adapter.PostAdapter
+import com.example.socialmediaapp.adapter.post.PostAdapter
 import com.example.socialmediaapp.data.firebase.authentication.UserAuthentication
 import com.example.socialmediaapp.databinding.FragmentHomeBinding
 import com.example.socialmediaapp.ui.acitivity.ChatActivity

@@ -2,7 +2,7 @@ package com.example.socialmediaapp.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.socialmediaapp.data.entity.Message
+import com.example.socialmediaapp.data.entity.notification.Message
 import com.example.socialmediaapp.data.firebase.remote.MessageRemoteDatabase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers

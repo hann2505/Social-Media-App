@@ -1,12 +1,11 @@
-package com.example.socialmediaapp.adapter
+package com.example.socialmediaapp.adapter.notification
 
 import android.text.Html
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.socialmediaapp.R
-import com.example.socialmediaapp.data.entity.Notification
-import com.example.socialmediaapp.data.entity.PostWithUser
+import com.example.socialmediaapp.data.entity.post.PostWithUser
 import com.example.socialmediaapp.databinding.NotificationBinding
 import com.example.socialmediaapp.extensions.TimeConverter
 

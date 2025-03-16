@@ -82,7 +82,7 @@
             app:destination="@id/searchFragment" />
         <argument
             android:name="user"
-            app:argType="com.example.socialmediaapp.data.entity.User" />
+            app:argType="com.example.socialmediaapp.data.entity.user.User" />
         <action
             android:id="@+id/action_userProfileFragment_to_commentListBottomSheetDialog"
             app:destination="@id/commentListBottomSheetDialog" />
@@ -129,7 +129,7 @@
             app:destination="@id/commentListBottomSheetDialog" />
         <argument
             android:name="postWithUser"
-            app:argType="com.example.socialmediaapp.data.entity.PostWithUser" />
+            app:argType="com.example.socialmediaapp.data.entity.post.PostWithUser" />
         <argument
             android:name="isNavigatedFromNotification"
             app:argType="boolean"

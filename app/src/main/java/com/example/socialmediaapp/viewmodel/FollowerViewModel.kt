@@ -5,7 +5,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.example.socialmediaapp.data.entity.Follower
+import com.example.socialmediaapp.data.entity.follower.Follower
 import com.example.socialmediaapp.data.firebase.remote.FollowerRemoteDatabase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers

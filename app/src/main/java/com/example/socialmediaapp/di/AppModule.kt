@@ -1,13 +1,15 @@
 package com.example.socialmediaapp.di
 
-import android.app.Application
+import android.content.Context
 import com.example.socialmediaapp.other.MediaTypeConverter
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.storage.FirebaseStorage
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
@@ -30,5 +32,9 @@ object AppModule {
     @Singleton
     @Provides
     fun provideMediaTypeConverter() = MediaTypeConverter()
+
+    @Singleton
+    @Provides
+    fun provideFirebaseMessaging() = FirebaseMessaging.getInstance()
 
 }

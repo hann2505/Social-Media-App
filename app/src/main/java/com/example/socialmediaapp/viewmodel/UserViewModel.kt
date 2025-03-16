@@ -7,10 +7,8 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.example.socialmediaapp.data.entity.PostWithUser
-import com.example.socialmediaapp.data.entity.User
+import com.example.socialmediaapp.data.entity.user.User
 import com.example.socialmediaapp.data.firebase.remote.UserRemoteDatabase
-import com.example.socialmediaapp.other.FirebaseChangeType
 import com.example.socialmediaapp.other.FirebaseChangeType.ADDED
 import com.example.socialmediaapp.other.FirebaseChangeType.MODIFIED
 import com.example.socialmediaapp.other.FirebaseChangeType.REMOVED
@@ -107,6 +105,12 @@ class UserViewModel @Inject constructor(
 
         }
 
+    }
+
+    fun saveFcmTokenToFirebase() {
+        viewModelScope.launch(Dispatchers.IO) {
+            userRemoteDatabase.saveFcmTokenToFirebase()
+        }
     }
 
 }

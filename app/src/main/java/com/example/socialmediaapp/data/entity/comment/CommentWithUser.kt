@@ -1,4 +1,4 @@
-package com.example.socialmediaapp.data.entity
+package com.example.socialmediaapp.data.entity.comment
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize

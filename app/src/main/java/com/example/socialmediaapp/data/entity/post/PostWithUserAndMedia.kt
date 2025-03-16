@@ -1,9 +1,10 @@
-package com.example.socialmediaapp.data.entity
+package com.example.socialmediaapp.data.entity.post
 
-import android.os.Parcelable
 import androidx.room.Embedded
 import androidx.room.Relation
-import kotlinx.parcelize.Parcelize
+import com.example.socialmediaapp.data.entity.user.User
+import com.example.socialmediaapp.data.entity.comment.Comment
+import com.example.socialmediaapp.data.entity.like.PostLike
 
 data class PostWithUserAndMedia(
     @Embedded

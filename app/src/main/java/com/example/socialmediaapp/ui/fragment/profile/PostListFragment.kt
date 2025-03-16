@@ -1,7 +1,6 @@
 package com.example.socialmediaapp.ui.fragment.profile
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,10 +9,9 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.socialmediaapp.R
-import com.example.socialmediaapp.adapter.PostAdapter
+import com.example.socialmediaapp.adapter.post.PostAdapter
 import com.example.socialmediaapp.data.firebase.authentication.UserAuthentication
 import com.example.socialmediaapp.databinding.FragmentPostListBinding
-import com.example.socialmediaapp.extensions.LiveDataExtensions.observeOnce
 import com.example.socialmediaapp.ui.fragment.main.ProfileFragmentDirections
 import com.example.socialmediaapp.viewmodel.PostViewModel
 import dagger.hilt.android.AndroidEntryPoint

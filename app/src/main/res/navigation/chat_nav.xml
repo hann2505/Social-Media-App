@@ -17,13 +17,13 @@
     </fragment>
     <fragment
         android:id="@+id/chatRoomFragment"
-        android:name="com.example.socialmediaapp.ChatRoomFragment"
+        android:name="com.example.socialmediaapp.ui.fragment.chat.ChatRoomFragment"
         android:label="fragment_chat_room"
         tools:layout="@layout/fragment_chat_room" >
 
         <argument
             android:name="user"
-            app:argType="com.example.socialmediaapp.data.entity.User" />
+            app:argType="com.example.socialmediaapp.data.entity.user.User" />
         <action
             android:id="@+id/action_chatRoomFragment_to_chatFragment"
             app:destination="@id/chatFragment" />

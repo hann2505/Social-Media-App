@@ -12,7 +12,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
-import com.example.socialmediaapp.adapter.CommentAdapter
+import com.example.socialmediaapp.adapter.comment.CommentAdapter
 import com.example.socialmediaapp.data.firebase.authentication.UserAuthentication
 import com.example.socialmediaapp.databinding.FragmentCommentListBottomSheetDialogBinding
 import com.example.socialmediaapp.viewmodel.CommentViewModel

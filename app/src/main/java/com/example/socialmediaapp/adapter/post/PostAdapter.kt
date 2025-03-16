@@ -1,4 +1,4 @@
-package com.example.socialmediaapp.adapter
+package com.example.socialmediaapp.adapter.post
 
 import android.util.Log
 import android.view.LayoutInflater
@@ -8,7 +8,7 @@ import androidx.core.net.toUri
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.socialmediaapp.R
-import com.example.socialmediaapp.data.entity.PostWithUser
+import com.example.socialmediaapp.data.entity.post.PostWithUser
 import com.example.socialmediaapp.data.firebase.remote.CommentRemoteDatabase
 import com.example.socialmediaapp.data.firebase.remote.PostLikeRemoteFirebase
 import com.example.socialmediaapp.databinding.PostBinding

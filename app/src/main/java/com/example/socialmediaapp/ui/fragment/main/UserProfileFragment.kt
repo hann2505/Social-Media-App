@@ -12,8 +12,8 @@ import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.example.socialmediaapp.R
-import com.example.socialmediaapp.adapter.PostAdapter
-import com.example.socialmediaapp.data.entity.User
+import com.example.socialmediaapp.adapter.post.PostAdapter
+import com.example.socialmediaapp.data.entity.user.User
 import com.example.socialmediaapp.data.firebase.authentication.UserAuthentication
 import com.example.socialmediaapp.databinding.FragmentUserProfileBinding
 import com.example.socialmediaapp.viewmodel.FollowerViewModel

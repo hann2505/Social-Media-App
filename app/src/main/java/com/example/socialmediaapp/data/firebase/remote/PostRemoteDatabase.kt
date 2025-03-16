@@ -2,24 +2,20 @@ package com.example.socialmediaapp.data.firebase.remote
 
 import android.net.Uri
 import android.util.Log
-import com.example.socialmediaapp.data.entity.MediaType
-import com.example.socialmediaapp.data.entity.Post
-import com.example.socialmediaapp.data.entity.PostWithUser
-import com.example.socialmediaapp.data.entity.User
+import com.example.socialmediaapp.data.entity.post.MediaType
+import com.example.socialmediaapp.data.entity.post.Post
+import com.example.socialmediaapp.data.entity.post.PostWithUser
+import com.example.socialmediaapp.data.entity.user.User
 import com.example.socialmediaapp.other.Constant.COLLECTION_COMMENTS
 import com.example.socialmediaapp.other.Constant.COLLECTION_POSTS
 import com.example.socialmediaapp.other.Constant.COLLECTION_POST_LIKES
 import com.example.socialmediaapp.other.Constant.COLLECTION_USERS
 import com.example.socialmediaapp.other.MediaTypeConverter
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.toObject
 import com.google.firebase.firestore.toObjects
 import com.google.firebase.storage.FirebaseStorage
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
@@ -107,15 +103,12 @@ class PostRemoteDatabase @Inject constructor(
 
             Log.d("New feed", "Post List: $posts")
 
-            // Extract unique user IDs from the posts
             val userIds = posts.map { it.userId }.toSet()
 
-            // Fetch user details in parallel for performance
             val usersMap = userIds.associateWith { userId ->
                 usersCollection.document(userId).get().await().toObject<User>()
             }
 
-            // Map posts to PostWithUser by attaching the corresponding user data
             posts.mapNotNull { post ->
                 val user = usersMap[post.userId]
                 user?.let {
@@ -179,15 +172,12 @@ class PostRemoteDatabase @Inject constructor(
 
             Log.d("Search Post", "Post List: $posts")
 
-            // Extract unique user IDs from the posts
             val userIds = posts.map { it.userId }.toSet()
 
-            // Fetch user details in parallel for performance
             val usersMap = userIds.associateWith { userId ->
                 usersCollection.document(userId).get().await().toObject<User>()
             }
 
-            // Map posts to PostWithUser by attaching the corresponding user data
             posts.mapNotNull { post ->
                 val user = usersMap[post.userId]
                 user?.let {
@@ -218,7 +208,7 @@ class PostRemoteDatabase @Inject constructor(
                         commentCount = commentCount,
                         timestamp = post.timestamp
                     )
-                }  // Only include posts where user data exists
+                }
             }
         } catch (e: Exception) {
             Log.e("SearchPost", "Search failed: ${e.message}", e)

@@ -1,6 +1,6 @@
 package com.example.socialmediaapp.other
 
-import com.example.socialmediaapp.data.entity.MediaType
+import com.example.socialmediaapp.data.entity.post.MediaType
 
 object Constant {
     val COLLECTION_USERS = "User"

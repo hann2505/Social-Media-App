@@ -5,14 +5,9 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.example.socialmediaapp.data.entity.Comment
-import com.example.socialmediaapp.data.entity.CommentWithUser
-import com.example.socialmediaapp.data.entity.User
+import com.example.socialmediaapp.data.entity.comment.Comment
+import com.example.socialmediaapp.data.entity.user.User
 import com.example.socialmediaapp.data.firebase.remote.CommentRemoteDatabase
-import com.example.socialmediaapp.other.FirebaseChangeType
-import com.example.socialmediaapp.other.FirebaseChangeType.ADDED
-import com.example.socialmediaapp.other.FirebaseChangeType.MODIFIED
-import com.example.socialmediaapp.other.FirebaseChangeType.REMOVED
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow

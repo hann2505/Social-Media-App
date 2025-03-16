@@ -1,7 +1,7 @@
 ﻿package com.example.socialmediaapp.data.firebase.remote
 
 import android.util.Log
-import com.example.socialmediaapp.data.entity.Follower
+import com.example.socialmediaapp.data.entity.follower.Follower
 import com.example.socialmediaapp.data.firebase.authentication.UserAuthentication
 import com.example.socialmediaapp.other.Constant.COLLECTION_FOLLOWERS
 import com.example.socialmediaapp.other.Constant.COLLECTION_USERS
@@ -11,7 +11,7 @@ import javax.inject.Inject
 
 class FollowerRemoteDatabase @Inject constructor(
     db: FirebaseFirestore,
-    private val userAuthentication: UserAuthentication,
+    private val auth: UserAuthentication,
 ) {
 
     private val userCollection = db.collection(COLLECTION_USERS)
@@ -75,12 +75,13 @@ class FollowerRemoteDatabase @Inject constructor(
     }
 
     fun getFollowerCountUpdate(userId: String, onFollowingChange: (Int) -> Unit) {
-        followersGroupCollection.whereEqualTo("followingId", userId).addSnapshotListener { snapshot, error ->
-            Log.d("FollowerRemoteDatabase", "error: $error")
-            if (error != null) return@addSnapshotListener
-            val followingCount = snapshot?.count() ?: 0
-            onFollowingChange(followingCount)
-        }
+        followersGroupCollection.whereEqualTo("followingId", userId)
+            .addSnapshotListener { snapshot, error ->
+                Log.d("FollowerRemoteDatabase", "error: $error")
+                if (error != null) return@addSnapshotListener
+                val followingCount = snapshot?.count() ?: 0
+                onFollowingChange(followingCount)
+            }
     }
 
 }

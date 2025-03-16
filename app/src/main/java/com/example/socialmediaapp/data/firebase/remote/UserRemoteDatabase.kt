@@ -5,12 +5,14 @@ import android.util.Log
 import androidx.core.net.toUri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.example.socialmediaapp.data.entity.User
+import com.example.socialmediaapp.data.entity.user.User
 import com.example.socialmediaapp.other.Constant.COLLECTION_USERS
 import com.example.socialmediaapp.other.FirebaseChangeType
 import com.example.socialmediaapp.other.FirebaseChangeType.*
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentChange
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -20,10 +22,14 @@ import javax.inject.Inject
 
 class UserRemoteDatabase @Inject constructor(
     db: FirebaseFirestore,
-    storage: FirebaseStorage
+    storage: FirebaseStorage,
+    private val auth: FirebaseAuth,
+    private val firebaseMessaging: FirebaseMessaging
 ) {
     private val usersCollection = db.collection(COLLECTION_USERS)
     private val storageRef = storage.reference
+
+    private val userId = auth.currentUser?.uid ?: ""
 
     suspend fun fetchUserInfo(userId: String): User {
         return try {
@@ -173,4 +179,29 @@ class UserRemoteDatabase @Inject constructor(
             emptyList()
         }
     }
+
+    fun saveFcmTokenToFirebase() {
+        firebaseMessaging.token.addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                val token = task.result
+                CoroutineScope(Dispatchers.IO).launch {
+                    usersCollection.document(userId).update("fcmToken", token).await()
+                }
+            }
+        }
+    }
+
+    fun getTokensFromFollower(followerIds: List<String>): List<String> {
+        val tokens = mutableListOf<String>()
+        for (id in followerIds) {
+            usersCollection.document(id).get().addOnSuccessListener {
+                val user = it.getString("fcmToken")
+                if (user != null) {
+                    tokens.add(user)
+                }
+            }
+        }
+        return tokens
+    }
+
 }

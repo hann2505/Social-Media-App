@@ -1,9 +1,9 @@
-package com.example.socialmediaapp.adapter
+package com.example.socialmediaapp.adapter.message
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.example.socialmediaapp.data.entity.Message
+import com.example.socialmediaapp.data.entity.notification.Message
 import com.example.socialmediaapp.databinding.ChatBoxLeftBinding
 import com.example.socialmediaapp.databinding.ChatBoxRightBinding
 import com.example.socialmediaapp.extensions.TimeConverter

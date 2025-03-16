@@ -1,5 +1,6 @@
 package com.example.socialmediaapp.ui.fragment.chat
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -9,8 +10,9 @@ import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.socialmediaapp.adapter.UserChatAdapter
+import com.example.socialmediaapp.adapter.message.UserChatAdapter
 import com.example.socialmediaapp.databinding.FragmentChatBinding
+import com.example.socialmediaapp.ui.acitivity.MainActivity
 import com.example.socialmediaapp.viewmodel.UserViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -41,6 +43,11 @@ class ChatFragment : Fragment(), SearchView.OnQueryTextListener {
         userChatAdapter.setOnItemClickListener {
             val action = ChatFragmentDirections.actionChatFragmentToChatRoomFragment(it)
             findNavController().navigate(action)
+        }
+
+        binding.back.setOnClickListener {
+            val intent = Intent(requireContext(), MainActivity::class.java)
+            startActivity(intent)
         }
     }
 

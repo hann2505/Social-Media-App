@@ -1,10 +1,10 @@
-package com.example.socialmediaapp.adapter
+package com.example.socialmediaapp.adapter.comment
 
 import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.bumptech.glide.Glide
-import com.example.socialmediaapp.data.entity.Comment
+import com.example.socialmediaapp.data.entity.comment.Comment
 import com.example.socialmediaapp.databinding.CommentBinding
 import com.example.socialmediaapp.extensions.TimeConverter
 

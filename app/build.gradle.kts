@@ -70,6 +70,7 @@ dependencies {
     implementation(libs.androidx.legacy.support.v4)
     implementation(libs.androidx.recyclerview)
     implementation(libs.firebase.messaging)
+    implementation(libs.googleid)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -126,6 +127,10 @@ dependencies {
 
     //Swipe to refresh
     implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
+
+    //facebook login
+    implementation ("com.facebook.android:facebook-android-sdk:latest.release")
+
 
 
 }

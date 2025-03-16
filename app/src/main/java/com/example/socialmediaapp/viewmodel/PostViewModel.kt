@@ -2,18 +2,14 @@ package com.example.socialmediaapp.viewmodel
 
 import android.app.Application
 import android.net.Uri
-import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.example.socialmediaapp.data.entity.Post
-import com.example.socialmediaapp.data.entity.PostWithUser
+import com.example.socialmediaapp.data.entity.post.PostWithUser
 import com.example.socialmediaapp.data.firebase.remote.PostRemoteDatabase
-import com.example.socialmediaapp.other.FirebaseChangeType.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch

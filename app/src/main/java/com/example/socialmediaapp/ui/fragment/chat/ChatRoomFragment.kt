@@ -1,4 +1,4 @@
-package com.example.socialmediaapp
+package com.example.socialmediaapp.ui.fragment.chat
 
 import android.os.Bundle
 import android.text.Editable
@@ -14,7 +14,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
-import com.example.socialmediaapp.adapter.MessageAdapter
+import com.example.socialmediaapp.adapter.message.MessageAdapter
 import com.example.socialmediaapp.data.firebase.authentication.UserAuthentication
 import com.example.socialmediaapp.databinding.FragmentChatRoomBinding
 import com.example.socialmediaapp.viewmodel.MessageViewModel
@@ -102,7 +102,8 @@ class ChatRoomFragment : Fragment(), TextWatcher {
                     else if (isUserAtBottom(layoutManager)) {
                         recyclerView.scrollToPosition(messageAdapter.itemCount - 1)
                     }
-                }            }
+                }
+            }
         }
 
     }

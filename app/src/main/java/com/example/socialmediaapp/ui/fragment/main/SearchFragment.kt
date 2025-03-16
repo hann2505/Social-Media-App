@@ -10,8 +10,8 @@ import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.socialmediaapp.adapter.PostAdapter
-import com.example.socialmediaapp.adapter.UserAdapter
+import com.example.socialmediaapp.adapter.post.PostAdapter
+import com.example.socialmediaapp.adapter.user.UserAdapter
 import com.example.socialmediaapp.data.firebase.authentication.UserAuthentication
 import com.example.socialmediaapp.databinding.FragmentSearchBinding
 import com.example.socialmediaapp.viewmodel.FollowerViewModel

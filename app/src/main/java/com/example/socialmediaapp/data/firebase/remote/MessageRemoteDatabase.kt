@@ -1,8 +1,7 @@
 package com.example.socialmediaapp.data.firebase.remote
 
 import android.util.Log
-import com.example.socialmediaapp.data.entity.Message
-import com.example.socialmediaapp.other.Constant.COLLECTION_COMMENTS
+import com.example.socialmediaapp.data.entity.notification.Message
 import com.example.socialmediaapp.other.Constant.COLLECTION_MESSAGES
 import com.example.socialmediaapp.other.Constant.COLLECTION_USERS
 import com.google.firebase.auth.FirebaseAuth

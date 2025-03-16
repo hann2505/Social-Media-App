@@ -10,8 +10,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.socialmediaapp.R
-import com.example.socialmediaapp.adapter.NotificationAdapter
+import com.example.socialmediaapp.adapter.notification.NotificationAdapter
 import com.example.socialmediaapp.data.firebase.authentication.UserAuthentication
 import com.example.socialmediaapp.databinding.FragmentNotificationBinding
 import com.example.socialmediaapp.viewmodel.FollowerViewModel

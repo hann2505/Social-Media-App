@@ -1,19 +1,11 @@
 package com.example.socialmediaapp.data.firebase.remote
 
 import android.util.Log
-import com.example.socialmediaapp.data.entity.PostLike
+import com.example.socialmediaapp.data.entity.like.PostLike
 import com.example.socialmediaapp.other.Constant.COLLECTION_POSTS
 import com.example.socialmediaapp.other.Constant.COLLECTION_POST_LIKES
 import com.example.socialmediaapp.other.Constant.COLLECTION_USERS
-import com.example.socialmediaapp.other.FirebaseChangeType
-import com.example.socialmediaapp.other.FirebaseChangeType.ADDED
-import com.example.socialmediaapp.other.FirebaseChangeType.REMOVED
-import com.google.firebase.Firebase
-import com.google.firebase.firestore.DocumentChange
-import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.firestore
-import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 class PostLikeRemoteFirebase @Inject constructor(

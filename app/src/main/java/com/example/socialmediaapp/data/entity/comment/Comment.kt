@@ -1,4 +1,4 @@
-package com.example.socialmediaapp.data.entity
+package com.example.socialmediaapp.data.entity.comment
 
 data class Comment(
     val commentId: String = "",

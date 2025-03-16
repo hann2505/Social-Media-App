@@ -1,7 +1,5 @@
-package com.example.socialmediaapp.data.entity
+package com.example.socialmediaapp.data.entity.like
 
-import androidx.room.Entity
-import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
 
 data class PostLike(

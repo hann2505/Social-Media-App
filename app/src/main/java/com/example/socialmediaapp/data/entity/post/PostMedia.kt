@@ -1,4 +1,4 @@
-package com.example.socialmediaapp.data.entity
+package com.example.socialmediaapp.data.entity.post
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity

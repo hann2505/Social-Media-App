@@ -9,7 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.example.socialmediaapp.R
-import com.example.socialmediaapp.data.entity.User
+import com.example.socialmediaapp.data.entity.user.User
 import com.example.socialmediaapp.databinding.FragmentSignUpBinding
 import com.example.socialmediaapp.data.firebase.authentication.UserAuthentication
 import com.example.socialmediaapp.viewmodel.UserViewModel

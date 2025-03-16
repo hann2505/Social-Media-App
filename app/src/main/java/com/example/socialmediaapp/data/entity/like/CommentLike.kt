@@ -1,8 +1,4 @@
-package com.example.socialmediaapp.data.entity
-
-import androidx.room.Entity
-import androidx.room.ForeignKey
-import androidx.room.PrimaryKey
+package com.example.socialmediaapp.data.entity.like
 
 data class CommentLike(
     val likeId: String = "",

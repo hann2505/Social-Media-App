@@ -1,7 +1,6 @@
 package com.example.socialmediaapp.other
 
-import androidx.room.TypeConverter
-import com.example.socialmediaapp.data.entity.MediaType
+import com.example.socialmediaapp.data.entity.post.MediaType
 
 class MediaTypeConverter {
 
