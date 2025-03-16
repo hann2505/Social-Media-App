@@ -20,6 +20,7 @@ import com.bumptech.glide.Glide
 import com.example.socialmediaapp.R
 import com.example.socialmediaapp.data.firebase.authentication.UserAuthentication
 import com.example.socialmediaapp.databinding.FragmentProfileBinding
+import com.example.socialmediaapp.ui.acitivity.ChatActivity
 import com.example.socialmediaapp.ui.acitivity.EditProfileActivity
 import com.example.socialmediaapp.ui.acitivity.SettingActivity
 import com.example.socialmediaapp.viewmodel.FollowerViewModel
@@ -59,7 +60,8 @@ class ProfileFragment : Fragment() {
         }
 
         binding.messageBtn.setOnClickListener {
-
+            val intent = Intent(requireActivity(), ChatActivity::class.java)
+            startActivity(intent)
         }
 
         binding.followers.setOnClickListener {
