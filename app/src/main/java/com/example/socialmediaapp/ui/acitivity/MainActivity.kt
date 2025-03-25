@@ -2,6 +2,7 @@ package com.example.socialmediaapp.ui.acitivity
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -12,13 +13,17 @@ import androidx.navigation.NavOptions
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.example.socialmediaapp.R
+import com.example.socialmediaapp.data.firebase.api.FirebaseAuthTokenProvider
 import com.example.socialmediaapp.data.firebase.authentication.UserAuthentication
 import com.example.socialmediaapp.databinding.ActivityMainBinding
 import com.example.socialmediaapp.viewmodel.CommentViewModel
+import com.example.socialmediaapp.viewmodel.FcmViewModel
 import com.example.socialmediaapp.viewmodel.FollowerViewModel
 import com.example.socialmediaapp.viewmodel.PostViewModel
 import com.example.socialmediaapp.viewmodel.UserViewModel
+import com.google.auth.oauth2.GoogleCredentials
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -33,6 +38,9 @@ class MainActivity : AppCompatActivity() {
     private val mFollowerViewModel: FollowerViewModel by viewModels()
     private val mPostViewModel: PostViewModel by viewModels()
     private val mCommentViewModel: CommentViewModel by viewModels()
+
+    private val mFcmViewModel = FcmViewModel(this)
+    private val accessTokenProvider = FirebaseAuthTokenProvider(this)
 
     @Inject
     lateinit var userAuthentication: UserAuthentication
@@ -52,6 +60,22 @@ class MainActivity : AppCompatActivity() {
         }
 
         println("MainActivity: OnCreated")
+
+        this.assets.list("")?.forEach {
+            Log.d("Assets", "File: $it")
+        }
+
+        lifecycleScope.launch(Dispatchers.IO) {
+            Log.d("MainActivity", "onCreate: ${accessTokenProvider.getAccessToken()}")
+        }
+
+//        mFcmViewModel.getAccessToken()
+
+        lifecycleScope.launch {
+            mFcmViewModel.accessToken.collect { accessToken ->
+                Log.d("MainActivity", "onCreate: $accessToken")
+            }
+        }
 
     }
 

@@ -17,11 +17,19 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.socialmediaapp.R
 import com.example.socialmediaapp.adapter.PostImageAdapter
+import com.example.socialmediaapp.data.entity.notification.FcmMessage
+import com.example.socialmediaapp.data.entity.notification.NotificationData
+import com.example.socialmediaapp.data.entity.notification.PushNotification
+import com.example.socialmediaapp.data.firebase.api.FirebaseAuthTokenProvider
 import com.example.socialmediaapp.data.firebase.authentication.UserAuthentication
 import com.example.socialmediaapp.databinding.ActivityPostBinding
+import com.example.socialmediaapp.retrofit.RetrofitInstance
 import com.example.socialmediaapp.viewmodel.PostViewModel
 import com.example.socialmediaapp.viewmodel.UserViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -38,6 +46,8 @@ class UploadActivity : AppCompatActivity() {
     private val imageUris = mutableListOf<Uri>()
     private lateinit var postImageAdapter: PostImageAdapter
 
+    private val fAuthTokenProvider = FirebaseAuthTokenProvider(this)
+
     @Inject
     lateinit var userAuthentication: UserAuthentication
 
@@ -53,8 +63,7 @@ class UploadActivity : AppCompatActivity() {
         }
         setSupportActionBar(binding.bottomBar.toolbar)
         supportActionBar?.setDisplayShowTitleEnabled(false)
-        imagePicker()
-        setRecyclerView()
+
 
         binding.cancel.setOnClickListener {
             finish()
@@ -64,17 +73,27 @@ class UploadActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
+        imagePicker()
+        setRecyclerView()
+        mUserViewModel.fetchUserInfo(userAuthentication.getCurrentUser()!!.uid)
+
         postImageAdapter.setOnCancelClickListener {
             imageUris.remove(it)
             postImageAdapter.updateList(imageUris)
         }
+
+
     }
 
     private fun setRecyclerView() {
         postImageAdapter = PostImageAdapter()
         binding.recyclerView.adapter = postImageAdapter
 
-        binding.recyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+        binding.recyclerView.layoutManager = LinearLayoutManager(
+            this,
+            LinearLayoutManager.HORIZONTAL,
+            false
+        )
 
     }
 
@@ -125,6 +144,8 @@ class UploadActivity : AppCompatActivity() {
         val postState = true
         mPostViewModel.uploadPost(userId, content, imageUrl, postState)
 
+        sendNotification()
+
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -146,6 +167,47 @@ class UploadActivity : AppCompatActivity() {
             }
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    private fun sendNotification() = CoroutineScope(Dispatchers.IO).launch {
+        try {
+
+            val oauthToken = fAuthTokenProvider.getAccessToken()
+
+            val username = userAuthentication.getCurrentUser()!!.displayName
+
+            val notification = FcmMessage(
+                message = PushNotification(
+                    topic = "user_" + userAuthentication.getCurrentUser()!!.uid,
+                    notification = NotificationData(
+                        title = "New Post!",
+                        body = buildString {
+                            append(username)
+                            append(" you follow just posted something new!")
+                        }
+                    ),
+                    data = NotificationData(
+                        title = "New Post!",
+                        body = buildString {
+                            append(username)
+                            append(" you follow just posted something new!")
+                        }
+                    )
+                )
+            )
+
+            val response = RetrofitInstance.api.sendNotification("Bearer $oauthToken", notification)
+            if (response.isSuccessful) {
+                Log.d("Notification", "Notification sent successfully")
+            } else {
+                Log.e("Notification", "Failed to send notification: ${response.errorBody()?.string()}")
+            }
+        }
+        catch (e: Exception) {
+            Log.e("Notification", "Error sending notification", e)
+
+        }
+
     }
 
 }

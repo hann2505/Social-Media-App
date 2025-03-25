@@ -1,81 +1,100 @@
 package com.example.socialmediaapp.data.firebase.service
-import android.Manifest
-import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
-import android.content.pm.PackageManager
+import android.app.PendingIntent
+import android.content.Context
+import android.content.Intent
 import android.os.Build
 import android.util.Log
-import androidx.core.app.ActivityCompat
-import androidx.core.app.NotificationManagerCompat
+import androidx.core.app.NotificationCompat
 import com.example.socialmediaapp.R
 import com.example.socialmediaapp.other.Constant.COLLECTION_USERS
+import com.example.socialmediaapp.ui.acitivity.MainActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
+import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
+import kotlin.random.Random
 
+@AndroidEntryPoint
+class FirebaseMessagingService : FirebaseMessagingService() {
 
-class FirebaseMessagingService @Inject constructor(
-    private val db: FirebaseFirestore,
-    private val auth: FirebaseAuth
-) : FirebaseMessagingService() {
+    @Inject
+    lateinit var db: FirebaseFirestore
+
+    @Inject
+    lateinit var auth: FirebaseAuth
 
     companion object {
         const val TAG = "FirebaseMessagingService"
-        val channelId = "social_media_app"
+        val CHANNEL_ID = "social_media_app_channel"
     }
 
     override fun onNewToken(token: String) {
         super.onNewToken(token)
-        Log.d("FCM", "Refreshed token: $token")
-        saveTokenToFirestore(token)
+        Log.d(TAG, "Refreshed token: $token")
+//        saveTokenToFirestore(token)
     }
 
     override fun onMessageReceived(message: RemoteMessage) {
         super.onMessageReceived(message)
         message.notification.let {
+            Log.d(TAG, "Notification Title: ${it?.title}")
+            Log.d(TAG, "Notification Body: ${it?.body}")
             showNotification(it?.title, it?.body)
+        }
+
+        message.data.let { data ->
+            // If the message contains a data payload
+            Log.d(TAG, "Data Payload: $data")
+
+            val title = data["title"] ?: "No Title"
+            val body = data["body"] ?: "No Body"
+
+            Log.d(TAG, "Message received from: ${message.from}")
+
+
+            showNotification(title, body)
         }
     }
 
     private fun showNotification(title: String?, body: String?) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel  = NotificationChannel(
-                channelId,
-                "FCM Notification",
-                NotificationManager.IMPORTANCE_LOW
-            )
+        Log.d(TAG, "Showing notification with title: $title and body: $body")
 
-            val manager = getSystemService(NotificationManager::class.java)
-            manager.createNotificationChannel(channel)
+        val intent = Intent(this, MainActivity::class.java)
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+
+        val pendingIntent = PendingIntent.getActivity(
+            this, 0, intent,
+            PendingIntent.FLAG_ONE_SHOT or PendingIntent.FLAG_IMMUTABLE
+        )
+
+        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channel = NotificationChannel(
+                CHANNEL_ID, "Channel Name",
+                NotificationManager.IMPORTANCE_HIGH
+            ).apply {
+                description = "Channel Description"
+                enableLights(true)
+                enableVibration(true)
+            }
+            notificationManager.createNotificationChannel(channel)
         }
 
-        val notification = Notification.Builder(this, channelId)
+        val notificationBuilder = NotificationCompat.Builder(this, CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_orange)
             .setContentTitle(title)
             .setContentText(body)
-            .setPriority(Notification.PRIORITY_HIGH)
-            .build()
+            .setAutoCancel(true)
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setContentIntent(pendingIntent)
 
-        if (ActivityCompat.checkSelfPermission(
-                this,
-                Manifest.permission.POST_NOTIFICATIONS
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return
-        }
-        NotificationManagerCompat.from(this).notify(1, notification)
-
+        val notificationId = Random.nextInt()
+        notificationManager.notify(notificationId, notificationBuilder.build())
     }
 
     private fun saveTokenToFirestore(token: String) {
@@ -84,8 +103,8 @@ class FirebaseMessagingService @Inject constructor(
 
         db.collection(COLLECTION_USERS).document(userId)
             .update("fcmToken", token)
-            .addOnSuccessListener { Log.d("FCM", "Token saved successfully!: $token") }
-            .addOnFailureListener { Log.e("FCM", "Error saving token", it) }
+            .addOnSuccessListener { Log.d(TAG, "Token saved successfully!: $token") }
+            .addOnFailureListener { Log.e(TAG, "Error saving token", it) }
     }
 
 

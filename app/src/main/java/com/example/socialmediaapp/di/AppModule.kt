@@ -1,6 +1,7 @@
 package com.example.socialmediaapp.di
 
 import android.content.Context
+import com.example.socialmediaapp.data.firebase.api.FirebaseAuthTokenProvider
 import com.example.socialmediaapp.other.MediaTypeConverter
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore

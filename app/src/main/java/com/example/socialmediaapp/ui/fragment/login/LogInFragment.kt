@@ -15,16 +15,10 @@ import com.example.socialmediaapp.data.firebase.authentication.GoogleSignInListe
 import com.example.socialmediaapp.data.firebase.authentication.GoogleSignInHelper
 import com.example.socialmediaapp.databinding.FragmentLogInBinding
 import com.example.socialmediaapp.data.firebase.authentication.UserAuthentication
-import com.example.socialmediaapp.data.firebase.service.FirebaseMessagingService
 import com.example.socialmediaapp.ui.acitivity.MainActivity
 import com.example.socialmediaapp.viewmodel.UserViewModel
-import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.google.android.gms.auth.api.signin.GoogleSignInClient
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions
-import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.auth.GoogleAuthProvider
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -42,9 +36,6 @@ class LogInFragment : Fragment(), GoogleSignInListener {
     lateinit var firebaseAuth: FirebaseAuth
 
     private val mUserViewModel: UserViewModel by viewModels()
-
-    @Inject
-    lateinit var service: FirebaseMessagingService
 
     @Inject
     lateinit var googleSignInHelper: GoogleSignInHelper

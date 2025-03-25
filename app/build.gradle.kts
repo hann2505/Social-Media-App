@@ -53,6 +53,15 @@ android {
     kapt {
         correctErrorTypes = true
     }
+
+    android {
+        packaging {
+            resources {
+                excludes += "META-INF/DEPENDENCIES"
+            }
+        }
+    }
+
 }
 
 dependencies {
@@ -132,6 +141,13 @@ dependencies {
     //facebook login
     implementation ("com.facebook.android:facebook-android-sdk:latest.release")
 
+    //Retrofit
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation("com.squareup.okhttp3:okhttp:4.9.0")
+
+    implementation("com.google.auth:google-auth-library-oauth2-http:1.20.0")
+//    implementation("com.google.firebase:firebase-admin:9.2.0")
 
 
 }

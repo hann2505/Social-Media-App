@@ -1,12 +1,14 @@
 package com.example.socialmediaapp.viewmodel
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.socialmediaapp.data.entity.follower.Follower
 import com.example.socialmediaapp.data.firebase.remote.FollowerRemoteDatabase
+import com.google.firebase.messaging.FirebaseMessaging
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -16,7 +18,8 @@ import javax.inject.Inject
 @HiltViewModel
 class FollowerViewModel @Inject constructor(
     application: Application,
-    private val followerRemoteDatabase: FollowerRemoteDatabase
+    private val followerRemoteDatabase: FollowerRemoteDatabase,
+    private val firebaseMessaging: FirebaseMessaging
 ) : AndroidViewModel(application)
 {
     private val _followers = MutableLiveData<List<Follower>>()
@@ -37,6 +40,13 @@ class FollowerViewModel @Inject constructor(
     fun followUser(followerId: String, followingId: String) {
         viewModelScope.launch(Dispatchers.IO) {
             followerRemoteDatabase.followUser(followerId, followingId)
+            firebaseMessaging.subscribeToTopic("user_$followingId").addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    Log.d("FollowerViewModel", "Subscribed to topic: user_$followingId")
+                } else {
+                    Log.d("FollowerViewModel", "Failed to subscribe to topic: user_$followingId")
+                }
+            }
         }
 
     }
@@ -44,6 +54,18 @@ class FollowerViewModel @Inject constructor(
     fun unfollowUser(followerId: String, followingId: String) {
         viewModelScope.launch(Dispatchers.IO) {
             followerRemoteDatabase.unfollowUser(followerId, followingId)
+            firebaseMessaging.unsubscribeFromTopic("user_$followingId")
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        Log.d("FollowerViewModel", "unsubscribed to topic: user_$followingId")
+                    } else {
+                        Log.d(
+                            "FollowerViewModel",
+                            "Failed to unsubscribe to topic: user_$followingId"
+                        )
+                    }
+
+                }
         }
 
     }
